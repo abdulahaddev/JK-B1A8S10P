@@ -1,0 +1,387 @@
+[  0.00] ets Jul 29 2019 12:21:46
+[  0.00] 
+[  0.00] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[  0.00] configsip: 0, SPIWP:0xee
+[  0.00] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[  0.02] mode:DIO, clock div:2
+[  0.02] load:0x3fff0030,len:6248
+[  0.02] load:0x40078000,len:15852
+[  0.02] ho 0 tail 12 room 4
+[  0.02] load:0x40080400,len:3896
+[  0.02] entry 0x40080638
+[  0.04] I (29) boot: ESP-IDF 5.5.4 2nd stage bootloader
+[  0.04] I (29) boot: Multicore bootloader
+[  0.04] I (30) boot: chip revision: v3.1
+[  0.04] I (30) boot.esp32: SPI Speed      : 40MHz
+[  0.04] I (33) boot.esp32: SPI Mode       : DIO
+[  0.05] I (36) boot.esp32: SPI Flash Size : 4MB
+[  0.06] I (40) boot: Enabling RNG early entropy source...
+[  0.06] I (44) boot: Partition Table:
+[  0.06] I (47) boot: ## Label            Usage          Type ST Offset   Length
+[  0.07] I (53) boot:  0 otadata          OTA data         01 00 00009000 00002000
+[  0.07] I (60) boot:  1 phy_init         RF data          01 01 0000b000 00001000
+[  0.09] I (66) boot:  2 app0             OTA app          00 10 00010000 001c0000
+[  0.09] I (73) boot:  3 app1             OTA app          00 11 001d0000 001c0000
+[  0.09] I (79) boot:  4 nvs              WiFi data        01 02 00390000 00070000
+[  0.10] I (86) boot: End of partition table
+[  0.10] I (89) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=35d9ch (220572) map
+[  0.17] I (172) esp_image: segment 1: paddr=00045dc4 vaddr=3ffbdb60 size=057c8h ( 22472) load
+[  0.18] I (181) esp_image: segment 2: paddr=0004b594 vaddr=40080000 size=04a84h ( 19076) load
+[  0.20] I (188) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=df658h (915032) map
+[  0.50] I (501) esp_image: segment 4: paddr=0012f680 vaddr=40084a84 size=15b0ch ( 88844) load
+[  0.54] I (536) esp_image: segment 5: paddr=00145194 vaddr=50000000 size=00020h (    32) load
+[  0.55] I (549) boot: Loaded app from partition at offset 0x10000
+[  0.55] I (549) boot: Disabling RNG early entropy source...
+[  0.70] [I][logger:122]: Log initialized
+[  0.70] [I][app:060]: Running through setup()
+[  0.70] [I][ble_mac:037]: BLE address for this boot: 5C:01:3B:BD:67:3C (ESP_OK)
+[  0.84] [I][app:117]: setup() finished successfully!
+[  0.89] [W][component:382]: wifi set Warning flag: scanning for networks
+[  0.89] [D][esp32_ble:525]: Enabling
+[  1.32] [W][component:513]: esp32_ble took a long time for an operation (426 ms), max is 50 ms
+[  1.32] [I][app:151]: ESPHome version 2026.6.5 compiled on 2026-10-22 00:31:59 +0600
+[  1.32] [I][app:158]: ESP32 Chip: ESP32 rev3.1, 2 core(s)
+[  1.34] [W][app:171]: Chip rev >= 3.0 detected. Set minimum_chip_revision: "3.1" under esp32 > framework > advanced to reduce binary size
+[  1.35] [W][app:198]: Bootloader supports SRAM1 as IRAM (+40KB). Set sram1_as_iram: true under esp32 > framework > advanced
+[  1.35] [C][logger:223]: Logger:
+[  1.35]   Max Level: DEBUG
+[  1.35]   Initial Level: DEBUG
+[  1.37] [C][logger:230]:   Log Baud Rate: 115200
+[  1.37]   Hardware UART: UART0
+[  1.37] [C][logger:239]:   Task Log Buffer Size: 768 bytes
+[  1.37] [C][logger:245]:   Level for 'component': INFO
+[  1.38] [C][logger:245]:   Level for 'display': WARN
+[  1.38] [C][logger:245]:   Level for 'esp32_ble_client': INFO
+[  1.38] [C][logger:245]:   Level for 'esp32_ble_tracker': INFO
+[  1.40] [C][logger:245]:   Level for 'i2c': WARN
+[  1.40] [C][logger:245]:   Level for 'i2c.idf': WARN
+[  1.40] [C][logger:245]:   Level for 'scheduler': INFO
+[  1.42] [C][logger:245]:   Level for 'ssd1306_base': WARN
+[  1.42] [C][logger:245]:   Level for 'ssd1306_i2c': WARN
+[  1.42] [C][logger:245]:   Level for 'wifi': INFO
+[  1.45] [C][gpio.output:009]: Binary Output:
+[  1.45] [C][gpio.output:152]:   Pin: GPIO2
+[  1.46] [C][gpio.output:009]: Binary Output:
+[  1.46] [C][gpio.output:152]:   Pin: GPIO4
+[  1.48] [C][gpio.output:009]: Binary Output:
+[  1.48] [C][gpio.output:152]:   Pin: GPIO16
+[  1.50] [C][gpio.output:009]: Binary Output:
+[  1.50] [C][gpio.output:152]:   Pin: GPIO17
+[  1.51] [C][template.sensor:017]: Template Sensor 'ESP32 Free Memory'
+[  1.51]   State Class: ''
+[  1.51]   Unit of Measurement: 'bytes'
+[  1.51]   Accuracy Decimals: 1
+[  1.51] [C][template.sensor:434]:   Update Interval: 15.0s
+[  1.53] [C][jk_bms_ble:300]: JkBmsBle
+[  1.53] [C][jk_bms_ble:016]: Balancing 'Balancing'
+[  1.53] [C][jk_bms_ble:016]: Charging 'Charging'
+[  1.54] [C][jk_bms_ble:016]: Discharging 'Discharging'
+[  1.54] [C][jk_bms_ble:016]: Heating 'Heating'
+[  1.54] [C][jk_bms_ble:016]: Online Status 'Online Status'
+[  1.56] [C][jk_bms_ble:232]:   Device Class: 'connectivity'
+[  1.56] [C][jk_bms_ble:017]: Minimum Cell Voltage 'Min Cell Voltage'
+[  1.56]   State Class: 'measurement'
+[  1.56]   Unit of Measurement: 'V'
+[  1.57]   Accuracy Decimals: 3
+[  1.57] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.57] [C][jk_bms_ble:017]: Maximum Cell Voltage 'Max Cell Voltage'
+[  1.57]   State Class: 'measurement'
+[  1.59]   Unit of Measurement: 'V'
+[  1.59]   Accuracy Decimals: 3
+[  1.59] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.59] [C][jk_bms_ble:017]: Minimum Voltage Cell 'Min Voltage Cell'
+[  1.59]   State Class: 'measurement'
+[  1.60]   Unit of Measurement: ''
+[  1.60]   Accuracy Decimals: 0
+[  1.60] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-minus-outline'
+[  1.62] [C][jk_bms_ble:017]: Maximum Voltage Cell 'Max Voltage Cell'
+[  1.62]   State Class: 'measurement'
+[  1.62]   Unit of Measurement: ''
+[  1.62]   Accuracy Decimals: 0
+[  1.62] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-plus-outline'
+[  1.64] [C][jk_bms_ble:017]: Delta Cell Voltage 'Delta Cell Voltage'
+[  1.64]   State Class: 'measurement'
+[  1.64]   Unit of Measurement: 'V'
+[  1.64]   Accuracy Decimals: 3
+[  1.65] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.65] [C][jk_bms_ble:017]: Average Cell Voltage 'Average Cell Voltage'
+[  1.65]   State Class: 'measurement'
+[  1.65]   Unit of Measurement: 'V'
+[  1.65]   Accuracy Decimals: 3
+[  1.67] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.67] [C][jk_bms_ble:017]: Cell Voltage 1 'Cell Voltage 1'
+[  1.67]   State Class: 'measurement'
+[  1.67]   Unit of Measurement: 'V'
+[  1.68]   Accuracy Decimals: 3
+[  1.68] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.68] [C][jk_bms_ble:017]: Cell Voltage 2 'Cell Voltage 2'
+[  1.68]   State Class: 'measurement'
+[  1.70]   Unit of Measurement: 'V'
+[  1.70]   Accuracy Decimals: 3
+[  1.70] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.70] [C][jk_bms_ble:017]: Cell Voltage 3 'Cell Voltage 3'
+[  1.72]   State Class: 'measurement'
+[  1.72]   Unit of Measurement: 'V'
+[  1.72]   Accuracy Decimals: 3
+[  1.72] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.72] [C][jk_bms_ble:017]: Cell Voltage 4 'Cell Voltage 4'
+[  1.73]   State Class: 'measurement'
+[  1.73]   Unit of Measurement: 'V'
+[  1.73]   Accuracy Decimals: 3
+[  1.73] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.73] [C][jk_bms_ble:017]: Cell Resistance 1 'Cell Resistance 1'
+[  1.75]   State Class: 'measurement'
+[  1.75]   Unit of Measurement: 'Ω'
+[  1.75]   Accuracy Decimals: 3
+[  1.75] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.76] [C][jk_bms_ble:017]: Cell Resistance 2 'Cell Resistance 2'
+[  1.76]   State Class: 'measurement'
+[  1.76]   Unit of Measurement: 'Ω'
+[  1.76]   Accuracy Decimals: 3
+[  1.76] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.78] [C][jk_bms_ble:017]: Cell Resistance 3 'Cell Resistance 3'
+[  1.78]   State Class: 'measurement'
+[  1.78]   Unit of Measurement: 'Ω'
+[  1.78]   Accuracy Decimals: 3
+[  1.78] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.80] [C][jk_bms_ble:017]: Cell Resistance 4 'Cell Resistance 4'
+[  1.80]   State Class: 'measurement'
+[  1.80]   Unit of Measurement: 'Ω'
+[  1.80]   Accuracy Decimals: 3
+[  1.81] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.81] [C][jk_bms_ble:017]: Total Voltage 'Total Voltage'
+[  1.81]   State Class: 'measurement'
+[  1.81]   Unit of Measurement: 'V'
+[  1.81]   Accuracy Decimals: 3
+[  1.83] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.83] [C][jk_bms_ble:017]: Current 'Current'
+[  1.83]   State Class: 'measurement'
+[  1.83]   Unit of Measurement: 'A'
+[  1.83]   Accuracy Decimals: 2
+[  1.84] [C][jk_bms_ble:232]:   Device Class: 'current'
+[  1.84] [C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[  1.84] [C][jk_bms_ble:017]: Power 'Power'
+[  1.84]   State Class: 'measurement'
+[  1.84]   Unit of Measurement: 'W'
+[  1.86]   Accuracy Decimals: 2
+[  1.86] [C][jk_bms_ble:232]:   Device Class: 'power'
+[  1.86] [C][jk_bms_ble:017]: Charging Power 'Charging Power'
+[  1.87]   State Class: 'measurement'
+[  1.88]   Unit of Measurement: 'W'
+[  1.88]   Accuracy Decimals: 2
+[  1.88] [C][jk_bms_ble:232]:   Device Class: 'power'
+[  1.89] [C][jk_bms_ble:017]: Discharging Power 'Discharging Power'
+[  1.89]   State Class: 'measurement'
+[  1.89]   Unit of Measurement: 'W'
+[  1.89]   Accuracy Decimals: 2
+[  1.89] [C][jk_bms_ble:232]:   Device Class: 'power'
+[  1.89] [C][jk_bms_ble:017]: Mosfet Temperature 'MOSFET Temperature'
+[  1.91]   State Class: 'measurement'
+[  1.91]   Unit of Measurement: '°C'
+[  1.91]   Accuracy Decimals: 1
+[  1.91] [C][jk_bms_ble:232]:   Device Class: 'temperature'
+[  1.92] [C][jk_bms_ble:017]: Temperature Sensor 1 'Temperature Sensor 1'
+[  1.92]   State Class: 'measurement'
+[  1.92]   Unit of Measurement: '°C'
+[  1.92]   Accuracy Decimals: 1
+[  1.92] [C][jk_bms_ble:232]:   Device Class: 'temperature'
+[  1.95] [C][jk_bms_ble:017]: Temperature Sensor 2 'Temperature Sensor 2'
+[  1.95]   State Class: 'measurement'
+[  1.95]   Unit of Measurement: '°C'
+[  1.95]   Accuracy Decimals: 1
+[  1.96] [C][jk_bms_ble:232]:   Device Class: 'temperature'
+[  1.96] [C][jk_bms_ble:017]: State Of Charge 'State of Charge'
+[  1.96]   State Class: 'measurement'
+[  1.96]   Unit of Measurement: '%'
+[  1.96]   Accuracy Decimals: 0
+[  1.97] [C][jk_bms_ble:232]:   Device Class: 'battery'
+[  1.97] [C][jk_bms_ble:017]: State Of Health 'State of Health'
+[  1.97]   State Class: 'measurement'
+[  1.97]   Unit of Measurement: '%'
+[  1.97]   Accuracy Decimals: 0
+[  1.99] [C][jk_bms_ble:017]: Capacity Remaining 'Capacity Remaining'
+[  1.99]   State Class: 'measurement'
+[  1.99]   Unit of Measurement: 'Ah'
+[  1.99]   Accuracy Decimals: 3
+[  2.01] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-50'
+[  2.01] [C][jk_bms_ble:017]: Full Charge Capacity 'Full Charge Capacity'
+[  2.01]   State Class: 'measurement'
+[  2.01]   Unit of Measurement: 'Ah'
+[  2.01]   Accuracy Decimals: 0
+[  2.02] [C][jk_bms_ble:017]: Charging Cycles 'Charging Cycles'
+[  2.02]   State Class: 'total_increasing'
+[  2.02]   Unit of Measurement: ''
+[  2.02]   Accuracy Decimals: 0
+[  2.04] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-sync'
+[  2.04] [C][jk_bms_ble:017]: Total Charging Cycle Capacity 'Total Charging Cycle Capacity'
+[  2.04]   State Class: 'total_increasing'
+[  2.05]   Unit of Measurement: 'Ah'
+[  2.05]   Accuracy Decimals: 3
+[  2.05] [C][jk_bms_ble:223]:   Icon: 'mdi:counter'
+[  2.05] [C][jk_bms_ble:017]: Total Runtime 'Total Runtime'
+[  2.05]   State Class: 'total_increasing'
+[  2.07]   Unit of Measurement: 's'
+[  2.07]   Accuracy Decimals: 0
+[  2.07] [C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[  2.07] [C][jk_bms_ble:017]: Balancing Current 'Balancing Current'
+[  2.07]   State Class: 'measurement'
+[  2.09]   Unit of Measurement: 'A'
+[  2.09]   Accuracy Decimals: 2
+[  2.09] [C][jk_bms_ble:232]:   Device Class: 'current'
+[  2.10] [C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[  2.10] [C][jk_bms_ble:016]: Balancer Status 'Balancer Status'
+[  2.10] [C][jk_bms_ble:223]:   Icon: 'mdi:heart-pulse'
+[  2.12] [C][jk_bms_ble:016]: Total Runtime Formatted 'Total Runtime Formatted'
+[  2.12] [C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[  2.12] [C][jk_bms_ble:016]: Errors 'Errors'
+[  2.13] [C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[  2.13] [C][jk_bms_ble:016]: Errors Bitmask Hex 'Errors Bitmask Hex'
+[  2.13] [C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[  2.15] [C][jk_bms_ble:016]: Software Version 'Software Version'
+[  2.15] [C][jk_bms_ble:016]: Hardware Version 'Hardware Version'
+[  2.15] [C][jk_bms_ble:016]: Device Model 'Device Model'
+[  2.16] [C][jk_bms_ble:223]:   Icon: 'mdi:chip'
+[  2.16] [C][jk_bms_ble:016]: Manufacturing Date 'Manufacturing Date'
+[  2.16] [C][jk_bms_ble:223]:   Icon: 'mdi:calendar'
+[  2.18] [C][jk_bms_ble:016]: Serial Number 'Serial Number'
+[  2.18] [C][jk_bms_ble:223]:   Icon: 'mdi:identifier'
+[  2.18] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[  2.21] [C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Charging Switch'
+[  2.21]   Restore Mode: always OFF
+[  2.21] [C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[  2.23] [C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Discharging Switch'
+[  2.23]   Restore Mode: always OFF
+[  2.24] [C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[  2.24] [C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Balancer Switch'
+[  2.25]   Restore Mode: always OFF
+[  2.25] [C][jk_bms_ble.switch:223]:   Icon: 'mdi:seesaw'
+[  2.32] [C][esp32_ble:663]: BLE:
+[  2.32]   MAC address: 5C:01:3B:BD:67:3C
+[  2.32]   IO Capability: none
+[  2.35] [C][ble_client:026]: BLE Client:
+[  2.38] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[  2.39] [C][sntp:058]: SNTP Time:
+[  2.40] [C][sntp:061]:   Server 0: '0.pool.ntp.org'
+[  2.40] [C][sntp:061]:   Server 1: '1.pool.ntp.org'
+[  2.40] [C][sntp:061]:   Server 2: '2.pool.ntp.org'
+[  2.40] [C][time:051]: Timezone: UTC+6:00
+[  2.42] [C][time:055]: Current time: 1970-01-01 06:00:01
+[  2.42] [C][http_request:012]: HTTP Request:
+[  2.42]   Timeout: 4500ms
+[  2.42]   User-Agent: ESPHome/2026.6.5 (https://esphome.io)
+[  2.43]   Follow redirects: YES
+[  2.43]   Redirect limit: 3
+[  2.43] [C][http_request.idf:029]:   Buffer Size RX: 512
+[  2.43]   Buffer Size TX: 512
+[  2.43]   Custom CA Certificate: NO
+[  2.43] [C][mdns:230]: mDNS:
+[  2.45]   Hostname: jk-bms
+[  2.85] [D][esp-idf:000][BTU_TASK]: W (5123) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[  5.55] [D][esp-idf:000][BTU_TASK]: W (7808) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[  6.37] [D][esp-idf:000][BTU_TASK]: W (8630) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[  7.16] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[  7.75] [I][wifi:1434]: - 'IoT' (1E:82:C4:DE:46:46) ▂▄▆█ Ch: 6 -57dB P:0
+[  7.77] [I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority 0, attempt 1/2 in phase SCAN_CONNECTING)...
+[  7.95] [D][esp-idf:000][BTU_TASK]: W (10220) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[  8.62] [D][esp-idf:000][BTU_TASK]: W (10881) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[  9.03] [D][esp-idf:000][BTU_TASK]: W (11289) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[  9.08] [I][wifi:1575]: Connected
+[  9.09] [W][component:405]: wifi cleared Warning flag
+[ 10.24] [D][esp-idf:000][BTU_TASK]: W (12504) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 10.65] [D][esp-idf:000][BTU_TASK]: W (12921) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 11.66] [D][esp-idf:000][BTU_TASK]: W (13929) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 12.15] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 12.48] [D][esp-idf:000][BTU_TASK]: W (14754) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 12.69] [D][esp-idf:000][BTU_TASK]: W (14965) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 12.71] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[ 12.72] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[ 13.05] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 13.51] [D][esp-idf:000][BTU_TASK]: W (15774) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 13.73] [D][esp-idf:000][BTU_TASK]: W (15985) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 14.75] [D][esp-idf:000][BTU_TASK]: W (17005) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 14.96] [D][esp-idf:000][BTU_TASK]: W (17215) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 15.35] [D][esp-idf:000][BTU_TASK]: W (17620) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 15.57] [D][esp-idf:000][BTU_TASK]: W (17830) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 15.98] [D][esp-idf:000][BTU_TASK]: W (18250) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 16.40] [D][esp-idf:000][BTU_TASK]: W (18655) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 17.01] [D][esp-idf:000][BTU_TASK]: W (19281) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 17.19] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 18.25] [D][esp-idf:000][BTU_TASK]: W (20511) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 18.65] [D][esp-idf:000][BTU_TASK]: W (20920) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 18.66] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[ 18.66] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[ 19.00] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 19.88] [D][esp-idf:000][BTU_TASK]: W (22150) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 20.31] [D][esp-idf:000][BTU_TASK]: W (22569) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 20.71] [D][esp-idf:000][BTU_TASK]: W (22975) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 21.54] [D][esp-idf:000][BTU_TASK]: W (23800) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 21.93] [D][esp-idf:000][BTU_TASK]: W (24202) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 22.19] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 22.77] [D][esp-idf:000][BTU_TASK]: W (25030) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 23.60] [D][esp-idf:000][BTU_TASK]: W (25851) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 24.41] [D][esp-idf:000][BTU_TASK]: W (26664) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 24.82] [D][esp-idf:000][BTU_TASK]: W (27081) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 25.63] [D][esp-idf:000][BTU_TASK]: W (27894) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 26.46] [D][esp-idf:000][BTU_TASK]: W (28719) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 26.46] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[ 26.48] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[ 26.79] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 27.15] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 27.26] [D][esp-idf:000][BTU_TASK]: W (29529) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 28.07] [D][esp-idf:000][BTU_TASK]: W (30340) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 28.90] [D][esp-idf:000][BTU_TASK]: W (31165) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 29.71] [D][esp-idf:000][BTU_TASK]: W (31975) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 30.53] [D][esp-idf:000][BTU_TASK]: W (32800) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 31.14] [D][esp-idf:000][BTU_TASK]: W (33400) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 31.96] [D][esp-idf:000][BTU_TASK]: W (34222) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 32.15] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 32.58] [D][esp-idf:000][BTU_TASK]: W (34840) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 32.98] [D][esp-idf:000][BTU_TASK]: W (35242) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 33.29] [D][sntp:099]: Synchronized time: 2026-10-22 00:34:40
+[ 33.39] [D][esp-idf:000][BTU_TASK]: W (35650) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 33.79] [D][esp-idf:000][BTU_TASK]: W (36055) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 33.79] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[ 33.81] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[ 34.12] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 34.62] [D][esp-idf:000][BTU_TASK]: W (36880) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 35.03] [D][esp-idf:000][BTU_TASK]: W (37285) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 35.64] [D][esp-idf:000][BTU_TASK]: W (37900) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 36.04] [D][esp-idf:000][BTU_TASK]: W (38305) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 37.09] [D][esp-idf:000][BTU_TASK]: W (39352) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 37.20] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 37.90] [D][esp-idf:000][BTU_TASK]: W (40162) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 38.49] [D][esp-idf:000][BTU_TASK]: W (40765) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 38.70] [D][esp-idf:000][BTU_TASK]: W (40975) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 39.14] [D][esp-idf:000][BTU_TASK]: W (41392) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 39.55] [D][esp-idf:000][BTU_TASK]: W (41812) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 39.96] [D][esp-idf:000][BTU_TASK]: W (42220) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 39.96] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[ 39.97] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[ 40.29] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 40.58] [D][esp-idf:000][BTU_TASK]: W (42835) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 40.99] [D][esp-idf:000][BTU_TASK]: W (43252) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 41.39] [D][esp-idf:000][BTU_TASK]: W (43660) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 42.16] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 46.12] [D][esp-idf:000][BTU_TASK]: W (48385) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 46.32] [D][esp-idf:000][BTU_TASK]: W (48595) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 46.55] [D][esp-idf:000][BTU_TASK]: W (48805) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 46.96] [D][esp-idf:000][BTU_TASK]: W (49221) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 47.20] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 48.40] [D][esp-idf:000][BTU_TASK]: W (50662) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 48.80] [D][esp-idf:000][BTU_TASK]: W (51070) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 49.21] [D][esp-idf:000][BTU_TASK]: W (51480) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 50.02] [D][esp-idf:000][BTU_TASK]: W (52285) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 50.04] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[ 50.04] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[ 50.35] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 50.85] [D][esp-idf:000][BTU_TASK]: W (53111) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 51.67] [D][esp-idf:000][BTU_TASK]: W (53931) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 52.19] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 52.49] [D][esp-idf:000][BTU_TASK]: W (54745) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 53.31] [D][esp-idf:000][BTU_TASK]: W (55569) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 55.14] [D][esp-idf:000][BTU_TASK]: W (57400) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 56.38] [D][esp-idf:000][BTU_TASK]: W (58641) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 57.14] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 57.21] [D][esp-idf:000][BTU_TASK]: W (59471) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 58.03] [D][esp-idf:000][BTU_TASK]: W (60292) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[ 58.84] [D][esp-idf:000][BTU_TASK]: W (61106) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1

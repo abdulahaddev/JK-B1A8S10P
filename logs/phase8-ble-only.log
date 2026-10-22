@@ -1,0 +1,377 @@
+[  0.00] ����������x�x�x�xx�x��x�xx�_b�ets Jul 29 2019 12:21:46
+[  0.00] 
+[  0.01] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[  0.01] configsip: 0, SPIWP:0xee
+[  0.01] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[  0.01] mode:DIO, clock div:2
+[  0.01] load:0x3fff0030,len:6248
+[  0.02] load:0x40078000,len:15852
+[  0.02] ho 0 tail 12 room 4
+[  0.02] load:0x40080400,len:3896
+[  0.02] entry 0x40080638
+[  0.02] I (29) boot: ESP-IDF 5.5.4 2nd stage bootloader
+[  0.04] I (29) boot: Multicore bootloader
+[  0.04] I (30) boot: chip revision: v3.1
+[  0.04] I (30) boot.esp32: SPI Speed      : 40MHz
+[  0.04] I (33) boot.esp32: SPI Mode       : DIO
+[  0.05] I (36) boot.esp32: SPI Flash Size : 4MB
+[  0.06] I (40) boot: Enabling RNG early entropy source...
+[  0.06] I (44) boot: Partition Table:
+[  0.06] I (47) boot: ## Label            Usage          Type ST Offset   Length
+[  0.07] I (53) boot:  0 otadata          OTA data         01 00 00009000 00002000
+[  0.07] I (60) boot:  1 phy_init         RF data          01 01 0000b000 00001000
+[  0.07] I (66) boot:  2 app0             OTA app          00 10 00010000 001c0000
+[  0.09] I (73) boot:  3 app1             OTA app          00 11 001d0000 001c0000
+[  0.09] I (79) boot:  4 nvs              WiFi data        01 02 00390000 00070000
+[  0.10] I (86) boot: End of partition table
+[  0.10] I (89) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=1dc14h (121876) map
+[  0.14] I (138) esp_image: segment 1: paddr=0002dc3c vaddr=3ffbdb60 size=023dch (  9180) load
+[  0.15] I (142) esp_image: segment 2: paddr=00030020 vaddr=400d0020 size=6e218h (451096) map
+[  0.29] I (296) esp_image: segment 3: paddr=0009e240 vaddr=3ffbff3c size=023c0h (  9152) load
+[  0.31] I (300) esp_image: segment 4: paddr=000a0608 vaddr=40080000 size=13240h ( 78400) load
+[  0.34] I (331) esp_image: segment 5: paddr=000b3850 vaddr=50000000 size=00020h (    32) load
+[  0.34] I (341) boot: Loaded app from partition at offset 0x10000
+[  0.34] I (341) boot: Disabling RNG early entropy source...
+[  0.48] [I][logger:122]: Log initialized
+[  0.48] [I][app:060]: Running through setup()
+[  0.50] [V][app:061]: Sorting components by setup priority
+[  0.50] [I][app:117]: setup() finished successfully!
+[  0.50] [D][esp32_ble:525]: Enabling
+[  0.99] [W][component:513]: esp32_ble took a long time for an operation (501 ms), max is 50 ms
+[  1.01] [I][app:151]: ESPHome version 2026.6.5 compiled on 2026-10-22 00:07:44 +0600
+[  1.02] [I][app:158]: ESP32 Chip: ESP32 rev3.1, 2 core(s)
+[  1.02] [W][app:171]: Chip rev >= 3.0 detected. Set minimum_chip_revision: "3.1" under esp32 > framework > advanced to reduce binary size
+[  1.04] [W][app:198]: Bootloader supports SRAM1 as IRAM (+40KB). Set sram1_as_iram: true under esp32 > framework > advanced
+[  1.04] [C][logger:223]: Logger:
+[  1.04]   Max Level: VERBOSE
+[  1.04]   Initial Level: VERBOSE
+[  1.05] [C][logger:230]:   Log Baud Rate: 115200
+[  1.05]   Hardware UART: UART0
+[  1.05] [C][logger:239]:   Task Log Buffer Size: 768 bytes
+[  1.07] [C][logger:245]:   Level for 'component': INFO
+[  1.07] [C][logger:245]:   Level for 'esp32_ble_client': INFO
+[  1.07] [C][logger:245]:   Level for 'esp32_ble_tracker': INFO
+[  1.07] [C][logger:245]:   Level for 'scheduler': INFO
+[  1.09] [I][logger:261]: VERBOSE logging is active — performance impact, short-term debugging only
+[  1.09]   Set log level to DEBUG or lower for long-term use.
+[  1.10] [V][esp32_ble:449]: gap_event_handler - 2
+[  1.10] [V][esp32_ble:449]: gap_event_handler - 7
+[  1.10] [V][esp32_ble:427]: gattc_event [esp_gatt_if: 3] - 0
+[  1.12] [C][jk_bms_ble:300]: JkBmsBle
+[  1.12] [C][jk_bms_ble:016]: Balancing 'Balancing'
+[  1.13] [C][jk_bms_ble:016]: Charging 'Charging'
+[  1.13] [C][jk_bms_ble:016]: Discharging 'Discharging'
+[  1.13] [C][jk_bms_ble:016]: Heating 'Heating'
+[  1.13] [C][jk_bms_ble:016]: Online Status 'Online Status'
+[  1.13] [C][jk_bms_ble:232]:   Device Class: 'connectivity'
+[  1.15] [C][jk_bms_ble:017]: Minimum Cell Voltage 'Min Cell Voltage'
+[  1.15]   State Class: 'measurement'
+[  1.15]   Unit of Measurement: 'V'
+[  1.15]   Accuracy Decimals: 3
+[  1.17] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.17] [C][jk_bms_ble:017]: Maximum Cell Voltage 'Max Cell Voltage'
+[  1.17]   State Class: 'measurement'
+[  1.17]   Unit of Measurement: 'V'
+[  1.17]   Accuracy Decimals: 3
+[  1.18] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.18] [C][jk_bms_ble:017]: Minimum Voltage Cell 'Min Voltage Cell'
+[  1.18]   State Class: 'measurement'
+[  1.18]   Unit of Measurement: ''
+[  1.20]   Accuracy Decimals: 0
+[  1.20] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-minus-outline'
+[  1.20] [C][jk_bms_ble:017]: Maximum Voltage Cell 'Max Voltage Cell'
+[  1.20]   State Class: 'measurement'
+[  1.20]   Unit of Measurement: ''
+[  1.20]   Accuracy Decimals: 0
+[  1.22] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-plus-outline'
+[  1.22] [C][jk_bms_ble:017]: Delta Cell Voltage 'Delta Cell Voltage'
+[  1.22]   State Class: 'measurement'
+[  1.22]   Unit of Measurement: 'V'
+[  1.23]   Accuracy Decimals: 3
+[  1.23] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.23] [C][jk_bms_ble:017]: Average Cell Voltage 'Average Cell Voltage'
+[  1.23]   State Class: 'measurement'
+[  1.25]   Unit of Measurement: 'V'
+[  1.25]   Accuracy Decimals: 3
+[  1.25] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.25] [C][jk_bms_ble:017]: Cell Voltage 1 'Cell Voltage 1'
+[  1.27]   State Class: 'measurement'
+[  1.27]   Unit of Measurement: 'V'
+[  1.27]   Accuracy Decimals: 3
+[  1.27] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.27] [C][jk_bms_ble:017]: Cell Voltage 2 'Cell Voltage 2'
+[  1.28]   State Class: 'measurement'
+[  1.28]   Unit of Measurement: 'V'
+[  1.28]   Accuracy Decimals: 3
+[  1.28] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.30] [C][jk_bms_ble:017]: Cell Voltage 3 'Cell Voltage 3'
+[  1.30]   State Class: 'measurement'
+[  1.30]   Unit of Measurement: 'V'
+[  1.30]   Accuracy Decimals: 3
+[  1.30] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.31] [C][jk_bms_ble:017]: Cell Voltage 4 'Cell Voltage 4'
+[  1.31]   State Class: 'measurement'
+[  1.31]   Unit of Measurement: 'V'
+[  1.31]   Accuracy Decimals: 3
+[  1.33] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.33] [C][jk_bms_ble:017]: Cell Voltage 5 'Cell Voltage 5'
+[  1.33]   State Class: 'measurement'
+[  1.33]   Unit of Measurement: 'V'
+[  1.33]   Accuracy Decimals: 3
+[  1.33] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.35] [C][jk_bms_ble:017]: Cell Voltage 6 'Cell Voltage 6'
+[  1.35]   State Class: 'measurement'
+[  1.35]   Unit of Measurement: 'V'
+[  1.35]   Accuracy Decimals: 3
+[  1.36] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.36] [C][jk_bms_ble:017]: Cell Voltage 7 'Cell Voltage 7'
+[  1.36]   State Class: 'measurement'
+[  1.36]   Unit of Measurement: 'V'
+[  1.36]   Accuracy Decimals: 3
+[  1.38] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.38] [C][jk_bms_ble:017]: Cell Voltage 8 'Cell Voltage 8'
+[  1.38]   State Class: 'measurement'
+[  1.38]   Unit of Measurement: 'V'
+[  1.38]   Accuracy Decimals: 3
+[  1.39] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.40] [C][jk_bms_ble:017]: Cell Resistance 1 'Cell Resistance 1'
+[  1.40]   State Class: 'measurement'
+[  1.40]   Unit of Measurement: 'Ω'
+[  1.40]   Accuracy Decimals: 3
+[  1.42] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.42] [C][jk_bms_ble:017]: Cell Resistance 2 'Cell Resistance 2'
+[  1.42]   State Class: 'measurement'
+[  1.42]   Unit of Measurement: 'Ω'
+[  1.42]   Accuracy Decimals: 3
+[  1.43] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.43] [C][jk_bms_ble:017]: Cell Resistance 3 'Cell Resistance 3'
+[  1.43]   State Class: 'measurement'
+[  1.43]   Unit of Measurement: 'Ω'
+[  1.43]   Accuracy Decimals: 3
+[  1.45] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.45] [C][jk_bms_ble:017]: Cell Resistance 4 'Cell Resistance 4'
+[  1.45]   State Class: 'measurement'
+[  1.45]   Unit of Measurement: 'Ω'
+[  1.45]   Accuracy Decimals: 3
+[  1.47] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.47] [C][jk_bms_ble:017]: Cell Resistance 5 'Cell Resistance 5'
+[  1.47]   State Class: 'measurement'
+[  1.47]   Unit of Measurement: 'Ω'
+[  1.47]   Accuracy Decimals: 3
+[  1.48] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.48] [C][jk_bms_ble:017]: Cell Resistance 6 'Cell Resistance 6'
+[  1.48]   State Class: 'measurement'
+[  1.50]   Unit of Measurement: 'Ω'
+[  1.50]   Accuracy Decimals: 3
+[  1.50] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.50] [C][jk_bms_ble:017]: Cell Resistance 7 'Cell Resistance 7'
+[  1.50]   State Class: 'measurement'
+[  1.51]   Unit of Measurement: 'Ω'
+[  1.52]   Accuracy Decimals: 3
+[  1.52] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.53] [C][jk_bms_ble:017]: Cell Resistance 8 'Cell Resistance 8'
+[  1.53]   State Class: 'measurement'
+[  1.53]   Unit of Measurement: 'Ω'
+[  1.53]   Accuracy Decimals: 3
+[  1.53] [C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[  1.53] [C][jk_bms_ble:017]: Total Voltage 'Total Voltage'
+[  1.53]   State Class: 'measurement'
+[  1.53]   Unit of Measurement: 'V'
+[  1.55]   Accuracy Decimals: 3
+[  1.55] [C][jk_bms_ble:232]:   Device Class: 'voltage'
+[  1.55] [C][jk_bms_ble:017]: Current 'Current'
+[  1.55]   State Class: 'measurement'
+[  1.56]   Unit of Measurement: 'A'
+[  1.56]   Accuracy Decimals: 2
+[  1.56] [C][jk_bms_ble:232]:   Device Class: 'current'
+[  1.56] [C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[  1.58] [C][jk_bms_ble:017]: Power 'Power'
+[  1.58]   State Class: 'measurement'
+[  1.58]   Unit of Measurement: 'W'
+[  1.58]   Accuracy Decimals: 2
+[  1.58] [C][jk_bms_ble:232]:   Device Class: 'power'
+[  1.60] [C][jk_bms_ble:017]: Charging Power 'Charging Power'
+[  1.60]   State Class: 'measurement'
+[  1.60]   Unit of Measurement: 'W'
+[  1.60]   Accuracy Decimals: 2
+[  1.60] [C][jk_bms_ble:232]:   Device Class: 'power'
+[  1.61] [C][jk_bms_ble:017]: Discharging Power 'Discharging Power'
+[  1.61]   State Class: 'measurement'
+[  1.61]   Unit of Measurement: 'W'
+[  1.61]   Accuracy Decimals: 2
+[  1.61] [C][jk_bms_ble:232]:   Device Class: 'power'
+[  1.63] [C][jk_bms_ble:017]: Mosfet Temperature 'MOSFET Temperature'
+[  1.63]   State Class: 'measurement'
+[  1.63]   Unit of Measurement: '°C'
+[  1.63]   Accuracy Decimals: 1
+[  1.64] [C][jk_bms_ble:232]:   Device Class: 'temperature'
+[  1.64] [C][jk_bms_ble:017]: Temperature Sensor 1 'Temperature Sensor 1'
+[  1.64]   State Class: 'measurement'
+[  1.64]   Unit of Measurement: '°C'
+[  1.66]   Accuracy Decimals: 1
+[  1.66] [C][jk_bms_ble:232]:   Device Class: 'temperature'
+[  1.66] [C][jk_bms_ble:017]: Temperature Sensor 2 'Temperature Sensor 2'
+[  1.68]   State Class: 'measurement'
+[  1.68]   Unit of Measurement: '°C'
+[  1.68]   Accuracy Decimals: 1
+[  1.68] [C][jk_bms_ble:232]:   Device Class: 'temperature'
+[  1.68] [C][jk_bms_ble:017]: State Of Charge 'State of Charge'
+[  1.69]   State Class: 'measurement'
+[  1.69]   Unit of Measurement: '%'
+[  1.69]   Accuracy Decimals: 0
+[  1.70] [C][jk_bms_ble:232]:   Device Class: 'battery'
+[  1.71] [C][jk_bms_ble:017]: State Of Health 'State of Health'
+[  1.71]   State Class: 'measurement'
+[  1.71]   Unit of Measurement: '%'
+[  1.71]   Accuracy Decimals: 0
+[  1.71] [C][jk_bms_ble:017]: Capacity Remaining 'Capacity Remaining'
+[  1.71]   State Class: 'measurement'
+[  1.72]   Unit of Measurement: 'Ah'
+[  1.73]   Accuracy Decimals: 3
+[  1.73] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-50'
+[  1.74] [C][jk_bms_ble:017]: Full Charge Capacity 'Full Charge Capacity'
+[  1.74]   State Class: 'measurement'
+[  1.74]   Unit of Measurement: 'Ah'
+[  1.74]   Accuracy Decimals: 0
+[  1.74] [C][jk_bms_ble:017]: Charging Cycles 'Charging Cycles'
+[  1.76]   State Class: 'total_increasing'
+[  1.76]   Unit of Measurement: ''
+[  1.76]   Accuracy Decimals: 0
+[  1.76] [C][jk_bms_ble:223]:   Icon: 'mdi:battery-sync'
+[  1.77] [C][jk_bms_ble:017]: Total Charging Cycle Capacity 'Total Charging Cycle Capacity'
+[  1.77]   State Class: 'total_increasing'
+[  1.78]   Unit of Measurement: 'Ah'
+[  1.78]   Accuracy Decimals: 3
+[  1.78] [C][jk_bms_ble:223]:   Icon: 'mdi:counter'
+[  1.79] [C][jk_bms_ble:017]: Total Runtime 'Total Runtime'
+[  1.79]   State Class: 'total_increasing'
+[  1.79]   Unit of Measurement: 's'
+[  1.79]   Accuracy Decimals: 0
+[  1.79] [C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[  1.80] [C][jk_bms_ble:017]: Balancing Current 'Balancing Current'
+[  1.80]   State Class: 'measurement'
+[  1.80]   Unit of Measurement: 'A'
+[  1.80]   Accuracy Decimals: 2
+[  1.82] [C][jk_bms_ble:232]:   Device Class: 'current'
+[  1.82] [C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[  1.82] [C][jk_bms_ble:016]: Balancer Status 'Balancer Status'
+[  1.83] [C][jk_bms_ble:223]:   Icon: 'mdi:heart-pulse'
+[  1.83] [C][jk_bms_ble:016]: Total Runtime Formatted 'Total Runtime Formatted'
+[  1.83] [C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[  1.85] [C][jk_bms_ble:016]: Errors 'Errors'
+[  1.85] [C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[  1.85] [C][jk_bms_ble:016]: Errors Bitmask Hex 'Errors Bitmask Hex'
+[  1.87] [C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[  1.87] [C][jk_bms_ble:016]: Software Version 'Software Version'
+[  1.87] [C][jk_bms_ble:016]: Hardware Version 'Hardware Version'
+[  1.88] [C][jk_bms_ble:016]: Device Model 'Device Model'
+[  1.88] [C][jk_bms_ble:223]:   Icon: 'mdi:chip'
+[  1.90] [C][jk_bms_ble:016]: Manufacturing Date 'Manufacturing Date'
+[  1.90] [C][jk_bms_ble:223]:   Icon: 'mdi:calendar'
+[  1.90] [C][jk_bms_ble:016]: Serial Number 'Serial Number'
+[  1.90] [C][jk_bms_ble:223]:   Icon: 'mdi:identifier'
+[  1.91] [C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Charging Switch'
+[  1.91]   Restore Mode: always OFF
+[  1.93] [C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[  1.93] [C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Discharging Switch'
+[  1.94]   Restore Mode: always OFF
+[  1.94] [C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[  1.95] [C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Balancer Switch'
+[  1.95]   Restore Mode: always OFF
+[  1.95] [C][jk_bms_ble.switch:223]:   Icon: 'mdi:seesaw'
+[  1.95] [C][esp32_ble:663]: BLE:
+[  1.95]   MAC address: 5C:01:3B:68:84:3E
+[  1.95]   IO Capability: none
+[  1.98] [C][ble_client:026]: BLE Client:
+[  2.02] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[  7.02] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 12.03] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 17.02] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 22.01] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 27.03] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 32.02] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 37.02] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 42.02] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 47.03] [V][binary_sensor:041]: 'Online Status' >> OFF
+[ 47.03] [V][text_sensor:037]: 'Errors': Received new state Offline
+[ 47.03] [V][text_sensor:108]: 'Errors' >> 'Offline'
+[ 47.04] [V][sensor:077]: 'Min Cell Voltage': Received new state nan
+[ 47.04] [V][sensor:125]: 'Min Cell Voltage' >> nan V
+[ 47.04] [V][sensor:077]: 'Max Cell Voltage': Received new state nan
+[ 47.06] [V][sensor:125]: 'Max Cell Voltage' >> nan V
+[ 47.06] [V][sensor:077]: 'Min Voltage Cell': Received new state nan
+[ 47.06] [V][sensor:125]: 'Min Voltage Cell' >> nan 
+[ 47.07] [V][sensor:077]: 'Max Voltage Cell': Received new state nan
+[ 47.07] [V][sensor:125]: 'Max Voltage Cell' >> nan 
+[ 47.07] [V][sensor:077]: 'Delta Cell Voltage': Received new state nan
+[ 47.09] [V][sensor:125]: 'Delta Cell Voltage' >> nan V
+[ 47.09] [V][sensor:077]: 'Average Cell Voltage': Received new state nan
+[ 47.10] [V][sensor:125]: 'Average Cell Voltage' >> nan V
+[ 47.10] [V][sensor:077]: 'Total Voltage': Received new state nan
+[ 47.10] [V][sensor:125]: 'Total Voltage' >> nan V
+[ 47.12] [V][sensor:077]: 'Current': Received new state nan
+[ 47.13] [V][sensor:125]: 'Current' >> nan A
+[ 47.13] [V][sensor:077]: 'Power': Received new state nan
+[ 47.13] [V][sensor:125]: 'Power' >> nan W
+[ 47.14] [V][sensor:077]: 'Charging Power': Received new state nan
+[ 47.14] [V][sensor:125]: 'Charging Power' >> nan W
+[ 47.15] [V][sensor:077]: 'Discharging Power': Received new state nan
+[ 47.15] [V][sensor:125]: 'Discharging Power' >> nan W
+[ 47.15] [V][sensor:077]: 'MOSFET Temperature': Received new state nan
+[ 47.17] [V][sensor:125]: 'MOSFET Temperature' >> nan °C
+[ 47.17] [V][sensor:077]: 'State of Charge': Received new state nan
+[ 47.17] [V][sensor:125]: 'State of Charge' >> nan %
+[ 47.18] [V][sensor:077]: 'State of Health': Received new state nan
+[ 47.19] [V][sensor:125]: 'State of Health' >> nan %
+[ 47.19] [V][sensor:077]: 'Capacity Remaining': Received new state nan
+[ 47.19] [V][sensor:125]: 'Capacity Remaining' >> nan Ah
+[ 47.20] [V][sensor:077]: 'Full Charge Capacity': Received new state nan
+[ 47.20] [V][sensor:125]: 'Full Charge Capacity' >> nan Ah
+[ 47.20] [V][sensor:077]: 'Charging Cycles': Received new state nan
+[ 47.22] [V][sensor:125]: 'Charging Cycles' >> nan 
+[ 47.22] [V][sensor:077]: 'Total Charging Cycle Capacity': Received new state nan
+[ 47.23] [V][sensor:125]: 'Total Charging Cycle Capacity' >> nan Ah
+[ 47.23] [V][sensor:077]: 'Total Runtime': Received new state nan
+[ 47.23] [V][sensor:125]: 'Total Runtime' >> nan s
+[ 47.25] [V][sensor:077]: 'Balancing Current': Received new state nan
+[ 47.25] [V][sensor:125]: 'Balancing Current' >> nan A
+[ 47.27] [V][sensor:077]: 'Cell Voltage 1': Received new state nan
+[ 47.27] [V][sensor:125]: 'Cell Voltage 1' >> nan V
+[ 47.27] [V][sensor:077]: 'Cell Resistance 1': Received new state nan
+[ 47.27] [V][sensor:125]: 'Cell Resistance 1' >> nan Ω
+[ 47.28] [V][sensor:077]: 'Cell Voltage 2': Received new state nan
+[ 47.28] [V][sensor:125]: 'Cell Voltage 2' >> nan V
+[ 47.30] [V][sensor:077]: 'Cell Resistance 2': Received new state nan
+[ 47.30] [V][sensor:125]: 'Cell Resistance 2' >> nan Ω
+[ 47.30] [V][sensor:077]: 'Cell Voltage 3': Received new state nan
+[ 47.30] [V][sensor:125]: 'Cell Voltage 3' >> nan V
+[ 47.32] [V][sensor:077]: 'Cell Resistance 3': Received new state nan
+[ 47.32] [V][sensor:125]: 'Cell Resistance 3' >> nan Ω
+[ 47.33] [V][sensor:077]: 'Cell Voltage 4': Received new state nan
+[ 47.33] [V][sensor:125]: 'Cell Voltage 4' >> nan V
+[ 47.33] [V][sensor:077]: 'Cell Resistance 4': Received new state nan
+[ 47.33] [V][sensor:125]: 'Cell Resistance 4' >> nan Ω
+[ 47.35] [V][sensor:077]: 'Cell Voltage 5': Received new state nan
+[ 47.35] [V][sensor:125]: 'Cell Voltage 5' >> nan V
+[ 47.36] [V][sensor:077]: 'Cell Resistance 5': Received new state nan
+[ 47.37] [V][sensor:125]: 'Cell Resistance 5' >> nan Ω
+[ 47.37] [V][sensor:077]: 'Cell Voltage 6': Received new state nan
+[ 47.37] [V][sensor:125]: 'Cell Voltage 6' >> nan V
+[ 47.37] [V][sensor:077]: 'Cell Resistance 6': Received new state nan
+[ 47.39] [V][sensor:125]: 'Cell Resistance 6' >> nan Ω
+[ 47.39] [V][sensor:077]: 'Cell Voltage 7': Received new state nan
+[ 47.39] [V][sensor:125]: 'Cell Voltage 7' >> nan V
+[ 47.40] [V][sensor:077]: 'Cell Resistance 7': Received new state nan
+[ 47.40] [V][sensor:125]: 'Cell Resistance 7' >> nan Ω
+[ 47.40] [V][sensor:077]: 'Cell Voltage 8': Received new state nan
+[ 47.42] [V][sensor:125]: 'Cell Voltage 8' >> nan V
+[ 47.42] [V][sensor:077]: 'Cell Resistance 8': Received new state nan
+[ 47.44] [V][sensor:125]: 'Cell Resistance 8' >> nan Ω
+[ 47.44] [V][sensor:077]: 'Temperature Sensor 1': Received new state nan
+[ 47.44] [V][sensor:125]: 'Temperature Sensor 1' >> nan °C
+[ 47.45] [V][sensor:077]: 'Temperature Sensor 2': Received new state nan
+[ 47.45] [V][sensor:125]: 'Temperature Sensor 2' >> nan °C
+[ 47.45] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 47.47] [W][component:513]: jk_bms_ble took a long time for an operation (406 ms), max is 50 ms
+[ 52.02] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[ 57.03] [W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected

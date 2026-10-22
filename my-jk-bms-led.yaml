@@ -1,0 +1,231 @@
+substitutions:
+  name: jk-bms
+  device_description: "Monitor and control JK-B1A8S10P via BLE with Status LEDs"
+  protocol_version: JK02_32S
+  bms_mac_address: "a4:c1:38:0b:82:42"
+  red_led_pin: GPIO2    # D2 on ESP32 DevKit
+  green_led_pin: GPIO4  # D4 on ESP32 DevKit
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+external_components:
+  # jk_bms_ble from upstream, pinned to the commit this project was tested with
+  - source: github://syssi/esphome-jk-bms@58385c78dc7248bd7bc1040677b05a46a5be42d3
+    components: [jk_bms_ble]
+    refresh: 0s
+
+logger:
+  level: VERBOSE
+  logs:
+    esp32_ble_tracker: INFO
+    esp32_ble_client: INFO
+    scheduler: INFO
+    component: INFO
+
+# Output pins for Status LEDs (D2 = Red, D4 = Green)
+output:
+  - platform: gpio
+    pin: ${red_led_pin}
+    id: led_red
+  - platform: gpio
+    pin: ${green_led_pin}
+    id: led_green
+
+# State machine for LEDs:
+# - BLE Scan / Idle: Red LED blinks normal (500ms ON / 500ms OFF), Green LED OFF
+# - Connecting: Red LED blinks fast (100ms ON / 100ms OFF), Green LED OFF
+# - Connected: Red LED OFF, Green LED ON
+interval:
+  - interval: 100ms
+    then:
+      - lambda: |-
+          static uint32_t tick = 0;
+          tick++;
+          auto st = id(client0)->state();
+
+          if (st == esphome::esp32_ble_tracker::ClientState::ESTABLISHED ||
+              st == esphome::esp32_ble_tracker::ClientState::CONNECTED) {
+            // Connected: Red is OFF, Green is ON
+            id(led_red)->turn_off();
+            id(led_green)->turn_on();
+          } else if (st == esphome::esp32_ble_tracker::ClientState::CONNECTING ||
+                     st == esphome::esp32_ble_tracker::ClientState::DISCOVERED) {
+            // Connecting: Blink faster (100ms toggle), Green is OFF
+            id(led_green)->turn_off();
+            if (tick % 2 == 0) {
+              id(led_red)->turn_on();
+            } else {
+              id(led_red)->turn_off();
+            }
+          } else {
+            // BLE Scan / Idle / Disconnected: Blink normal (500ms ON, 500ms OFF)
+            id(led_green)->turn_off();
+            if ((tick % 10) < 5) {
+              id(led_red)->turn_on();
+            } else {
+              id(led_red)->turn_off();
+            }
+          }
+
+esp32_ble_tracker:
+  scan_parameters:
+    active: false
+
+ble_client:
+  - mac_address: ${bms_mac_address}
+    id: client0
+
+jk_bms_ble:
+  - ble_client_id: client0
+    id: bms0
+    protocol_version: ${protocol_version}
+    throttle: 2s
+
+sensor:
+  - platform: jk_bms_ble
+    jk_bms_ble_id: bms0
+
+    # Cell Voltages (1-8)
+    cell_voltage_1:
+      name: "Cell Voltage 1"
+    cell_voltage_2:
+      name: "Cell Voltage 2"
+    cell_voltage_3:
+      name: "Cell Voltage 3"
+    cell_voltage_4:
+      name: "Cell Voltage 4"
+    cell_voltage_5:
+      name: "Cell Voltage 5"
+    cell_voltage_6:
+      name: "Cell Voltage 6"
+    cell_voltage_7:
+      name: "Cell Voltage 7"
+    cell_voltage_8:
+      name: "Cell Voltage 8"
+
+    # Cell Resistances (1-8)
+    cell_resistance_1:
+      name: "Cell Resistance 1"
+    cell_resistance_2:
+      name: "Cell Resistance 2"
+    cell_resistance_3:
+      name: "Cell Resistance 3"
+    cell_resistance_4:
+      name: "Cell Resistance 4"
+    cell_resistance_5:
+      name: "Cell Resistance 5"
+    cell_resistance_6:
+      name: "Cell Resistance 6"
+    cell_resistance_7:
+      name: "Cell Resistance 7"
+    cell_resistance_8:
+      name: "Cell Resistance 8"
+
+    # Overall Battery Metrics
+    total_voltage:
+      name: "Total Voltage"
+    current:
+      name: "Current"
+    power:
+      name: "Power"
+    charging_power:
+      name: "Charging Power"
+    discharging_power:
+      name: "Discharging Power"
+    balancing_current:
+      name: "Balancing Current"
+
+    # Cell Statistics
+    min_cell_voltage:
+      name: "Min Cell Voltage"
+    max_cell_voltage:
+      name: "Max Cell Voltage"
+    min_voltage_cell:
+      name: "Min Voltage Cell"
+    max_voltage_cell:
+      name: "Max Voltage Cell"
+    delta_cell_voltage:
+      name: "Delta Cell Voltage"
+    average_cell_voltage:
+      name: "Average Cell Voltage"
+
+    # Battery Capacity & State
+    state_of_charge:
+      name: "State of Charge"
+    state_of_health:
+      name: "State of Health"
+    capacity_remaining:
+      name: "Capacity Remaining"
+    full_charge_capacity:
+      name: "Full Charge Capacity"
+    charging_cycles:
+      name: "Charging Cycles"
+    total_charging_cycle_capacity:
+      name: "Total Charging Cycle Capacity"
+
+    # Temperatures
+    mosfet_temperature:
+      name: "MOSFET Temperature"
+    temperature_sensor_1:
+      name: "Temperature Sensor 1"
+    temperature_sensor_2:
+      name: "Temperature Sensor 2"
+
+    # Diagnostic Counters
+    total_runtime:
+      name: "Total Runtime"
+    smart_sleep_countdown:
+      name: "Smart Sleep Countdown"
+
+text_sensor:
+  - platform: jk_bms_ble
+    jk_bms_ble_id: bms0
+    errors:
+      name: "Errors"
+    errors_bitmask_hex:
+      name: "Errors Bitmask Hex"
+    balancer_status:
+      name: "Balancer Status"
+    total_runtime_formatted:
+      name: "Total Runtime Formatted"
+    software_version:
+      name: "Software Version"
+    hardware_version:
+      name: "Hardware Version"
+    device_model:
+      name: "Device Model"
+    manufacturing_date:
+      name: "Manufacturing Date"
+    serial_number:
+      name: "Serial Number"
+
+binary_sensor:
+  - platform: jk_bms_ble
+    jk_bms_ble_id: bms0
+    charging:
+      name: "Charging"
+    discharging:
+      name: "Discharging"
+    balancing:
+      name: "Balancing"
+    heating:
+      name: "Heating"
+    online_status:
+      name: "Online Status"
+
+switch:
+  - platform: jk_bms_ble
+    charging:
+      name: "Charging Switch"
+    discharging:
+      name: "Discharging Switch"
+    balancer:
+      name: "Balancer Switch"

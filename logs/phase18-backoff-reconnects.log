@@ -1,0 +1,1104 @@
+INFO ESPHome 2026.6.5
+INFO Reading configuration my-jk-bms-firebase.yaml...
+WARNING GPIO2 is a strapping PIN and should only be used for I/O with care.
+Attaching external pullup/down resistors to strapping pins can cause unexpected failures.
+See https://esphome.io/guides/faq/#why-am-i-getting-a-warning-about-strapping-pins
+INFO Generating C++ source...
+INFO Detected timezone 'Asia/Dhaka'
+INFO Compiling app... Build path: D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms
+Processing [36m[1mjk-bms[0m (board: esp32dev; framework: espidf; platform: https://github.com/pioarduino/platform-espressif32/releases/download/55.03.39/platform-espressif32.zip)
+[1m--------------------------------------------------------------------------------[0m
+[0mHARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+[0m - contrib-piohome @ 3.4.4 
+[0m - framework-espidf @ 3.50504.0 (5.5.4) 
+[0m - tool-cmake @ 4.0.3 
+[0m - tool-esp-rom-elfs @ 2024.10.11 
+[0m - tool-esptoolpy @ 5.3.0 
+[0m - tool-ninja @ 1.13.1 
+[0m - tool-scons @ 4.40801.0 (4.8.1) 
+[0m - tool-xtensa-esp-elf-gdb @ 17.1.0+20260402 
+[0m - toolchain-xtensa-esp-elf @ 14.2.0+20260121
+[33mUsing Python 3.11.8 environment at: C:\Users\hi\.platformio\penv\.espidf-5.5.4
+[0mReading CMake configuration...
+[0mNo dependencies
+[0mRAM:   [==        ]  21.9% (used 71768 bytes from 327680 bytes)
+[0mFlash: [=======   ]  69.1% (used 1267243 bytes from 1835008 bytes)
+========================= [[32m[1mSUCCESS[0m] Took 21.79 seconds =========================[0m
+INFO Build Info: config_hash=0x2b40bf7c build_time_str=2026-10-22 01:54:25 +0600
+INFO Successfully compiled program.
+esptool v5.3.0
+Serial port COM8:
+Connecting.....
+Connected to ESP32 on COM8:
+Chip type:          ESP32-D0WD-V3 (revision v3.1)
+Features:           Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+Crystal frequency:  40MHz
+MAC:                5c:01:3b:68:84:3c
+
+Uploading stub flasher...
+Running stub flasher...
+Stub flasher running.
+Changing baud rate to 460800...
+Changed.
+
+Configuring flash size...
+Auto-detected flash size: 4MB
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\firmware.bin' at 0x00010000...
+Flash will be erased from 0x00010000 to 0x00145fff...
+Compressed 1267648 bytes to 831214...
+Writing at 0x00010000 [                              ]   0.0% 0/831214 bytes... Writing at 0x0001cd68 [                              ]   2.0% 16384/831214 bytes... Writing at 0x0002a8a5 [>                             ]   3.9% 32768/831214 bytes... Writing at 0x0003560f [>                             ]   5.9% 49152/831214 bytes... Writing at 0x0003cea5 [=>                            ]   7.9% 65536/831214 bytes... Writing at 0x000436b2 [=>                            ]   9.9% 81920/831214 bytes... Writing at 0x0004dff2 [==>                           ]  11.8% 98304/831214 bytes... Writing at 0x00053f46 [===>                          ]  13.8% 114688/831214 bytes... Writing at 0x0005963b [===>                          ]  15.8% 131072/831214 bytes... Writing at 0x0005ec20 [====>                         ]  17.7% 147456/831214 bytes... Writing at 0x000641c2 [====>                         ]  19.7% 163840/831214 bytes... Writing at 0x0006a154 [=====>                        ]  21.7% 180224/831214 bytes... Writing at 0x0006f583 [======>                       ]  23.7% 196608/831214 bytes... Writing at 0x0007490e [======>                       ]  25.6% 212992/831214 bytes... Writing at 0x00079e71 [=======>                      ]  27.6% 229376/831214 bytes... Writing at 0x0007f989 [=======>                      ]  29.6% 245760/831214 bytes... Writing at 0x0008578d [========>                     ]  31.5% 262144/831214 bytes... Writing at 0x0008b3aa [=========>                    ]  33.5% 278528/831214 bytes... Writing at 0x00090c58 [=========>                    ]  35.5% 294912/831214 bytes... Writing at 0x00096560 [==========>                   ]  37.5% 311296/831214 bytes... Writing at 0x0009b7fe [==========>                   ]  39.4% 327680/831214 bytes... Writing at 0x000a10c2 [===========>                  ]  41.4% 344064/831214 bytes... Writing at 0x000a6c47 [============>                 ]  43.4% 360448/831214 bytes... Writing at 0x000abfb5 [============>                 ]  45.3% 376832/831214 bytes... Writing at 0x000b116e [=============>                ]  47.3% 393216/831214 bytes... Writing at 0x000b6554 [=============>                ]  49.3% 409600/831214 bytes... Writing at 0x000bba27 [==============>               ]  51.2% 425984/831214 bytes... Writing at 0x000c0eb0 [==============>               ]  53.2% 442368/831214 bytes... Writing at 0x000c6036 [===============>              ]  55.2% 458752/831214 bytes... Writing at 0x000cb854 [================>             ]  57.2% 475136/831214 bytes... Writing at 0x000d1118 [================>             ]  59.1% 491520/831214 bytes... Writing at 0x000d67de [=================>            ]  61.1% 507904/831214 bytes... Writing at 0x000db793 [=================>            ]  63.1% 524288/831214 bytes... Writing at 0x000e0de0 [==================>           ]  65.0% 540672/831214 bytes... Writing at 0x000e64e3 [===================>          ]  67.0% 557056/831214 bytes... Writing at 0x000ec24e [===================>          ]  69.0% 573440/831214 bytes... Writing at 0x000f1b18 [====================>         ]  71.0% 589824/831214 bytes... Writing at 0x000f7178 [====================>         ]  72.9% 606208/831214 bytes... Writing at 0x000fcc72 [=====================>        ]  74.9% 622592/831214 bytes... Writing at 0x0010299c [======================>       ]  76.9% 638976/831214 bytes... Writing at 0x001083f0 [======================>       ]  78.8% 655360/831214 bytes... Writing at 0x0010de09 [=======================>      ]  80.8% 671744/831214 bytes... Writing at 0x00113896 [=======================>      ]  82.8% 688128/831214 bytes... Writing at 0x00118f5c [========================>     ]  84.8% 704512/831214 bytes... Writing at 0x0011f749 [=========================>    ]  86.7% 720896/831214 bytes... Writing at 0x001259b9 [=========================>    ]  88.7% 737280/831214 bytes... Writing at 0x0012b040 [==========================>   ]  90.7% 753664/831214 bytes... Writing at 0x00130f66 [==========================>   ]  92.6% 770048/831214 bytes... Writing at 0x001362e7 [===========================>  ]  94.6% 786432/831214 bytes... Writing at 0x0013bf82 [===========================>  ]  96.6% 802816/831214 bytes... Writing at 0x00141561 [============================> ]  98.6% 819200/831214 bytes... Writing at 0x001457c0 [==============================] 100.0% 831214/831214 bytes... 
+Wrote 1267648 bytes (831214 compressed) at 0x00010000 in 19.7 seconds (514.5 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\bootloader.bin' at 0x00001000...
+SHA digest in image updated.
+Flash will be erased from 0x00001000 to 0x00007fff...
+Compressed 26080 bytes to 16458...
+Writing at 0x00001000 [                              ]   0.0% 0/16458 bytes... Writing at 0x00007584 [============================> ]  99.6% 16384/16458 bytes... Writing at 0x000075e0 [==============================] 100.0% 16458/16458 bytes... 
+Wrote 26080 bytes (16458 compressed) at 0x00001000 in 0.7 seconds (320.6 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\partitions.bin' at 0x00008000...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Compressed 3072 bytes to 133...
+Writing at 0x00008000 [                              ]   0.0% 0/133 bytes... Writing at 0x00008c00 [==============================] 100.0% 133/133 bytes... 
+Wrote 3072 bytes (133 compressed) at 0x00008000 in 0.1 seconds (488.9 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\ota_data_initial.bin' at 0x00009000...
+Flash will be erased from 0x00009000 to 0x0000afff...
+Compressed 8192 bytes to 31...
+Writing at 0x00009000 [                              ]   0.0% 0/31 bytes... Writing at 0x0000b000 [==============================] 100.0% 31/31 bytes... 
+Wrote 8192 bytes (31 compressed) at 0x00009000 in 0.1 seconds (1269.7 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Hard resetting via RTS pin...
+INFO Successfully uploaded program.
+INFO Starting log output from COM8 with baud rate 115200
+[01:56:42.892]\xc0\xf8x\x80x\x80x\x80\xf8xx\xf8\x80 \x80 \x80 x \x9aA%\xfdets Jul 29 2019 12:21:46
+
+[01:56:42.908]rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[01:56:42.908]configsip: 0, SPIWP:0xee
+[01:56:42.916]clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[01:56:42.918]mode:DIO, clock div:2
+[01:56:42.918]load:0x3fff0030,len:6248
+[01:56:42.924]load:0x40078000,len:15852
+[01:56:42.924]ho 0 tail 12 room 4
+[01:56:42.925]load:0x40080400,len:3896
+[01:56:42.925]entry 0x40080638
+[01:56:42.925]I (29) boot: ESP-IDF 5.5.4 2nd stage bootloader
+[01:56:42.925]I (29) boot: Multicore bootloader
+[01:56:42.941]I (30) boot: chip revision: v3.1
+[01:56:42.945]I (30) boot.esp32: SPI Speed      : 40MHz
+[01:56:42.945]I (33) boot.esp32: SPI Mode       : DIO
+[01:56:42.945]I (36) boot.esp32: SPI Flash Size : 4MB
+[01:56:42.958]I (40) boot: Enabling RNG early entropy source...
+[01:56:42.959]I (44) boot: Partition Table:
+[01:56:42.959]I (47) boot: ## Label            Usage          Type ST Offset   Length
+[01:56:42.959]I (53) boot:  0 otadata          OTA data         01 00 00009000 00002000
+[01:56:42.976]I (60) boot:  1 phy_init         RF data          01 01 0000b000 00001000
+[01:56:42.976]I (66) boot:  2 app0             OTA app          00 10 00010000 001c0000
+[01:56:42.991]I (73) boot:  3 app1             OTA app          00 11 001d0000 001c0000
+[01:56:42.992]I (79) boot:  4 nvs              WiFi data        01 02 00390000 00070000
+[01:56:42.992]I (86) boot: End of partition table
+[01:56:42.992]I (89) boot: No factory image, trying OTA 0
+[01:56:43.009]I (93) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=35e8ch (220812) map
+[01:56:43.076]I (176) esp_image: segment 1: paddr=00045eb4 vaddr=3ffbdb60 size=057c8h ( 22472) load
+[01:56:43.092]I (185) esp_image: segment 2: paddr=0004b684 vaddr=40080000 size=04994h ( 18836) load
+[01:56:43.092]I (192) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=dfb48h (916296) map
+[01:56:43.412]I (506) esp_image: segment 4: paddr=0012fb70 vaddr=40084994 size=15bfch ( 89084) load
+[01:56:43.442]I (540) esp_image: segment 5: paddr=00145774 vaddr=50000000 size=00020h (    32) load
+[01:56:43.458]I (554) boot: Loaded app from partition at offset 0x10000
+[01:56:43.474]I (570) boot: Set actual ota_seq=1 in otadata[0]
+[01:56:43.475]I (570) boot: Disabling RNG early entropy source...
+[01:56:43.607][I][logger:122]: Log initialized
+[01:56:43.607][I][app:060]: Running through setup()
+[01:56:43.768][I][app:117]: setup() finished successfully!
+[01:56:43.768][W][component:382]: wifi set Warning flag: scanning for networks
+[01:56:43.768][D][esp32_ble:525]: Enabling
+[01:56:44.190][W][component:513]: esp32_ble took a long time for an operation (426 ms), max is 50 ms
+[01:56:44.205][I][app:151]: ESPHome version 2026.6.5 compiled on 2026-10-22 01:54:25 +0600
+[01:56:44.205][I][app:158]: ESP32 Chip: ESP32 rev3.1, 2 core(s)
+[01:56:44.227][W][app:171]: Chip rev >= 3.0 detected. Set minimum_chip_revision: "3.1" under esp32 > framework > advanced to reduce binary size
+[01:56:44.237][W][app:198]: Bootloader supports SRAM1 as IRAM (+40KB). Set sram1_as_iram: true under esp32 > framework > advanced
+[01:56:44.237][C][logger:223]: Logger:
+[01:56:44.237][C][logger:223]:   Max Level: DEBUG
+[01:56:44.237][C][logger:223]:   Initial Level: DEBUG
+[01:56:44.237][C][logger:230]:   Log Baud Rate: 115200
+[01:56:44.237][C][logger:230]:   Hardware UART: UART0
+[01:56:44.253][C][logger:239]:   Task Log Buffer Size: 768 bytes
+[01:56:44.253][C][logger:245]:   Level for 'component': INFO
+[01:56:44.253][C][logger:245]:   Level for 'display': WARN
+[01:56:44.269][C][logger:245]:   Level for 'esp32_ble_client': INFO
+[01:56:44.276][C][logger:245]:   Level for 'esp32_ble_tracker': INFO
+[01:56:44.276][C][logger:245]:   Level for 'i2c': WARN
+[01:56:44.276][C][logger:245]:   Level for 'i2c.idf': WARN
+[01:56:44.291][C][logger:245]:   Level for 'scheduler': INFO
+[01:56:44.291][C][logger:245]:   Level for 'ssd1306_base': WARN
+[01:56:44.291][C][logger:245]:   Level for 'ssd1306_i2c': WARN
+[01:56:44.307][C][logger:245]:   Level for 'wifi': INFO
+[01:56:44.323][I][ble_power:038]: BLE TX power set to +9 dBm (level 7)
+[01:56:44.339][C][gpio.output:009]: Binary Output:
+[01:56:44.349][C][gpio.output:152]:   Pin: GPIO2
+[01:56:44.355][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:56:44.360][C][gpio.output:009]: Binary Output:
+[01:56:44.362][C][gpio.output:152]:   Pin: GPIO4
+[01:56:44.362][C][gpio.output:009]: Binary Output:
+[01:56:44.378][C][gpio.output:152]:   Pin: GPIO16
+[01:56:44.378][C][gpio.output:009]: Binary Output:
+[01:56:44.378][C][gpio.output:152]:   Pin: GPIO17
+[01:56:44.393][C][template.sensor:017]: Template Sensor 'ESP32 Free Memory'
+[01:56:44.393][C][template.sensor:017]:   State Class: ''
+[01:56:44.393][C][template.sensor:017]:   Unit of Measurement: 'bytes'
+[01:56:44.393][C][template.sensor:017]:   Accuracy Decimals: 1
+[01:56:44.393][C][template.sensor:434]:   Update Interval: 15.0s
+[01:56:44.441][C][jk_bms_ble:300]: JkBmsBle
+[01:56:44.441][C][jk_bms_ble:016]: Balancing 'Balancing'
+[01:56:44.441][C][jk_bms_ble:016]: Charging 'Charging'
+[01:56:44.441][C][jk_bms_ble:016]: Discharging 'Discharging'
+[01:56:44.457][C][jk_bms_ble:016]: Heating 'Heating'
+[01:56:44.457][C][jk_bms_ble:016]: Online Status 'Online Status'
+[01:56:44.457][C][jk_bms_ble:232]:   Device Class: 'connectivity'
+[01:56:44.474][C][jk_bms_ble:017]: Minimum Cell Voltage 'Min Cell Voltage'
+[01:56:44.475][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.475][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.475][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.475][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.491][C][jk_bms_ble:017]: Maximum Cell Voltage 'Max Cell Voltage'
+[01:56:44.491][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.491][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.491][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.491][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.508][C][jk_bms_ble:017]: Minimum Voltage Cell 'Min Voltage Cell'
+[01:56:44.508][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.508][C][jk_bms_ble:017]:   Unit of Measurement: ''
+[01:56:44.508][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:56:44.524][C][jk_bms_ble:223]:   Icon: 'mdi:battery-minus-outline'
+[01:56:44.529][C][jk_bms_ble:017]: Maximum Voltage Cell 'Max Voltage Cell'
+[01:56:44.529][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.529][C][jk_bms_ble:017]:   Unit of Measurement: ''
+[01:56:44.529][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:56:44.541][C][jk_bms_ble:223]:   Icon: 'mdi:battery-plus-outline'
+[01:56:44.549][C][jk_bms_ble:017]: Delta Cell Voltage 'Delta Cell Voltage'
+[01:56:44.549][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.549][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.557][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.558][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.558][C][jk_bms_ble:017]: Average Cell Voltage 'Average Cell Voltage'
+[01:56:44.558][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.574][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.574][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.575][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.575][C][jk_bms_ble:017]: Cell Voltage 1 'Cell Voltage 1'
+[01:56:44.575][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.591][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.591][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.591][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.591][C][jk_bms_ble:017]: Cell Voltage 2 'Cell Voltage 2'
+[01:56:44.591][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.608][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.608][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.608][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.608][C][jk_bms_ble:017]: Cell Voltage 3 'Cell Voltage 3'
+[01:56:44.624][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.624][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.625][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.630][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.630][C][jk_bms_ble:017]: Cell Voltage 4 'Cell Voltage 4'
+[01:56:44.641][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.641][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.641][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.641][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.641][C][jk_bms_ble:017]: Cell Resistance 1 'Cell Resistance 1'
+[01:56:44.657][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.660][01:56:44.660][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:56:44.661][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.661][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:56:44.674][C][jk_bms_ble:017]: Cell Resistance 2 'Cell Resistance 2'
+[01:56:44.674][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.674][01:56:44.674][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:56:44.674][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.674][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:56:44.691][C][jk_bms_ble:017]: Cell Resistance 3 'Cell Resistance 3'
+[01:56:44.691][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.691][01:56:44.691][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:56:44.691][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.691][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:56:44.707][C][jk_bms_ble:017]: Cell Resistance 4 'Cell Resistance 4'
+[01:56:44.708][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.708][01:56:44.708][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:56:44.708][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.708][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:56:44.724][C][jk_bms_ble:017]: Total Voltage 'Total Voltage'
+[01:56:44.725][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.725][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:56:44.730][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.730][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:56:44.740][C][jk_bms_ble:017]: Current 'Current'
+[01:56:44.741][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.741][C][jk_bms_ble:017]:   Unit of Measurement: 'A'
+[01:56:44.749][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:56:44.749][C][jk_bms_ble:232]:   Device Class: 'current'
+[01:56:44.757][C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[01:56:44.758][C][jk_bms_ble:017]: Power 'Power'
+[01:56:44.758][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.758][C][jk_bms_ble:017]:   Unit of Measurement: 'W'
+[01:56:44.758][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:56:44.774][C][jk_bms_ble:232]:   Device Class: 'power'
+[01:56:44.775][C][jk_bms_ble:017]: Charging Power 'Charging Power'
+[01:56:44.775][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.775][C][jk_bms_ble:017]:   Unit of Measurement: 'W'
+[01:56:44.775][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:56:44.790][C][jk_bms_ble:232]:   Device Class: 'power'
+[01:56:44.791][C][jk_bms_ble:017]: Discharging Power 'Discharging Power'
+[01:56:44.791][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.791][C][jk_bms_ble:017]:   Unit of Measurement: 'W'
+[01:56:44.791][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:56:44.808][C][jk_bms_ble:232]:   Device Class: 'power'
+[01:56:44.808][C][jk_bms_ble:017]: Mosfet Temperature 'MOSFET Temperature'
+[01:56:44.808][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.808][C][jk_bms_ble:017]:   Unit of Measurement: '°C'
+[01:56:44.808][C][jk_bms_ble:017]:   Accuracy Decimals: 1
+[01:56:44.824][C][jk_bms_ble:232]:   Device Class: 'temperature'
+[01:56:44.831][C][jk_bms_ble:017]: Temperature Sensor 1 'Temperature Sensor 1'
+[01:56:44.831][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.831][C][jk_bms_ble:017]:   Unit of Measurement: '°C'
+[01:56:44.840][C][jk_bms_ble:017]:   Accuracy Decimals: 1
+[01:56:44.841][C][jk_bms_ble:232]:   Device Class: 'temperature'
+[01:56:44.841][C][jk_bms_ble:017]: Temperature Sensor 2 'Temperature Sensor 2'
+[01:56:44.841][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.857][C][jk_bms_ble:017]:   Unit of Measurement: '°C'
+[01:56:44.858][C][jk_bms_ble:017]:   Accuracy Decimals: 1
+[01:56:44.858][C][jk_bms_ble:232]:   Device Class: 'temperature'
+[01:56:44.858][C][jk_bms_ble:017]: State Of Charge 'State of Charge'
+[01:56:44.874][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.875][C][jk_bms_ble:017]:   Unit of Measurement: '%'
+[01:56:44.875][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:56:44.875][C][jk_bms_ble:232]:   Device Class: 'battery'
+[01:56:44.885][C][jk_bms_ble:017]: State Of Health 'State of Health'
+[01:56:44.891][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.891][C][jk_bms_ble:017]:   Unit of Measurement: '%'
+[01:56:44.891][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:56:44.891][C][jk_bms_ble:017]: Capacity Remaining 'Capacity Remaining'
+[01:56:44.891][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.907][C][jk_bms_ble:017]:   Unit of Measurement: 'Ah'
+[01:56:44.908][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.908][C][jk_bms_ble:223]:   Icon: 'mdi:battery-50'
+[01:56:44.908][C][jk_bms_ble:017]: Full Charge Capacity 'Full Charge Capacity'
+[01:56:44.924][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.924][C][jk_bms_ble:017]:   Unit of Measurement: 'Ah'
+[01:56:44.924][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:56:44.933][C][jk_bms_ble:017]: Charging Cycles 'Charging Cycles'
+[01:56:44.933][C][jk_bms_ble:017]:   State Class: 'total_increasing'
+[01:56:44.933][C][jk_bms_ble:017]:   Unit of Measurement: ''
+[01:56:44.940][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:56:44.941][C][jk_bms_ble:223]:   Icon: 'mdi:battery-sync'
+[01:56:44.949][C][jk_bms_ble:017]: Total Charging Cycle Capacity 'Total Charging Cycle Capacity'
+[01:56:44.957][C][jk_bms_ble:017]:   State Class: 'total_increasing'
+[01:56:44.958][C][jk_bms_ble:017]:   Unit of Measurement: 'Ah'
+[01:56:44.958][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:56:44.958][C][jk_bms_ble:223]:   Icon: 'mdi:counter'
+[01:56:44.958][C][jk_bms_ble:017]: Total Runtime 'Total Runtime'
+[01:56:44.973][C][jk_bms_ble:017]:   State Class: 'total_increasing'
+[01:56:44.974][C][jk_bms_ble:017]:   Unit of Measurement: 's'
+[01:56:44.974][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:56:44.974][C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[01:56:44.990][C][jk_bms_ble:017]: Balancing Current 'Balancing Current'
+[01:56:44.990][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:56:44.991][C][jk_bms_ble:017]:   Unit of Measurement: 'A'
+[01:56:44.991][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:56:44.991][C][jk_bms_ble:232]:   Device Class: 'current'
+[01:56:45.007][C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[01:56:45.008][C][jk_bms_ble:016]: Balancer Status 'Balancer Status'
+[01:56:45.008][C][jk_bms_ble:223]:   Icon: 'mdi:heart-pulse'
+[01:56:45.024][C][jk_bms_ble:016]: Total Runtime Formatted 'Total Runtime Formatted'
+[01:56:45.027][C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[01:56:45.027][C][jk_bms_ble:016]: Errors 'Errors'
+[01:56:45.034][C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[01:56:45.041][C][jk_bms_ble:016]: Errors Bitmask Hex 'Errors Bitmask Hex'
+[01:56:45.041][C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[01:56:45.057][C][jk_bms_ble:016]: Software Version 'Software Version'
+[01:56:45.058][C][jk_bms_ble:016]: Hardware Version 'Hardware Version'
+[01:56:45.058][C][jk_bms_ble:016]: Device Model 'Device Model'
+[01:56:45.074][C][jk_bms_ble:223]:   Icon: 'mdi:chip'
+[01:56:45.075][C][jk_bms_ble:016]: Manufacturing Date 'Manufacturing Date'
+[01:56:45.075][C][jk_bms_ble:223]:   Icon: 'mdi:calendar'
+[01:56:45.075][C][jk_bms_ble:016]: Serial Number 'Serial Number'
+[01:56:45.091][C][jk_bms_ble:223]:   Icon: 'mdi:identifier'
+[01:56:45.091][C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Charging Switch'
+[01:56:45.091][C][jk_bms_ble.switch:088]:   Restore Mode: always OFF
+[01:56:45.107][C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[01:56:45.107][C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Discharging Switch'
+[01:56:45.107][C][jk_bms_ble.switch:088]:   Restore Mode: always OFF
+[01:56:45.124][C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[01:56:45.124][C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Balancer Switch'
+[01:56:45.124][C][jk_bms_ble.switch:088]:   Restore Mode: always OFF
+[01:56:45.135][C][jk_bms_ble.switch:223]:   Icon: 'mdi:seesaw'
+[01:56:45.258][C][esp32_ble:663]: BLE:
+[01:56:45.258][C][esp32_ble:663]:   MAC address: 5C:01:3B:68:84:3E
+[01:56:45.258][C][esp32_ble:663]:   IO Capability: none
+[01:56:45.275][C][ble_client:026]: BLE Client:
+[01:56:45.357][C][sntp:058]: SNTP Time:
+[01:56:45.358][C][sntp:061]:   Server 0: '0.pool.ntp.org'
+[01:56:45.358][C][sntp:061]:   Server 1: '1.pool.ntp.org'
+[01:56:45.358][C][sntp:061]:   Server 2: '2.pool.ntp.org'
+[01:56:45.374][C][time:051]: Timezone: UTC+6:00
+[01:56:45.374][C][time:055]: Current time: 1970-01-01 06:00:01
+[01:56:45.374][C][http_request:012]: HTTP Request:
+[01:56:45.374][C][http_request:012]:   Timeout: 4000ms
+[01:56:45.390][C][http_request:012]:   User-Agent: ESPHome/2026.6.5 (https://esphome.io)
+[01:56:45.390][C][http_request:012]:   Follow redirects: YES
+[01:56:45.391][C][http_request:012]:   Redirect limit: 3
+[01:56:45.391][C][http_request:020]:   Watchdog Timeout: 15000ms
+[01:56:45.391][C][http_request.idf:029]:   Buffer Size RX: 512
+[01:56:45.407][C][http_request.idf:029]:   Buffer Size TX: 512
+[01:56:45.408][C][http_request.idf:029]:   Custom CA Certificate: NO
+[01:56:45.408][C][mdns:230]: mDNS:
+[01:56:45.408][C][mdns:230]:   Hostname: jk-bms
+[01:56:45.541][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:56:50.540][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:56:50.689][D][esp-idf:000][BTU_TASK]: W (14971) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:51.323][D][esp-idf:000][BTU_TASK]: W (15598) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:51.839][I][wifi:1434]: - 'IoT' (1E:82:C4:DE:46:46) [01:56:51.839][I][wifi:1434]: - 'IoT' (1E:82:C4:DE:46:46) \u2582\u2584\u2586\u2588 Ch: 6 -81dB P:0
+[01:56:51.855][I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority 0, attempt 1/2 in phase SCAN_CONNECTING)...
+[01:56:53.154][I][wifi:1575]: Connected
+[01:56:53.172][W][component:405]: wifi cleared Warning flag
+[01:56:54.626][D][esp-idf:000][BTU_TASK]: W (18900) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:55.221][D][esp-idf:000][BTU_TASK]: W (19503) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:55.438][D][esp-idf:000][BTU_TASK]: W (19712) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:55.538][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:56:55.637][D][esp-idf:000][BTU_TASK]: W (19920) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:55.846][D][esp-idf:000][BTU_TASK]: W (20130) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:56.251][D][esp-idf:000][BTU_TASK]: W (20538) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:57.494][D][esp-idf:000][BTU_TASK]: W (21777) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:58.928][D][esp-idf:000][BTU_TASK]: W (23209) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:59.920][D][esp-idf:000][BTU_TASK]: W (24211) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:56:59.937][E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[01:56:59.953][W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[01:57:00.536][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:05.535][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:10.533][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:15.532][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:17.450][D][sntp:099]: Synchronized time: 2026-10-22 01:57:17
+[01:57:19.347][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:57:20.531][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:25.529][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:25.742][D][esp-idf:000][BTU_TASK]: W (50028) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:57:25.950][D][esp-idf:000][BTU_TASK]: W (50223) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:57:26.031][D][esp-idf:000][BTU_TASK]: W (50313) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:57:30.344][D][esp-idf:000][BTU_TASK]: W (54618) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:57:30.531][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:33.360][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:57:35.541][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:39.175][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[01:57:39.175][I][jk_bms_ble:513]: Request device info
+[01:57:39.191][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[01:57:39.191][D][ble_client:056]: All clients established, services released
+[01:57:39.774][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:57:39.774][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[01:57:39.774][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:57:39.791][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:57:39.791][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:57:39.791][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:57:39.791][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:57:39.808][I][jk_bms_ble:1774]:   Hardware option: 
+[01:57:39.808][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:57:39.808][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:57:39.824][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:57:40.540][I][jk_bms_ble:542]: Request status notification
+[01:57:40.541][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[01:57:40.727][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[01:57:40.739][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[01:57:40.739][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[01:57:40.739][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[01:57:40.755][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[01:57:40.766][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[01:57:40.772][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[01:57:40.772][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[01:57:40.772][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[01:57:40.787][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[01:57:40.787][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[01:57:40.803][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[01:57:40.803][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[01:57:40.803][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[01:57:40.823][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[01:57:40.827][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[01:57:40.835][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[01:57:40.835][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[01:57:40.835][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[01:57:40.852][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[01:57:40.852][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[01:57:40.867][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[01:57:40.867][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[01:57:40.867][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[01:57:40.883][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[01:57:40.883][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[01:57:40.899][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[01:57:40.899][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[01:57:40.899][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[01:57:40.916][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[01:57:40.916][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[01:57:40.928][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[01:57:40.932][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[01:57:40.932][I][jk_bms_ble:1379]:   Device address: 2
+[01:57:40.948][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[01:57:40.948][I][jk_bms_ble:1404]:   Heating switch: OFF
+[01:57:40.948][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[01:57:40.948][I][jk_bms_ble:1413]:   Special charger: OFF
+[01:57:40.967][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[01:57:40.967][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:57:40.974][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[01:57:40.974][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:57:40.974][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:57:40.990][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:57:40.990][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:57:40.990][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:57:41.006][I][jk_bms_ble:1774]:   Hardware option: 
+[01:57:41.008][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:57:41.008][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:57:41.008][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:57:41.255][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:57:41.255][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:57:41.271][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:57:41.271][D][jk_bms_ble:865]: Precharge: OFF
+[01:57:41.271][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:57:41.271][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:57:41.287][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:57:41.302][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:57:41.306][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:57:41.306][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:57:41.318][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:57:41.318][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:57:41.332][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:57:41.334][D][jk_bms_ble:901]: Heating: OFF
+[01:57:41.334][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:57:41.334][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:57:41.350][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:57:41.350][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[01:57:41.368][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:57:41.368][D][jk_bms_ble:911]: Battery voltage: 13.10 V
+[01:57:41.368][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:57:41.382][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:57:41.382][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:57:41.382][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:57:43.448][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:57:43.455][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:57:43.457][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:57:43.457][D][jk_bms_ble:865]: Precharge: OFF
+[01:57:43.457][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:57:43.473][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:57:43.473][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:57:43.490][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:57:43.490][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:57:43.506][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:57:43.507][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:57:43.507][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:57:43.522][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:57:43.523][D][jk_bms_ble:901]: Heating: OFF
+[01:57:43.523][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:57:43.539][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:57:43.547][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:57:43.549][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[01:57:43.556][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:57:43.556][D][jk_bms_ble:911]: Battery voltage: 13.10 V
+[01:57:43.556][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:57:43.572][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:57:43.575][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:57:43.575][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:57:47.218][I][jk_bms_ble:676]: Cell info frame (version 3, 308 bytes) received
+[01:57:47.233][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:57:47.233][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:57:47.233][D][jk_bms_ble:865]: Precharge: OFF
+[01:57:47.249][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:57:47.249][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:57:47.264][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:57:47.266][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:57:47.277][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:57:47.282][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:57:47.282][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:57:47.282][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:57:47.298][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:57:47.298][D][jk_bms_ble:901]: Heating: OFF
+[01:57:47.311][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:57:47.314][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:57:47.314][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:57:47.330][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[01:57:47.330][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:57:47.330][D][jk_bms_ble:911]: Battery voltage: 13.10 V
+[01:57:47.345][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:57:47.345][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:57:47.345][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:57:47.361][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:57:49.087][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:57:49.091][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:57:49.105][W][component:513]: interval took a long time for an operation (1336 ms), max is 50 ms
+[01:57:53.134][I][ble_backoff:395]: Disconnected, reconnecting in 30000 ms
+[01:57:53.135][D][esp-idf:000][BTU_TASK]: W (77401) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:57:55.536][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:57:58.985][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:57:58.986][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:58:00.535][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:05.533][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:09.015][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:58:09.031][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:58:10.531][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:15.531][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:18.995][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:58:18.995][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:58:20.529][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:24.350][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:58:25.060][D][esp-idf:000][BTU_TASK]: W (109343) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:58:25.127][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:58:25.543][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:28.980][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:58:28.992][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:58:30.542][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:30.692]llcp prog: 443 1 387 0 0
+[01:58:31.722][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[01:58:31.722][I][jk_bms_ble:513]: Request device info
+[01:58:31.745][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[01:58:31.745][D][ble_client:056]: All clients established, services released
+[01:58:31.901][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:58:31.901][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[01:58:31.916][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:58:31.916][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:58:31.916][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:58:31.932][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:58:31.932][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:58:31.932][I][jk_bms_ble:1774]:   Hardware option: 
+[01:58:31.947][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:58:31.949][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:58:31.949][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:58:35.540][I][jk_bms_ble:542]: Request status notification
+[01:58:35.540][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[01:58:36.027][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[01:58:36.040][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[01:58:36.040][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[01:58:36.040][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[01:58:36.057][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[01:58:36.057][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[01:58:36.057][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[01:58:36.073][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[01:58:36.073][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[01:58:36.089][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[01:58:36.095][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[01:58:36.097][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[01:58:36.106][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[01:58:36.106][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[01:58:36.106][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[01:58:36.123][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[01:58:36.123][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[01:58:36.139][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[01:58:36.140][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[01:58:36.140][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[01:58:36.156][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[01:58:36.156][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[01:58:36.173][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[01:58:36.173][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[01:58:36.173][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[01:58:36.189][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[01:58:36.197][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[01:58:36.202][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[01:58:36.207][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[01:58:36.207][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[01:58:36.222][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[01:58:36.223][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[01:58:36.223][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[01:58:36.240][I][jk_bms_ble:1379]:   Device address: 2
+[01:58:36.240][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[01:58:36.240][I][jk_bms_ble:1404]:   Heating switch: OFF
+[01:58:36.240][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[01:58:36.256][I][jk_bms_ble:1413]:   Special charger: OFF
+[01:58:36.256][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[01:58:36.357][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:58:36.357][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[01:58:36.357][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:58:36.374][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:58:36.374][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:58:36.374][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:58:36.390][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:58:36.390][I][jk_bms_ble:1774]:   Hardware option: 
+[01:58:36.399][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:58:36.403][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:58:36.407][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:58:37.473][W][jk_bms_ble:615]: CRC check failed! 0xD3 != 0x51
+[01:58:37.711][W][jk_bms_ble:615]: CRC check failed! 0xE9 != 0x0B
+[01:58:38.821][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:58:38.823][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:58:38.823][W][jk_bms_ble:615]: CRC check failed! 0xEE != 0x0B
+[01:58:40.539][I][jk_bms_ble:542]: Request status notification
+[01:58:40.539][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[01:58:43.254][D][esp-idf:000][BTU_TASK]: W (127532) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:58:43.254][I][ble_backoff:395]: Disconnected, reconnecting in 30000 ms
+[01:58:45.538][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:49.057][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:58:49.068][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:58:50.536][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:55.534][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:58:58.937][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:58:58.937][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:59:00.532][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:05.532][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:08.914][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:59:08.930][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:59:10.529][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:14.337][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:59:15.019][D][esp-idf:000][BTU_TASK]: W (159300) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:59:15.423][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:59:15.528][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:18.960][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:59:18.960][D][http_request.idf:044]: Received response header, name: content-length, value: 927
+[01:59:20.542][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:25.541][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:26.858][D][esp-idf:000][BTU_TASK]: W (171142) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:59:26.858][I][ble_backoff:395]: Disconnected, reconnecting in 30000 ms
+[01:59:30.540][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:35.538][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:40.541][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:45.535][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:50.544][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:55.532][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:59:59.340][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[02:00:00.530][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:01.402][D][esp-idf:000][BTU_TASK]: W (205681) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:00:01.808][D][esp-idf:000][BTU_TASK]: W (206088) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:00:01.915][D][esp-idf:000][BTU_TASK]: W (206191) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:00:02.322][D][esp-idf:000][BTU_TASK]: W (206599) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:00:02.729][D][esp-idf:000][BTU_TASK]: W (207004) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:00:02.930][D][esp-idf:000][BTU_TASK]: W (207214) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:00:03.547][D][esp-idf:000][BTU_TASK]: W (207830) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:00:05.194][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[02:00:05.533][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:10.311][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[02:00:10.311][I][jk_bms_ble:513]: Request device info
+[02:00:10.327][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[02:00:10.327][D][ble_client:056]: All clients established, services released
+[02:00:10.494][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[02:00:10.494][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[02:00:10.494][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[02:00:10.494][I][jk_bms_ble:1689]:   Device passcode: 1234
+[02:00:10.510][I][jk_bms_ble:1704]:   Passcode: 6613
+[02:00:10.510][I][jk_bms_ble:1707]:   User data: JK-BMS
+[02:00:10.510][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[02:00:10.527][I][jk_bms_ble:1774]:   Hardware option: 
+[02:00:10.527][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[02:00:10.527][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[02:00:10.543][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[02:00:10.544][I][jk_bms_ble:542]: Request status notification
+[02:00:10.544][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[02:00:10.692][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[02:00:10.692][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[02:00:10.692][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[02:00:10.708][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[02:00:10.708][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[02:00:10.723][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[02:00:10.723][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[02:00:10.723][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[02:00:10.739][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[02:00:10.739][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[02:00:10.755][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[02:00:10.755][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[02:00:10.770][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[02:00:10.771][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[02:00:10.771][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[02:00:10.787][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[02:00:10.787][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[02:00:10.787][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[02:00:10.802][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[02:00:10.814][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[02:00:10.818][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[02:00:10.818][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[02:00:10.834][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[02:00:10.838][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[02:00:10.838][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[02:00:10.851][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[02:00:10.851][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[02:00:10.851][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[02:00:10.867][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[02:00:10.867][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[02:00:10.884][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[02:00:10.884][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[02:00:10.884][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[02:00:10.899][I][jk_bms_ble:1379]:   Device address: 2
+[02:00:10.899][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[02:00:10.899][I][jk_bms_ble:1404]:   Heating switch: OFF
+[02:00:10.899][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[02:00:10.915][I][jk_bms_ble:1413]:   Special charger: OFF
+[02:00:10.915][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[02:00:11.027][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[02:00:11.030][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[02:00:11.030][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[02:00:11.039][I][jk_bms_ble:1689]:   Device passcode: 1234
+[02:00:11.046][I][jk_bms_ble:1704]:   Passcode: 6613
+[02:00:11.050][I][jk_bms_ble:1707]:   User data: JK-BMS
+[02:00:11.055][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[02:00:11.060][I][jk_bms_ble:1774]:   Hardware option: 
+[02:00:11.063][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[02:00:11.069][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[02:00:11.074][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[02:00:11.594][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:00:11.610][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:00:11.610][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:00:11.610][D][jk_bms_ble:865]: Precharge: OFF
+[02:00:11.627][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:00:11.627][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:00:11.643][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:00:11.644][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:00:11.644][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:00:11.660][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:00:11.660][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:00:11.677][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:00:11.677][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:00:11.688][D][jk_bms_ble:901]: Heating: OFF
+[02:00:11.690][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:00:11.694][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:00:11.694][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:00:11.711][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:00:11.717][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:00:11.717][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:00:11.727][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:00:11.727][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:00:11.727][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:00:11.727][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:00:14.026][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:00:14.029][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:00:14.029][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:00:14.043][D][jk_bms_ble:865]: Precharge: OFF
+[02:00:14.046][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:00:14.046][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:00:14.064][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:00:14.072][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:00:14.078][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:00:14.086][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:00:14.091][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:00:14.093][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:00:14.093][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:00:14.093][D][jk_bms_ble:901]: Heating: OFF
+[02:00:14.108][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:00:14.118][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:00:14.125][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:00:14.125][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:00:14.125][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:00:14.141][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:00:14.141][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:00:14.141][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:00:14.157][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:00:14.157][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:00:18.967][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:00:18.975][D][http_request.idf:044]: Received response header, name: content-length, value: 926
+[02:00:19.783][D][esp-idf:000][BTU_TASK]: W (224072) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[02:00:19.799][I][ble_backoff:395]: Disconnected, reconnecting in 30000 ms
+[02:00:20.541][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:25.539][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:28.895][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:00:28.906][D][http_request.idf:044]: Received response header, name: content-length, value: 926
+[02:00:30.538][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:35.536][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:39.038][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:00:39.039][D][http_request.idf:044]: Received response header, name: content-length, value: 926
+[02:00:40.535][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:45.533][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:48.865][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:00:48.865][D][http_request.idf:044]: Received response header, name: content-length, value: 926
+[02:00:50.543][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:54.348][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[02:00:55.530][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:00:58.996][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:00:59.012][D][http_request.idf:044]: Received response header, name: content-length, value: 926
+[02:01:00.346][D][esp-idf:000][BTU_TASK]: W (264635) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[02:01:00.533][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:01:02.126][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[02:01:05.543][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:01:06.177][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[02:01:06.197][I][jk_bms_ble:513]: Request device info
+[02:01:06.199][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[02:01:06.210][D][ble_client:056]: All clients established, services released
+[02:01:06.692][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[02:01:06.693][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[02:01:06.701][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[02:01:06.701][I][jk_bms_ble:1689]:   Device passcode: 1234
+[02:01:06.710][I][jk_bms_ble:1704]:   Passcode: 6613
+[02:01:06.710][I][jk_bms_ble:1707]:   User data: JK-BMS
+[02:01:06.710][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[02:01:06.726][I][jk_bms_ble:1774]:   Hardware option: 
+[02:01:06.727][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[02:01:06.727][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[02:01:06.727][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[02:01:09.029][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:01:09.043][D][http_request.idf:044]: Received response header, name: content-length, value: 193
+[02:01:10.542][I][jk_bms_ble:542]: Request status notification
+[02:01:10.542][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[02:01:10.642][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[02:01:10.642][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[02:01:10.658][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[02:01:10.658][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[02:01:10.674][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[02:01:10.674][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[02:01:10.674][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[02:01:10.691][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[02:01:10.691][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[02:01:10.691][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[02:01:10.706][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[02:01:10.706][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[02:01:10.722][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[02:01:10.727][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[02:01:10.727][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[02:01:10.739][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[02:01:10.739][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[02:01:10.755][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[02:01:10.755][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[02:01:10.755][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[02:01:10.772][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[02:01:10.772][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[02:01:10.788][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[02:01:10.788][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[02:01:10.788][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[02:01:10.803][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[02:01:10.803][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[02:01:10.819][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[02:01:10.819][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[02:01:10.828][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[02:01:10.836][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[02:01:10.836][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[02:01:10.836][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[02:01:10.852][I][jk_bms_ble:1379]:   Device address: 2
+[02:01:10.852][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[02:01:10.852][I][jk_bms_ble:1404]:   Heating switch: OFF
+[02:01:10.868][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[02:01:10.868][I][jk_bms_ble:1413]:   Special charger: OFF
+[02:01:10.868][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[02:01:10.884][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[02:01:10.890][I][jk_bms_ble:1680]:   Uptime: 3492900 s
+[02:01:10.890][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[02:01:10.900][I][jk_bms_ble:1689]:   Device passcode: 1234
+[02:01:10.900][I][jk_bms_ble:1704]:   Passcode: 6613
+[02:01:10.900][I][jk_bms_ble:1707]:   User data: JK-BMS
+[02:01:10.916][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[02:01:10.916][I][jk_bms_ble:1774]:   Hardware option: 
+[02:01:10.916][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[02:01:10.928][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[02:01:10.933][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[02:01:11.192][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:01:11.209][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:11.215][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:11.217][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:11.223][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:11.228][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:11.237][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:11.241][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:11.241][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:11.258][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:11.258][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:11.258][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:11.273][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:11.273][D][jk_bms_ble:901]: Heating: OFF
+[02:01:11.273][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:11.291][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:11.291][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:11.291][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:11.305][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:11.305][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:11.305][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:11.322][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:11.331][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:11.331][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:13.574][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:01:13.574][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:13.594][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:13.597][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:13.602][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:13.609][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:13.617][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:13.624][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:13.624][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:13.624][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:13.640][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:13.649][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:13.649][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:13.656][D][jk_bms_ble:901]: Heating: OFF
+[02:01:13.656][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:13.672][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:13.672][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:13.672][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:13.688][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:13.688][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:13.700][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:13.704][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:13.704][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:13.704][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:15.591][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:01:15.607][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:15.607][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:15.607][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:15.624][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:15.624][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:15.624][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:15.640][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:15.640][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:15.661][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:15.662][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:15.671][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:15.674][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:15.674][D][jk_bms_ble:901]: Heating: OFF
+[02:01:15.674][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:15.690][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:15.690][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:15.690][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:15.708][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:15.708][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:15.708][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:15.723][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:15.723][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:15.723][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:18.972][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:01:18.973][D][http_request.idf:044]: Received response header, name: content-length, value: 928
+[02:01:18.989][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:01:18.994][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:18.994][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:19.006][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:19.006][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:19.006][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:19.024][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:19.026][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:19.039][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:19.040][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:19.040][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:19.056][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:19.056][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:19.056][D][jk_bms_ble:901]: Heating: OFF
+[02:01:19.072][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:19.073][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:19.073][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:19.089][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:19.094][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:19.105][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:19.106][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:19.106][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:19.106][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:19.123][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:21.139][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:01:21.155][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:21.155][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:21.155][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:21.173][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:21.173][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:21.173][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:21.189][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:21.189][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:21.205][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:21.214][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:21.221][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:21.222][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:21.222][D][jk_bms_ble:901]: Heating: OFF
+[02:01:21.222][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:21.239][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:21.239][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:21.254][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:21.255][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:21.255][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:21.271][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:21.272][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:21.272][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:21.272][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:23.281][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:01:23.281][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:23.297][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:23.297][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:23.297][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:23.297][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:23.314][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:23.327][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:23.329][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:23.329][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:23.345][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:23.353][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:23.354][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:23.362][D][jk_bms_ble:901]: Heating: OFF
+[02:01:23.362][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:23.362][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:23.378][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:23.378][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:23.393][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:23.393][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:23.393][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:23.409][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:23.409][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:23.409][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:25.303][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[02:01:25.304][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:25.304][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:25.319][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:25.320][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:25.320][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:25.338][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:25.339][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:25.353][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:25.361][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:25.361][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:25.371][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:25.371][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:25.371][D][jk_bms_ble:901]: Heating: OFF
+[02:01:25.386][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:25.387][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:25.387][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:25.404][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:25.404][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:25.420][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:25.420][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:25.420][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:25.420][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:25.436][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:29.004][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:01:29.021][D][http_request.idf:044]: Received response header, name: content-length, value: 931
+[02:01:30.303][I][jk_bms_ble:676]: Cell info frame (version 3, 308 bytes) received
+[02:01:30.320][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[02:01:30.320][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[02:01:30.320][D][jk_bms_ble:865]: Precharge: OFF
+[02:01:30.336][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[02:01:30.336][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[02:01:30.336][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[02:01:30.352][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[02:01:30.352][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[02:01:30.371][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[02:01:30.378][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[02:01:30.380][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[02:01:30.386][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[02:01:30.392][D][jk_bms_ble:901]: Heating: OFF
+[02:01:30.392][D][jk_bms_ble:904]: Time emergency: 0 s
+[02:01:30.403][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[02:01:30.403][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[02:01:30.403][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.004
+[02:01:30.419][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[02:01:30.419][D][jk_bms_ble:911]: Battery voltage: 13.11 V
+[02:01:30.435][D][jk_bms_ble:912]: Heating current: 0.000 A
+[02:01:30.436][D][jk_bms_ble:915]: Charger Plugged: OFF
+[02:01:30.442][D][jk_bms_ble:917]: PCL Module State: OFF
+[02:01:30.442][I][jk_bms_ble:928]: Emergency switch: OFF
+[02:01:30.683][W][jk_bms_ble:615]: CRC check failed! 0x3A != 0x0B
+[02:01:35.181][W][jk_bms_ble:615]: CRC check failed! 0x19 != 0x00
+[02:01:35.458][W][jk_bms_ble:615]: CRC check failed! 0xAD != 0x00
+[02:01:35.485][W][jk_bms_ble:615]: CRC check failed! 0xDD != 0x00
+[02:01:35.751][W][jk_bms_ble:615]: CRC check failed! 0xC7 != 0x00
+[02:01:35.801][W][jk_bms_ble:615]: CRC check failed! 0x96 != 0x51
+[02:01:35.811][W][jk_bms_ble:615]: CRC check failed! 0x44 != 0x00
+[02:01:36.083][W][jk_bms_ble:615]: CRC check failed! 0x0F != 0x00
+[02:01:36.100][W][jk_bms_ble:615]: CRC check failed! 0x96 != 0x4D
+[02:01:36.100][W][jk_bms_ble:615]: CRC check failed! 0x44 != 0x00
+[02:01:38.933][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:01:38.950][D][http_request.idf:044]: Received response header, name: content-length, value: 928
+[02:01:41.099][D][esp-idf:000][BTU_TASK]: W (305393) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[02:01:41.115][I][ble_backoff:395]: Disconnected, reconnecting in 30000 ms
+[02:01:45.531][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:01:48.864][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:01:48.880][D][http_request.idf:044]: Received response header, name: content-length, value: 928
+[02:01:50.545][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:01:55.543][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[02:02:03.409][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[02:02:03.424][D][http_request.idf:044]: Received response header, name: content-length, value: 928
+[02:02:03.425][W][component:513]: interval took a long time for an operation (5664 ms), max is 1340 ms
+[02:02:03.466][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected

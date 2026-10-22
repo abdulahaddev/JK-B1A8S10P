@@ -1,0 +1,2417 @@
+INFO ESPHome 2026.6.5
+INFO Reading configuration my-jk-bms-firebase.yaml...
+WARNING GPIO2 is a strapping PIN and should only be used for I/O with care.
+Attaching external pullup/down resistors to strapping pins can cause unexpected failures.
+See https://esphome.io/guides/faq/#why-am-i-getting-a-warning-about-strapping-pins
+INFO Generating C++ source...
+INFO Detected timezone 'Asia/Dhaka'
+INFO Compiling app... Build path: D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms
+Processing [36m[1mjk-bms[0m (board: esp32dev; framework: espidf; platform: https://github.com/pioarduino/platform-espressif32/releases/download/55.03.39/platform-espressif32.zip)
+[1m--------------------------------------------------------------------------------[0m
+[0mHARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+[0m - contrib-piohome @ 3.4.4 
+[0m - framework-espidf @ 3.50504.0 (5.5.4) 
+[0m - tool-cmake @ 4.0.3 
+[0m - tool-esp-rom-elfs @ 2024.10.11 
+[0m - tool-esptoolpy @ 5.3.0 
+[0m - tool-ninja @ 1.13.1 
+[0m - tool-scons @ 4.40801.0 (4.8.1) 
+[0m - tool-xtensa-esp-elf-gdb @ 17.1.0+20260402 
+[0m - toolchain-xtensa-esp-elf @ 14.2.0+20260121
+[33mUsing Python 3.11.8 environment at: C:\Users\hi\.platformio\penv\.espidf-5.5.4
+[0mReading CMake configuration...
+[0mNo dependencies
+[0mRAM:   [==        ]  21.9% (used 71736 bytes from 327680 bytes)
+[0mFlash: [=======   ]  69.1% (used 1267195 bytes from 1835008 bytes)
+========================= [[32m[1mSUCCESS[0m] Took 38.58 seconds =========================[0m
+INFO Build Info: config_hash=0xf9e6e976 build_time_str=2026-10-22 01:36:17 +0600
+INFO Successfully compiled program.
+esptool v5.3.0
+Serial port COM8:
+Connecting....
+Connected to ESP32 on COM8:
+Chip type:          ESP32-D0WD-V3 (revision v3.1)
+Features:           Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+Crystal frequency:  40MHz
+MAC:                5c:01:3b:68:84:3c
+
+Uploading stub flasher...
+Running stub flasher...
+Stub flasher running.
+Changing baud rate to 460800...
+Changed.
+
+Configuring flash size...
+Auto-detected flash size: 4MB
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\firmware.bin' at 0x00010000...
+Flash will be erased from 0x00010000 to 0x00145fff...
+Compressed 1267600 bytes to 831196...
+Writing at 0x00010000 [                              ]   0.0% 0/831196 bytes... Writing at 0x0001cd78 [                              ]   2.0% 16384/831196 bytes... Writing at 0x0002a8b6 [>                             ]   3.9% 32768/831196 bytes... Writing at 0x00035611 [>                             ]   5.9% 49152/831196 bytes... Writing at 0x0003cea2 [=>                            ]   7.9% 65536/831196 bytes... Writing at 0x000436c9 [=>                            ]   9.9% 81920/831196 bytes... Writing at 0x0004dff3 [==>                           ]  11.8% 98304/831196 bytes... Writing at 0x00053f1c [===>                          ]  13.8% 114688/831196 bytes... Writing at 0x0005965b [===>                          ]  15.8% 131072/831196 bytes... Writing at 0x0005ec47 [====>                         ]  17.7% 147456/831196 bytes... Writing at 0x000641ed [====>                         ]  19.7% 163840/831196 bytes... Writing at 0x0006a165 [=====>                        ]  21.7% 180224/831196 bytes... Writing at 0x0006f5b1 [======>                       ]  23.7% 196608/831196 bytes... Writing at 0x0007494a [======>                       ]  25.6% 212992/831196 bytes... Writing at 0x00079ea5 [=======>                      ]  27.6% 229376/831196 bytes... Writing at 0x0007f9a5 [=======>                      ]  29.6% 245760/831196 bytes... Writing at 0x0008579b [========>                     ]  31.5% 262144/831196 bytes... Writing at 0x0008b3bb [=========>                    ]  33.5% 278528/831196 bytes... Writing at 0x00090c5d [=========>                    ]  35.5% 294912/831196 bytes... Writing at 0x00096576 [==========>                   ]  37.5% 311296/831196 bytes... Writing at 0x0009b7f7 [==========>                   ]  39.4% 327680/831196 bytes... Writing at 0x000a10b8 [===========>                  ]  41.4% 344064/831196 bytes... Writing at 0x000a6c27 [============>                 ]  43.4% 360448/831196 bytes... Writing at 0x000abf96 [============>                 ]  45.3% 376832/831196 bytes... Writing at 0x000b1162 [=============>                ]  47.3% 393216/831196 bytes... Writing at 0x000b6552 [=============>                ]  49.3% 409600/831196 bytes... Writing at 0x000bba2d [==============>               ]  51.2% 425984/831196 bytes... Writing at 0x000c0eb1 [==============>               ]  53.2% 442368/831196 bytes... Writing at 0x000c6035 [===============>              ]  55.2% 458752/831196 bytes... Writing at 0x000cb8f0 [================>             ]  57.2% 475136/831196 bytes... Writing at 0x000d1104 [================>             ]  59.1% 491520/831196 bytes... Writing at 0x000d67d9 [=================>            ]  61.1% 507904/831196 bytes... Writing at 0x000db780 [=================>            ]  63.1% 524288/831196 bytes... Writing at 0x000e0dd1 [==================>           ]  65.0% 540672/831196 bytes... Writing at 0x000e64dc [===================>          ]  67.0% 557056/831196 bytes... Writing at 0x000ec233 [===================>          ]  69.0% 573440/831196 bytes... Writing at 0x000f1af1 [====================>         ]  71.0% 589824/831196 bytes... Writing at 0x000f7153 [====================>         ]  72.9% 606208/831196 bytes... Writing at 0x000fcc51 [=====================>        ]  74.9% 622592/831196 bytes... Writing at 0x0010295b [======================>       ]  76.9% 638976/831196 bytes... Writing at 0x001083b5 [======================>       ]  78.8% 655360/831196 bytes... Writing at 0x0010ddcc [=======================>      ]  80.8% 671744/831196 bytes... Writing at 0x0011382c [=======================>      ]  82.8% 688128/831196 bytes... Writing at 0x00118f2c [========================>     ]  84.8% 704512/831196 bytes... Writing at 0x0011f713 [=========================>    ]  86.7% 720896/831196 bytes... Writing at 0x0012599b [=========================>    ]  88.7% 737280/831196 bytes... Writing at 0x0012b031 [==========================>   ]  90.7% 753664/831196 bytes... Writing at 0x00130f48 [==========================>   ]  92.6% 770048/831196 bytes... Writing at 0x001362da [===========================>  ]  94.6% 786432/831196 bytes... Writing at 0x0013bf69 [===========================>  ]  96.6% 802816/831196 bytes... Writing at 0x0014154f [============================> ]  98.6% 819200/831196 bytes... Writing at 0x00145790 [==============================] 100.0% 831196/831196 bytes... 
+Wrote 1267600 bytes (831196 compressed) at 0x00010000 in 23.5 seconds (430.7 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\bootloader.bin' at 0x00001000...
+SHA digest in image updated.
+Flash will be erased from 0x00001000 to 0x00007fff...
+Compressed 26080 bytes to 16458...
+Writing at 0x00001000 [                              ]   0.0% 0/16458 bytes... Writing at 0x00007584 [============================> ]  99.6% 16384/16458 bytes... Writing at 0x000075e0 [==============================] 100.0% 16458/16458 bytes... 
+Wrote 26080 bytes (16458 compressed) at 0x00001000 in 0.7 seconds (294.9 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\partitions.bin' at 0x00008000...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Compressed 3072 bytes to 133...
+Writing at 0x00008000 [                              ]   0.0% 0/133 bytes... Writing at 0x00008c00 [==============================] 100.0% 133/133 bytes... 
+Wrote 3072 bytes (133 compressed) at 0x00008000 in 0.0 seconds (848.6 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\ota_data_initial.bin' at 0x00009000...
+Flash will be erased from 0x00009000 to 0x0000afff...
+Compressed 8192 bytes to 31...
+Writing at 0x00009000 [                              ]   0.0% 0/31 bytes... Writing at 0x0000b000 [==============================] 100.0% 31/31 bytes... 
+Wrote 8192 bytes (31 compressed) at 0x00009000 in 0.1 seconds (1309.1 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Hard resetting via RTS pin...
+INFO Successfully uploaded program.
+INFO Starting log output from COM8 with baud rate 115200
+[01:39:47.089]\x80 \x80 \x80 \x80 @'\xa2\x82j!\xe9ets Jul 29 2019 12:21:46
+
+[01:39:47.104]rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[01:39:47.104]configsip: 0, SPIWP:0xee
+[01:39:47.104]clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[01:39:47.116]mode:DIO, clock div:2
+[01:39:47.118]load:0x3fff0030,len:6248
+[01:39:47.121]load:0x40078000,len:15852
+[01:39:47.121]ho 0 tail 12 room 4
+[01:39:47.121]load:0x40080400,len:3896
+[01:39:47.126]entry 0x40080638
+[01:39:47.126]I (29) boot: ESP-IDF 5.5.4 2nd stage bootloader
+[01:39:47.132]I (29) boot: Multicore bootloader
+[01:39:47.137]I (30) boot: chip revision: v3.1
+[01:39:47.137]I (30) boot.esp32: SPI Speed      : 40MHz
+[01:39:47.137]I (33) boot.esp32: SPI Mode       : DIO
+[01:39:47.148]I (36) boot.esp32: SPI Flash Size : 4MB
+[01:39:47.154]I (40) boot: Enabling RNG early entropy source...
+[01:39:47.154]I (44) boot: Partition Table:
+[01:39:47.154]I (47) boot: ## Label            Usage          Type ST Offset   Length
+[01:39:47.164]I (53) boot:  0 otadata          OTA data         01 00 00009000 00002000
+[01:39:47.176]I (60) boot:  1 phy_init         RF data          01 01 0000b000 00001000
+[01:39:47.180]I (66) boot:  2 app0             OTA app          00 10 00010000 001c0000
+[01:39:47.188]I (73) boot:  3 app1             OTA app          00 11 001d0000 001c0000
+[01:39:47.196]I (79) boot:  4 nvs              WiFi data        01 02 00390000 00070000
+[01:39:47.196]I (86) boot: End of partition table
+[01:39:47.196]I (89) boot: No factory image, trying OTA 0
+[01:39:47.209]I (93) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=35e9ch (220828) map
+[01:39:47.271]I (176) esp_image: segment 1: paddr=00045ec4 vaddr=3ffbdb60 size=057c8h ( 22472) load
+[01:39:47.290]I (185) esp_image: segment 2: paddr=0004b694 vaddr=40080000 size=04984h ( 18820) load
+[01:39:47.292]I (192) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=dfb08h (916232) map
+[01:39:47.604]I (505) esp_image: segment 4: paddr=0012fb30 vaddr=40084984 size=15c0ch ( 89100) load
+[01:39:47.638]I (540) esp_image: segment 5: paddr=00145744 vaddr=50000000 size=00020h (    32) load
+[01:39:47.654]I (554) boot: Loaded app from partition at offset 0x10000
+[01:39:47.671]I (570) boot: Set actual ota_seq=1 in otadata[0]
+[01:39:47.671]I (570) boot: Disabling RNG early entropy source...
+[01:39:47.812][I][logger:122]: Log initialized
+[01:39:47.814][I][app:060]: Running through setup()
+[01:39:47.951][I][app:117]: setup() finished successfully!
+[01:39:47.957][W][component:382]: wifi set Warning flag: scanning for networks
+[01:39:47.957][D][esp32_ble:525]: Enabling
+[01:39:48.386][W][component:513]: esp32_ble took a long time for an operation (423 ms), max is 50 ms
+[01:39:48.388][I][app:151]: ESPHome version 2026.6.5 compiled on 2026-10-22 01:36:17 +0600
+[01:39:48.396][I][app:158]: ESP32 Chip: ESP32 rev3.1, 2 core(s)
+[01:39:48.407][W][app:171]: Chip rev >= 3.0 detected. Set minimum_chip_revision: "3.1" under esp32 > framework > advanced to reduce binary size
+[01:39:48.418][W][app:198]: Bootloader supports SRAM1 as IRAM (+40KB). Set sram1_as_iram: true under esp32 > framework > advanced
+[01:39:48.418][C][logger:223]: Logger:
+[01:39:48.418][C][logger:223]:   Max Level: DEBUG
+[01:39:48.418][C][logger:223]:   Initial Level: DEBUG
+[01:39:48.418][C][logger:230]:   Log Baud Rate: 115200
+[01:39:48.418][C][logger:230]:   Hardware UART: UART0
+[01:39:48.438][C][logger:239]:   Task Log Buffer Size: 768 bytes
+[01:39:48.438][C][logger:245]:   Level for 'component': INFO
+[01:39:48.449][C][logger:245]:   Level for 'display': WARN
+[01:39:48.449][C][logger:245]:   Level for 'esp32_ble_client': INFO
+[01:39:48.449][C][logger:245]:   Level for 'esp32_ble_tracker': INFO
+[01:39:48.465][C][logger:245]:   Level for 'i2c': WARN
+[01:39:48.465][C][logger:245]:   Level for 'i2c.idf': WARN
+[01:39:48.472][C][logger:245]:   Level for 'scheduler': INFO
+[01:39:48.472][C][logger:245]:   Level for 'ssd1306_base': WARN
+[01:39:48.481][C][logger:245]:   Level for 'ssd1306_i2c': WARN
+[01:39:48.490][C][logger:245]:   Level for 'wifi': INFO
+[01:39:48.499][I][ble_power:038]: BLE TX power set to +9 dBm (level 7)
+[01:39:48.530][C][gpio.output:009]: Binary Output:
+[01:39:48.530][C][gpio.output:152]:   Pin: GPIO2
+[01:39:48.549][C][gpio.output:009]: Binary Output:
+[01:39:48.559][C][gpio.output:152]:   Pin: GPIO4
+[01:39:48.563][C][gpio.output:009]: Binary Output:
+[01:39:48.563][C][gpio.output:152]:   Pin: GPIO16
+[01:39:48.571][C][gpio.output:009]: Binary Output:
+[01:39:48.577][C][gpio.output:152]:   Pin: GPIO17
+[01:39:48.589][C][template.sensor:017]: Template Sensor 'ESP32 Free Memory'
+[01:39:48.589][C][template.sensor:017]:   State Class: ''
+[01:39:48.593][C][template.sensor:017]:   Unit of Measurement: 'bytes'
+[01:39:48.593][C][template.sensor:017]:   Accuracy Decimals: 1
+[01:39:48.601][C][template.sensor:434]:   Update Interval: 15.0s
+[01:39:48.639][C][jk_bms_ble:300]: JkBmsBle
+[01:39:48.641][C][jk_bms_ble:016]: Balancing 'Balancing'
+[01:39:48.641][C][jk_bms_ble:016]: Charging 'Charging'
+[01:39:48.641][C][jk_bms_ble:016]: Discharging 'Discharging'
+[01:39:48.655][C][jk_bms_ble:016]: Heating 'Heating'
+[01:39:48.657][C][jk_bms_ble:016]: Online Status 'Online Status'
+[01:39:48.657][C][jk_bms_ble:232]:   Device Class: 'connectivity'
+[01:39:48.671][C][jk_bms_ble:017]: Minimum Cell Voltage 'Min Cell Voltage'
+[01:39:48.671][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.671][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.671][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.686][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.687][C][jk_bms_ble:017]: Maximum Cell Voltage 'Max Cell Voltage'
+[01:39:48.687][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.687][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.701][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.704][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.708][C][jk_bms_ble:017]: Minimum Voltage Cell 'Min Voltage Cell'
+[01:39:48.708][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.708][C][jk_bms_ble:017]:   Unit of Measurement: ''
+[01:39:48.717][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:39:48.721][C][jk_bms_ble:223]:   Icon: 'mdi:battery-minus-outline'
+[01:39:48.721][C][jk_bms_ble:017]: Maximum Voltage Cell 'Max Voltage Cell'
+[01:39:48.721][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.733][C][jk_bms_ble:017]:   Unit of Measurement: ''
+[01:39:48.736][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:39:48.737][C][jk_bms_ble:223]:   Icon: 'mdi:battery-plus-outline'
+[01:39:48.737][C][jk_bms_ble:017]: Delta Cell Voltage 'Delta Cell Voltage'
+[01:39:48.749][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.753][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.754][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.759][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.766][C][jk_bms_ble:017]: Average Cell Voltage 'Average Cell Voltage'
+[01:39:48.769][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.770][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.770][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.770][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.781][C][jk_bms_ble:017]: Cell Voltage 1 'Cell Voltage 1'
+[01:39:48.786][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.787][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.787][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.787][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.800][C][jk_bms_ble:017]: Cell Voltage 2 'Cell Voltage 2'
+[01:39:48.802][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.804][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.808][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.813][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.819][C][jk_bms_ble:017]: Cell Voltage 3 'Cell Voltage 3'
+[01:39:48.821][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.821][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.821][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.830][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.836][C][jk_bms_ble:017]: Cell Voltage 4 'Cell Voltage 4'
+[01:39:48.837][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.837][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.837][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.846][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.853][C][jk_bms_ble:017]: Cell Resistance 1 'Cell Resistance 1'
+[01:39:48.854][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.854][01:39:48.854][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:39:48.862][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.862][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:39:48.870][C][jk_bms_ble:017]: Cell Resistance 2 'Cell Resistance 2'
+[01:39:48.870][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.870][01:39:48.870][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:39:48.870][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.870][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:39:48.887][C][jk_bms_ble:017]: Cell Resistance 3 'Cell Resistance 3'
+[01:39:48.887][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.887][01:39:48.887][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:39:48.887][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.887][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:39:48.905][C][jk_bms_ble:017]: Cell Resistance 4 'Cell Resistance 4'
+[01:39:48.907][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.907][01:39:48.907][C][jk_bms_ble:017]:   Unit of Measurement: '\u03a9'
+[01:39:48.907][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.919][C][jk_bms_ble:223]:   Icon: 'mdi:omega'
+[01:39:48.920][C][jk_bms_ble:017]: Total Voltage 'Total Voltage'
+[01:39:48.920][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.920][C][jk_bms_ble:017]:   Unit of Measurement: 'V'
+[01:39:48.920][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:48.936][C][jk_bms_ble:232]:   Device Class: 'voltage'
+[01:39:48.937][C][jk_bms_ble:017]: Current 'Current'
+[01:39:48.937][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.937][C][jk_bms_ble:017]:   Unit of Measurement: 'A'
+[01:39:48.937][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:39:48.953][C][jk_bms_ble:232]:   Device Class: 'current'
+[01:39:48.954][C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[01:39:48.959][C][jk_bms_ble:017]: Power 'Power'
+[01:39:48.959][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.959][C][jk_bms_ble:017]:   Unit of Measurement: 'W'
+[01:39:48.966][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:39:48.970][C][jk_bms_ble:232]:   Device Class: 'power'
+[01:39:48.970][C][jk_bms_ble:017]: Charging Power 'Charging Power'
+[01:39:48.981][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.981][C][jk_bms_ble:017]:   Unit of Measurement: 'W'
+[01:39:48.986][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:39:48.987][C][jk_bms_ble:232]:   Device Class: 'power'
+[01:39:48.987][C][jk_bms_ble:017]: Discharging Power 'Discharging Power'
+[01:39:48.997][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:48.997][C][jk_bms_ble:017]:   Unit of Measurement: 'W'
+[01:39:49.002][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:39:49.007][C][jk_bms_ble:232]:   Device Class: 'power'
+[01:39:49.013][C][jk_bms_ble:017]: Mosfet Temperature 'MOSFET Temperature'
+[01:39:49.013][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.019][C][jk_bms_ble:017]:   Unit of Measurement: '°C'
+[01:39:49.019][C][jk_bms_ble:017]:   Accuracy Decimals: 1
+[01:39:49.023][C][jk_bms_ble:232]:   Device Class: 'temperature'
+[01:39:49.031][C][jk_bms_ble:017]: Temperature Sensor 1 'Temperature Sensor 1'
+[01:39:49.037][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.037][C][jk_bms_ble:017]:   Unit of Measurement: '°C'
+[01:39:49.038][C][jk_bms_ble:017]:   Accuracy Decimals: 1
+[01:39:49.041][C][jk_bms_ble:232]:   Device Class: 'temperature'
+[01:39:49.053][C][jk_bms_ble:017]: Temperature Sensor 2 'Temperature Sensor 2'
+[01:39:49.054][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.054][C][jk_bms_ble:017]:   Unit of Measurement: '°C'
+[01:39:49.058][C][jk_bms_ble:017]:   Accuracy Decimals: 1
+[01:39:49.062][C][jk_bms_ble:232]:   Device Class: 'temperature'
+[01:39:49.070][C][jk_bms_ble:017]: State Of Charge 'State of Charge'
+[01:39:49.071][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.071][C][jk_bms_ble:017]:   Unit of Measurement: '%'
+[01:39:49.071][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:39:49.071][C][jk_bms_ble:232]:   Device Class: 'battery'
+[01:39:49.086][C][jk_bms_ble:017]: State Of Health 'State of Health'
+[01:39:49.087][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.087][C][jk_bms_ble:017]:   Unit of Measurement: '%'
+[01:39:49.087][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:39:49.087][C][jk_bms_ble:017]: Capacity Remaining 'Capacity Remaining'
+[01:39:49.103][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.106][C][jk_bms_ble:017]:   Unit of Measurement: 'Ah'
+[01:39:49.107][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:49.107][C][jk_bms_ble:223]:   Icon: 'mdi:battery-50'
+[01:39:49.120][C][jk_bms_ble:017]: Full Charge Capacity 'Full Charge Capacity'
+[01:39:49.120][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.120][C][jk_bms_ble:017]:   Unit of Measurement: 'Ah'
+[01:39:49.120][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:39:49.120][C][jk_bms_ble:017]: Charging Cycles 'Charging Cycles'
+[01:39:49.134][C][jk_bms_ble:017]:   State Class: 'total_increasing'
+[01:39:49.137][C][jk_bms_ble:017]:   Unit of Measurement: ''
+[01:39:49.137][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:39:49.137][C][jk_bms_ble:223]:   Icon: 'mdi:battery-sync'
+[01:39:49.154][C][jk_bms_ble:017]: Total Charging Cycle Capacity 'Total Charging Cycle Capacity'
+[01:39:49.154][C][jk_bms_ble:017]:   State Class: 'total_increasing'
+[01:39:49.159][C][jk_bms_ble:017]:   Unit of Measurement: 'Ah'
+[01:39:49.159][C][jk_bms_ble:017]:   Accuracy Decimals: 3
+[01:39:49.160][C][jk_bms_ble:223]:   Icon: 'mdi:counter'
+[01:39:49.169][C][jk_bms_ble:017]: Total Runtime 'Total Runtime'
+[01:39:49.171][C][jk_bms_ble:017]:   State Class: 'total_increasing'
+[01:39:49.171][C][jk_bms_ble:017]:   Unit of Measurement: 's'
+[01:39:49.171][C][jk_bms_ble:017]:   Accuracy Decimals: 0
+[01:39:49.181][C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[01:39:49.187][C][jk_bms_ble:017]: Balancing Current 'Balancing Current'
+[01:39:49.187][C][jk_bms_ble:017]:   State Class: 'measurement'
+[01:39:49.187][C][jk_bms_ble:017]:   Unit of Measurement: 'A'
+[01:39:49.187][C][jk_bms_ble:017]:   Accuracy Decimals: 2
+[01:39:49.199][C][jk_bms_ble:232]:   Device Class: 'current'
+[01:39:49.205][C][jk_bms_ble:223]:   Icon: 'mdi:current-dc'
+[01:39:49.208][C][jk_bms_ble:016]: Balancer Status 'Balancer Status'
+[01:39:49.213][C][jk_bms_ble:223]:   Icon: 'mdi:heart-pulse'
+[01:39:49.220][C][jk_bms_ble:016]: Total Runtime Formatted 'Total Runtime Formatted'
+[01:39:49.224][C][jk_bms_ble:223]:   Icon: 'mdi:timelapse'
+[01:39:49.229][C][jk_bms_ble:016]: Errors 'Errors'
+[01:39:49.237][C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[01:39:49.245][C][jk_bms_ble:016]: Errors Bitmask Hex 'Errors Bitmask Hex'
+[01:39:49.248][C][jk_bms_ble:223]:   Icon: 'mdi:alert-circle-outline'
+[01:39:49.253][C][jk_bms_ble:016]: Software Version 'Software Version'
+[01:39:49.257][C][jk_bms_ble:016]: Hardware Version 'Hardware Version'
+[01:39:49.257][C][jk_bms_ble:016]: Device Model 'Device Model'
+[01:39:49.270][C][jk_bms_ble:223]:   Icon: 'mdi:chip'
+[01:39:49.270][C][jk_bms_ble:016]: Manufacturing Date 'Manufacturing Date'
+[01:39:49.270][C][jk_bms_ble:223]:   Icon: 'mdi:calendar'
+[01:39:49.287][C][jk_bms_ble:016]: Serial Number 'Serial Number'
+[01:39:49.287][C][jk_bms_ble:223]:   Icon: 'mdi:identifier'
+[01:39:49.287][C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Charging Switch'
+[01:39:49.301][C][jk_bms_ble.switch:088]:   Restore Mode: always OFF
+[01:39:49.308][C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[01:39:49.310][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:39:49.319][C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Discharging Switch'
+[01:39:49.320][C][jk_bms_ble.switch:088]:   Restore Mode: always OFF
+[01:39:49.320][C][jk_bms_ble.switch:223]:   Icon: 'mdi:battery-charging-50'
+[01:39:49.336][C][jk_bms_ble.switch:088]: JkBmsBle Switch 'Balancer Switch'
+[01:39:49.337][C][jk_bms_ble.switch:088]:   Restore Mode: always OFF
+[01:39:49.341][C][jk_bms_ble.switch:223]:   Icon: 'mdi:seesaw'
+[01:39:49.431][C][esp32_ble:663]: BLE:
+[01:39:49.437][C][esp32_ble:663]:   MAC address: 5C:01:3B:68:84:3E
+[01:39:49.437][C][esp32_ble:663]:   IO Capability: none
+[01:39:49.463][C][ble_client:026]: BLE Client:
+[01:39:49.538][C][sntp:058]: SNTP Time:
+[01:39:49.538][C][sntp:061]:   Server 0: '0.pool.ntp.org'
+[01:39:49.538][C][sntp:061]:   Server 1: '1.pool.ntp.org'
+[01:39:49.553][C][sntp:061]:   Server 2: '2.pool.ntp.org'
+[01:39:49.553][C][time:051]: Timezone: UTC+6:00
+[01:39:49.561][C][time:055]: Current time: 1970-01-01 06:00:01
+[01:39:49.561][C][http_request:012]: HTTP Request:
+[01:39:49.567][C][http_request:012]:   Timeout: 4000ms
+[01:39:49.570][C][http_request:012]:   User-Agent: ESPHome/2026.6.5 (https://esphome.io)
+[01:39:49.570][C][http_request:012]:   Follow redirects: YES
+[01:39:49.570][C][http_request:012]:   Redirect limit: 3
+[01:39:49.570][C][http_request:020]:   Watchdog Timeout: 15000ms
+[01:39:49.587][C][http_request.idf:029]:   Buffer Size RX: 512
+[01:39:49.587][C][http_request.idf:029]:   Buffer Size TX: 512
+[01:39:49.587][C][http_request.idf:029]:   Custom CA Certificate: NO
+[01:39:49.587][C][mdns:230]: mDNS:
+[01:39:49.587][C][mdns:230]:   Hostname: jk-bms
+[01:39:49.762][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:39:54.752][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:39:56.186][I][wifi:1434]: - 'IoT' (1E:82:C4:DE:46:46) [01:39:56.186][I][wifi:1434]: - 'IoT' (1E:82:C4:DE:46:46) \u2582\u2584\u2586\u2588 Ch: 6 -82dB P:0
+[01:39:56.197][I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority 0, attempt 1/2 in phase SCAN_CONNECTING)...
+[01:39:57.535][I][wifi:1575]: Connected
+[01:39:57.546][W][component:405]: wifi cleared Warning flag
+[01:39:59.765][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:40:00.800][D][esp-idf:000][BTU_TASK]: W (26799) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:40:01.350]ELx2000
+[01:40:01.450][D][esp-idf:000][BTU_TASK]: W (27444) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:40:04.766][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:40:08.951][D][esp-idf:000][BTU_TASK]: W (34941) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:40:09.764][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:40:10.240][D][esp-idf:000][BTU_TASK]: W (36235) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:40:10.328][D][esp-idf:000][BTU_TASK]: W (36324) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:40:14.766][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:40:15.119][D][esp-idf:000][BTU_TASK]: W (41109) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:40:15.214][D][esp-idf:000][BTU_TASK]: W (41211) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:40:15.649][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:40:19.761][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:40:21.401][D][sntp:099]: Synchronized time: 2026-10-22 01:40:21
+[01:40:22.277]llcp prog: 554 1 296 0 0
+[01:40:22.294]llcp prog: 555 1 396 0 0
+[01:40:22.455]llcp prog: 571 1 496 0 0
+[01:40:22.826][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[01:40:22.843][I][firebase:389]: BLE connected, uploads paused for 30000 ms
+[01:40:22.843][I][jk_bms_ble:513]: Request device info
+[01:40:22.858][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[01:40:22.864][D][ble_client:056]: All clients established, services released
+[01:40:22.994][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:40:22.994][I][jk_bms_ble:1680]:   Uptime: 3491700 s
+[01:40:22.994][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:40:23.009][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:40:23.012][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:40:23.012][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:40:23.022][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:40:23.026][I][jk_bms_ble:1774]:   Hardware option: 
+[01:40:23.030][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:40:23.030][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:40:23.038][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:40:24.763][I][jk_bms_ble:542]: Request status notification
+[01:40:24.775][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[01:40:25.046][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[01:40:25.046][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[01:40:25.058][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[01:40:25.059][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[01:40:25.059][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[01:40:25.076][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[01:40:25.076][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[01:40:25.089][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[01:40:25.093][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[01:40:25.093][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[01:40:25.108][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[01:40:25.109][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[01:40:25.121][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[01:40:25.126][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[01:40:25.126][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[01:40:25.141][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[01:40:25.147][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[01:40:25.153][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[01:40:25.158][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[01:40:25.159][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[01:40:25.169][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[01:40:25.176][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[01:40:25.184][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[01:40:25.191][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[01:40:25.196][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[01:40:25.196][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[01:40:25.210][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[01:40:25.216][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[01:40:25.217][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[01:40:25.226][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[01:40:25.226][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[01:40:25.242][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[01:40:25.246][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[01:40:25.246][I][jk_bms_ble:1379]:   Device address: 2
+[01:40:25.258][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[01:40:25.259][I][jk_bms_ble:1404]:   Heating switch: OFF
+[01:40:25.263][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[01:40:25.272][I][jk_bms_ble:1413]:   Special charger: OFF
+[01:40:25.276][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[01:40:25.276][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:40:25.288][I][jk_bms_ble:1680]:   Uptime: 3491700 s
+[01:40:25.293][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:40:25.299][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:40:25.299][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:40:25.308][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:40:25.309][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:40:25.309][I][jk_bms_ble:1774]:   Hardware option: 
+[01:40:25.322][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:40:25.325][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:40:25.326][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:40:25.738][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:25.745][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:25.745][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:25.754][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:25.760][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:25.760][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:25.770][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:25.779][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:25.786][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:25.794][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:25.794][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:25.794][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:25.810][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:25.810][D][jk_bms_ble:901]: Heating: OFF
+[01:40:25.810][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:25.827][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:25.827][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:25.827][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:25.843][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:25.843][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:25.858][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:25.859][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:25.859][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:25.859][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:27.886][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:27.892][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:27.900][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:27.900][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:27.907][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:27.912][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:27.912][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:27.928][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:27.928][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:27.941][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:27.950][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:27.955][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:27.958][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:27.962][D][jk_bms_ble:901]: Heating: OFF
+[01:40:27.962][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:27.975][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:27.975][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:27.988][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:27.995][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:27.995][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:28.004][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:28.008][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:28.015][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:28.019][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:30.274][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:30.283][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:30.290][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:30.292][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:30.293][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:30.303][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:30.308][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:30.308][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:30.325][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:30.331][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:30.340][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:30.341][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:30.341][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:30.357][D][jk_bms_ble:901]: Heating: OFF
+[01:40:30.358][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:30.361][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:30.372][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:30.378][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:30.380][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:30.391][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:30.395][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:30.398][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:30.406][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:30.408][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:32.341][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:32.357][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:32.357][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:32.366][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:32.372][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:32.374][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:32.374][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:32.390][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:32.390][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:32.408][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:32.412][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:32.414][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:32.423][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:32.426][D][jk_bms_ble:901]: Heating: OFF
+[01:40:32.426][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:32.440][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:32.440][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:32.453][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:32.457][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:32.457][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:32.469][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:32.473][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:32.473][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:32.473][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:34.773][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:34.785][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:34.790][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:34.790][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:34.790][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:34.805][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:34.806][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:34.822][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:34.823][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:34.834][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:34.840][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:34.840][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:34.853][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:34.856][D][jk_bms_ble:901]: Heating: OFF
+[01:40:34.856][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:34.865][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:34.873][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:34.873][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:34.888][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:34.890][D][jk_bms_ble:911]: Battery voltage: 13.10 V
+[01:40:34.890][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:34.890][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:34.906][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:34.906][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:37.024][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:37.032][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:37.039][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:37.040][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:37.047][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:37.053][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:37.055][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:37.068][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:37.072][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:37.084][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:37.089][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:37.092][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:37.100][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:37.105][D][jk_bms_ble:901]: Heating: OFF
+[01:40:37.105][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:37.116][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:37.122][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:37.122][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:37.132][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:37.139][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:37.139][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:37.147][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:37.155][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:37.155][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:39.376][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:39.387][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:39.391][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:39.394][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:39.394][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:39.406][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:39.411][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:39.423][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:39.427][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:39.437][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:39.437][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:39.437][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:39.451][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:39.451][D][jk_bms_ble:901]: Heating: OFF
+[01:40:39.451][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:39.468][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:39.468][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:39.468][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:39.483][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:39.483][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:39.499][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:39.499][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:39.510][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:39.510][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:41.437][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:41.442][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:41.451][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:41.453][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:41.455][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:41.455][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:41.471][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:41.475][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:41.486][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:41.492][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:41.499][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:41.499][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:41.499][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:41.518][D][jk_bms_ble:901]: Heating: OFF
+[01:40:41.518][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:41.518][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:41.531][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:41.531][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:41.546][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:41.553][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:41.553][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:41.562][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:41.563][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:41.570][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:43.786][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:43.793][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:43.799][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:43.802][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:43.806][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:43.811][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:43.822][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:43.822][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:43.834][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:43.840][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:43.850][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:43.855][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:43.860][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:43.866][D][jk_bms_ble:901]: Heating: OFF
+[01:40:43.868][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:43.877][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:43.882][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:43.887][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:43.887][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:43.898][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:43.904][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:43.908][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:43.914][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:43.914][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:46.126][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:46.135][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:46.139][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:46.143][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:46.149][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:46.154][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:46.163][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:46.170][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:46.177][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:46.185][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:46.186][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:46.195][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:46.198][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:46.202][D][jk_bms_ble:901]: Heating: OFF
+[01:40:46.202][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:46.218][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:46.218][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:46.229][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:46.237][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:46.243][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:46.246][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:46.252][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:46.252][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:46.260][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:48.196][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:48.203][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:48.211][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:48.213][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:48.219][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:48.225][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:48.232][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:48.242][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:48.246][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:48.256][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:48.261][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:48.263][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:48.272][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:48.277][D][jk_bms_ble:901]: Heating: OFF
+[01:40:48.279][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:48.287][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:48.292][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:48.300][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:48.304][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:48.314][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:48.314][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:48.319][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:48.327][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:48.330][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:50.896][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:50.896][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:50.911][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:50.911][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:50.911][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:50.927][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:50.927][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:50.943][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:50.943][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:50.943][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:50.958][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:50.958][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:50.974][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:50.974][D][jk_bms_ble:901]: Heating: OFF
+[01:40:50.974][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:50.989][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:50.995][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:50.995][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:51.005][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:51.005][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:51.005][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:51.021][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:51.021][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:51.021][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:53.260][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:53.260][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:53.277][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:53.282][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:53.285][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:53.293][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:53.298][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:53.310][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:53.315][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:53.323][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:53.326][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:53.335][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:53.339][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:53.346][D][jk_bms_ble:901]: Heating: OFF
+[01:40:53.348][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:53.353][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:53.363][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:53.366][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:53.376][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:53.382][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:53.382][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:53.390][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:53.396][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:53.398][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:55.625][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:55.628][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:55.640][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:55.641][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:55.641][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:55.653][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:55.653][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:55.668][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:55.668][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:55.684][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:55.684][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:55.684][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:55.700][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:55.706][D][jk_bms_ble:901]: Heating: OFF
+[01:40:55.706][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:55.716][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:55.716][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:55.716][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:55.735][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:55.742][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:55.744][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:55.750][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:55.756][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:55.757][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:57.712][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:57.719][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:57.719][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:57.734][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:57.739][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:40:57.743][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:40:57.753][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:40:57.760][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:40:57.766][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:40:57.766][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:40:57.766][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:40:57.782][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:40:57.782][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:40:57.798][D][jk_bms_ble:901]: Heating: OFF
+[01:40:57.801][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:40:57.808][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:40:57.814][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:40:57.821][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:40:57.828][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:40:57.835][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:40:57.835][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:40:57.842][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:40:57.844][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:40:57.850][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:40:58.465][D][firebase:315]: upload start
+[01:40:59.705][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:40:59.713][D][http_request.idf:044]: Received response header, name: content-length, value: 932
+[01:40:59.721][W][component:513]: interval took a long time for an operation (1239 ms), max is 50 ms
+[01:40:59.970][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:40:59.970][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:40:59.986][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:40:59.986][D][jk_bms_ble:865]: Precharge: OFF
+[01:40:59.986][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:00.001][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:00.001][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:00.017][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:00.025][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:00.033][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:00.033][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:00.033][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:00.049][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:00.049][D][jk_bms_ble:901]: Heating: OFF
+[01:41:00.049][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:00.067][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:00.067][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:00.067][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:00.085][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:00.085][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:00.085][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:00.097][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:00.097][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:00.097][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:02.036][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:02.043][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:02.045][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:02.051][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:02.059][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:02.064][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:02.068][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:02.081][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:02.086][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:02.094][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:02.101][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:02.105][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:02.111][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:02.117][D][jk_bms_ble:901]: Heating: OFF
+[01:41:02.118][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:02.129][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:02.133][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:02.139][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:02.147][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:02.152][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:02.155][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:02.159][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:02.167][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:02.170][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:04.116][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:04.125][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:04.130][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:04.133][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:04.139][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:04.144][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:04.146][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:04.160][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:04.160][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:04.175][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:04.175][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:04.175][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:04.191][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:04.191][D][jk_bms_ble:901]: Heating: OFF
+[01:41:04.191][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:04.207][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:04.207][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:04.207][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:04.223][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:04.223][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:04.223][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:04.241][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:04.247][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:04.249][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:06.482][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:06.493][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:06.493][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:06.503][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:06.509][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:06.515][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:06.523][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:06.531][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:06.531][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:06.545][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:06.549][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:06.556][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:06.559][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:06.567][D][jk_bms_ble:901]: Heating: OFF
+[01:41:06.569][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:06.578][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:06.584][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:06.588][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:06.597][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:06.603][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:06.603][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:06.611][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:06.617][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:06.621][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:08.453][D][firebase:315]: upload start
+[01:41:09.528][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:41:09.528][D][http_request.idf:044]: Received response header, name: content-length, value: 929
+[01:41:09.544][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:09.559][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:09.562][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:09.562][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:09.562][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:09.577][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:09.583][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:09.592][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:09.592][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:09.592][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:09.607][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:09.607][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:09.623][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:09.623][D][jk_bms_ble:901]: Heating: OFF
+[01:41:09.623][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:09.639][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:09.639][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:09.639][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:09.662][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:09.667][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:09.667][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:09.671][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:09.680][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:09.684][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:12.037][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:12.047][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:12.052][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:12.052][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:12.061][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:12.066][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:12.069][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:12.079][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:12.088][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:12.096][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:12.096][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:12.105][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:12.109][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:12.109][D][jk_bms_ble:901]: Heating: OFF
+[01:41:12.109][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:12.125][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:12.125][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:12.141][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:12.147][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:12.147][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:12.156][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:12.163][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:12.166][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:12.172][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:14.261][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:14.262][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:14.271][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:14.277][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:14.279][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:14.288][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:14.295][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:14.304][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:14.310][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:14.316][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:14.319][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:14.328][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:14.333][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:14.333][D][jk_bms_ble:901]: Heating: OFF
+[01:41:14.344][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:14.351][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:14.351][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:14.361][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:14.361][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:14.377][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:14.378][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:14.383][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:14.383][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:14.392][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:16.624][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:16.634][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:16.638][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:16.640][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:16.644][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:16.652][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:16.661][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:16.661][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:16.676][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:16.678][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:16.688][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:16.694][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:16.694][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:16.704][D][jk_bms_ble:901]: Heating: OFF
+[01:41:16.710][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:16.716][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:16.720][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:16.727][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:16.737][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:16.743][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:16.744][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:16.744][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:16.753][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:16.760][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:18.462][D][firebase:315]: upload start
+[01:41:19.775][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:41:19.782][D][http_request.idf:044]: Received response header, name: content-length, value: 928
+[01:41:19.792][W][component:513]: interval took a long time for an operation (1308 ms), max is 1240 ms
+[01:41:19.799][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:19.807][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:19.811][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:19.811][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:19.811][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:19.826][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:19.835][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:19.843][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:19.843][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:19.859][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:19.860][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:19.866][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:19.875][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:19.876][D][jk_bms_ble:901]: Heating: OFF
+[01:41:19.876][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:19.892][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:19.893][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:19.903][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:19.910][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:19.915][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:19.919][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:19.925][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:19.927][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:19.927][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:21.819][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:21.826][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:21.826][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:21.835][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:21.842][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:21.843][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:21.851][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:21.859][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:21.867][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:21.876][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:21.876][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:21.876][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:21.892][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:21.892][D][jk_bms_ble:901]: Heating: OFF
+[01:41:21.892][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:21.909][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:21.913][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:21.922][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:21.926][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:21.926][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:21.938][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:21.943][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:21.943][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:21.943][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:24.134][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:24.139][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:24.139][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:24.139][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:24.158][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:24.162][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:24.171][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:24.178][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:24.178][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:24.192][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:24.192][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:24.203][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:24.211][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:24.212][D][jk_bms_ble:901]: Heating: OFF
+[01:41:24.219][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:24.227][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:24.227][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:24.234][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:24.247][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:24.250][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:24.250][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:24.258][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:24.266][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:24.266][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:26.507][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:26.508][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:26.518][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:26.523][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:26.525][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:26.529][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:26.541][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:26.550][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:26.556][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:26.563][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:26.567][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:26.575][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:26.575][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:26.583][D][jk_bms_ble:901]: Heating: OFF
+[01:41:26.590][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:26.594][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:26.594][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:26.608][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:26.608][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:26.623][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:26.625][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:26.625][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:26.625][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:26.638][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:28.457][D][firebase:315]: upload start
+[01:41:29.606][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:41:29.607][D][http_request.idf:044]: Received response header, name: content-length, value: 929
+[01:41:29.623][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:41:29.624][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:41:29.624][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:41:29.639][D][jk_bms_ble:865]: Precharge: OFF
+[01:41:29.644][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:41:29.644][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:41:29.657][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:41:29.657][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:41:29.672][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:41:29.674][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:41:29.687][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:41:29.692][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:41:29.695][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:41:29.701][D][jk_bms_ble:901]: Heating: OFF
+[01:41:29.705][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:41:29.711][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:41:29.717][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:41:29.723][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:41:29.733][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:41:29.739][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:41:29.740][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:41:29.740][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:41:29.749][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:41:29.757][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:41:29.775][W][reconnect_test:295]: Forcing BLE disconnect
+[01:41:29.784][I][esp32_ble_client:167]: [0] [A4:C1:38:0B:82:42] Disconnecting (conn_id: 0).
+[01:41:29.794][D][esp-idf:000][BTU_TASK]: W (115781) BT_HCI: hci cmd send: disconnect: hdl 0x0, rsn:0x13
+[01:41:29.837][D][esp-idf:000][BTU_TASK]: W (115843) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x16 dev_find 1
+[01:41:29.917][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:41:34.918][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:41:35.659][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:41:37.778][D][esp-idf:000][BTU_TASK]: W (123772) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:41:38.840][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:41:39.919][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:41:44.829][D][esp-idf:000][BTU_TASK]: W (130824) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:41:44.919][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:41:45.299][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:41:45.781][D][esp-idf:000][BTU_TASK]: W (131756) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:41:49.783][D][esp-idf:000][BTU_TASK]: W (135762) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:41:49.919][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:41:51.917][D][esp-idf:000][BTU_TASK]: W (137921) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:41:53.346][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:41:54.916][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:41:58.824]llcp prog: 439 1 391 0 0
+[01:41:59.426][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[01:41:59.431][I][firebase:389]: BLE connected, uploads paused for 30000 ms
+[01:41:59.431][I][jk_bms_ble:513]: Request device info
+[01:41:59.448][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[01:41:59.448][D][ble_client:056]: All clients established, services released
+[01:41:59.708][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:41:59.708][I][jk_bms_ble:1680]:   Uptime: 3491700 s
+[01:41:59.714][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:41:59.714][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:41:59.725][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:41:59.731][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:41:59.735][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:41:59.741][I][jk_bms_ble:1774]:   Hardware option: 
+[01:41:59.741][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:41:59.747][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:41:59.747][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:41:59.915][I][jk_bms_ble:542]: Request status notification
+[01:41:59.918][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[01:42:00.096][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[01:42:00.097][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[01:42:00.107][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[01:42:00.113][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[01:42:00.120][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[01:42:00.120][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[01:42:00.131][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[01:42:00.131][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[01:42:00.145][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[01:42:00.145][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[01:42:00.145][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[01:42:00.160][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[01:42:00.166][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[01:42:00.176][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[01:42:00.182][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[01:42:00.183][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[01:42:00.192][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[01:42:00.199][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[01:42:00.199][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[01:42:00.213][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[01:42:00.219][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[01:42:00.224][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[01:42:00.234][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[01:42:00.240][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[01:42:00.246][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[01:42:00.248][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[01:42:00.256][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[01:42:00.264][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[01:42:00.264][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[01:42:00.272][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[01:42:00.281][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[01:42:00.281][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[01:42:00.296][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[01:42:00.301][I][jk_bms_ble:1379]:   Device address: 2
+[01:42:00.305][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[01:42:00.309][I][jk_bms_ble:1404]:   Heating switch: OFF
+[01:42:00.315][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[01:42:00.321][I][jk_bms_ble:1413]:   Special charger: OFF
+[01:42:00.326][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[01:42:00.329][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:42:00.337][I][jk_bms_ble:1680]:   Uptime: 3491700 s
+[01:42:00.337][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:42:00.337][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:42:00.337][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:42:00.353][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:42:00.353][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:42:00.365][I][jk_bms_ble:1774]:   Hardware option: 
+[01:42:00.369][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:42:00.369][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:42:00.369][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:42:00.576][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:00.582][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:00.582][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:00.592][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:00.598][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:00.598][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:00.608][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:00.615][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:00.624][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:00.631][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:00.641][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:00.641][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:00.648][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:00.657][D][jk_bms_ble:901]: Heating: OFF
+[01:42:00.657][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:00.664][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:00.664][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:00.679][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:00.684][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:00.684][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:00.696][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:00.701][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:00.701][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:00.711][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:02.614][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:02.626][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:02.630][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:02.630][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:02.639][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:02.645][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:02.650][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:02.662][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:02.663][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:02.671][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:02.680][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:02.686][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:02.686][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:02.697][D][jk_bms_ble:901]: Heating: OFF
+[01:42:02.697][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:02.697][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:02.713][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:02.713][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:02.728][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:02.730][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:02.730][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:02.730][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:02.747][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:02.747][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:04.946][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:04.959][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:04.964][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:04.967][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:04.967][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:04.978][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:04.986][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:04.995][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:04.996][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:04.996][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:05.013][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:05.013][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:05.024][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:05.030][D][jk_bms_ble:901]: Heating: OFF
+[01:42:05.034][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:05.039][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:05.046][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:05.046][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:05.061][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:05.062][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:05.062][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:05.062][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:05.080][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:05.084][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:07.157][W][jk_bms_ble:615]: CRC check failed! 0x5E != 0x00
+[01:42:07.162][W][jk_bms_ble:615]: CRC check failed! 0xB1 != 0x00
+[01:42:07.378][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:07.395][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:07.395][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:07.395][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:07.411][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:07.415][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:07.424][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:07.431][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:07.437][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:07.445][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:07.451][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:07.457][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:07.462][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:07.462][D][jk_bms_ble:901]: Heating: OFF
+[01:42:07.472][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:07.479][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:07.479][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:07.488][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:07.495][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:07.504][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:07.504][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:07.512][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:07.512][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:07.520][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:09.704][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:09.711][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:09.719][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:09.722][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:09.728][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:09.729][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:09.737][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:09.745][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:09.745][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:09.760][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:09.760][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:09.775][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:09.776][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:09.776][D][jk_bms_ble:901]: Heating: OFF
+[01:42:09.776][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:09.797][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:09.802][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:09.808][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:09.816][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:09.823][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:09.823][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:09.831][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:09.837][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:09.838][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:12.018][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:12.027][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:12.027][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:12.036][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:12.043][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:12.045][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:12.053][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:12.064][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:12.069][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:12.078][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:12.083][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:12.083][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:12.083][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:12.099][D][jk_bms_ble:901]: Heating: OFF
+[01:42:12.099][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:12.111][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:12.115][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:12.115][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:12.131][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:12.131][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:12.131][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:12.145][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:12.147][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:12.147][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:14.081][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:14.092][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:14.092][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:14.092][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:14.109][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:14.113][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:14.116][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:14.126][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:14.126][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:14.143][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:14.148][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:14.156][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:14.162][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:14.162][D][jk_bms_ble:901]: Heating: OFF
+[01:42:14.162][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:14.179][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:14.181][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:14.188][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:14.192][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:14.192][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:14.204][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:14.209][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:14.213][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:14.220][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:16.458][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:16.459][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:16.471][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:16.474][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:16.476][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:16.476][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:16.492][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:16.502][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:16.508][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:16.513][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:16.518][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:16.526][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:16.526][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:16.534][D][jk_bms_ble:901]: Heating: OFF
+[01:42:16.541][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:16.548][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:16.550][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:16.559][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:16.565][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:16.574][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:16.576][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:16.576][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:16.576][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:16.590][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:18.525][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:18.536][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:18.536][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:18.544][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:18.547][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:18.554][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:18.560][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:18.560][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:18.578][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:18.586][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:18.590][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:18.592][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:18.602][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:18.607][D][jk_bms_ble:901]: Heating: OFF
+[01:42:18.608][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:18.619][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:18.623][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:18.630][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:18.639][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:18.644][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:18.644][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:18.652][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:18.656][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:18.660][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:20.525][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:20.535][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:20.541][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:20.541][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:20.549][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:20.556][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:20.563][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:20.573][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:20.575][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:20.585][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:20.591][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:20.595][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:20.599][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:20.608][D][jk_bms_ble:901]: Heating: OFF
+[01:42:20.608][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:20.608][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:20.625][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:20.625][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:20.640][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:20.641][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:20.641][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:20.651][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:20.658][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:20.658][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:22.774][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:22.783][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:22.783][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:22.799][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:22.799][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:22.799][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:22.808][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:22.808][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:22.825][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:22.825][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:22.840][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:22.840][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:22.840][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:22.858][D][jk_bms_ble:901]: Heating: OFF
+[01:42:22.858][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:22.858][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:22.870][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:22.880][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:22.886][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:22.891][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:22.891][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:22.902][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:22.902][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:22.908][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:25.136][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:25.139][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:25.151][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:25.152][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:25.156][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:25.156][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:25.173][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:25.173][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:25.187][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:25.195][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:25.200][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:25.206][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:25.206][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:25.216][D][jk_bms_ble:901]: Heating: OFF
+[01:42:25.216][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:25.228][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:25.232][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:25.239][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:25.248][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:25.248][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:25.256][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:25.256][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:25.264][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:25.264][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:27.136][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:27.151][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:27.151][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:27.151][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:27.167][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:27.177][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:27.183][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:27.190][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:27.190][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:27.206][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:27.212][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:27.212][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:27.221][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:27.224][D][jk_bms_ble:901]: Heating: OFF
+[01:42:27.224][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:27.239][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:27.239][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:27.239][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:27.255][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:27.255][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:27.255][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:27.272][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:27.272][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:27.272][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:27.998][W][jk_bms_ble:615]: CRC check failed! 0x99 != 0x0F
+[01:42:31.582][I][jk_bms_ble:676]: Cell info frame (version 3, 304 bytes) received
+[01:42:31.596][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:31.598][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:31.598][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:31.605][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:31.614][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:31.622][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:31.629][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:31.637][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:31.638][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:31.638][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:31.655][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:31.655][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:31.655][D][jk_bms_ble:901]: Heating: OFF
+[01:42:31.669][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:31.672][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:31.685][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:31.688][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:31.698][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:31.704][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:31.704][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:31.704][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:31.718][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:31.718][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:36.736][D][esp-idf:000][BTU_TASK]: W (182734) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:42:39.922][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:42:42.026][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:42:44.550][D][esp-idf:000][BTU_TASK]: W (190541) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:42:44.823][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:42:44.923][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:42:49.916][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:42:50.026][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[01:42:50.041][I][firebase:389]: BLE connected, uploads paused for 30000 ms
+[01:42:50.048][I][jk_bms_ble:513]: Request device info
+[01:42:50.048][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[01:42:50.063][D][ble_client:056]: All clients established, services released
+[01:42:50.226][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:42:50.226][I][jk_bms_ble:1680]:   Uptime: 3492000 s
+[01:42:50.232][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:42:50.232][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:42:50.242][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:42:50.242][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:42:50.249][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:42:50.258][I][jk_bms_ble:1774]:   Hardware option: 
+[01:42:50.258][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:42:50.266][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:42:50.266][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:42:54.914][I][jk_bms_ble:542]: Request status notification
+[01:42:54.933][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[01:42:55.280][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[01:42:55.292][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[01:42:55.297][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[01:42:55.297][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[01:42:55.312][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[01:42:55.314][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[01:42:55.323][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[01:42:55.329][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[01:42:55.335][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[01:42:55.340][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[01:42:55.347][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[01:42:55.351][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[01:42:55.363][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[01:42:55.365][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[01:42:55.365][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[01:42:55.381][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[01:42:55.381][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[01:42:55.381][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[01:42:55.397][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[01:42:55.401][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[01:42:55.412][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[01:42:55.414][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[01:42:55.414][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[01:42:55.430][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[01:42:55.430][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[01:42:55.443][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[01:42:55.447][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[01:42:55.447][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[01:42:55.462][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[01:42:55.467][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[01:42:55.475][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[01:42:55.481][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[01:42:55.481][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[01:42:55.491][I][jk_bms_ble:1379]:   Device address: 2
+[01:42:55.497][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[01:42:55.497][I][jk_bms_ble:1404]:   Heating switch: OFF
+[01:42:55.507][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[01:42:55.512][I][jk_bms_ble:1413]:   Special charger: OFF
+[01:42:55.517][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[01:42:55.522][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:42:55.529][I][jk_bms_ble:1680]:   Uptime: 3492000 s
+[01:42:55.534][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:42:55.538][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:42:55.538][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:42:55.547][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:42:55.547][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:42:55.547][I][jk_bms_ble:1774]:   Hardware option: 
+[01:42:55.562][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:42:55.564][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:42:55.567][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:42:55.752][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:55.764][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:55.770][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:55.770][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:55.780][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:55.780][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:55.796][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:55.797][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:55.808][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:55.813][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:55.813][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:55.829][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:55.830][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:55.840][D][jk_bms_ble:901]: Heating: OFF
+[01:42:55.840][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:55.847][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:55.856][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:55.862][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:55.869][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:55.872][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:55.879][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:55.880][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:55.880][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:55.880][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:42:57.824][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:42:57.829][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:42:57.840][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:42:57.840][D][jk_bms_ble:865]: Precharge: OFF
+[01:42:57.849][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:42:57.849][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:42:57.863][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:42:57.872][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:42:57.872][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:42:57.879][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:42:57.887][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:42:57.896][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:42:57.896][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:42:57.896][D][jk_bms_ble:901]: Heating: OFF
+[01:42:57.896][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:42:57.913][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:42:57.913][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:42:57.929][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:42:57.929][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:42:57.945][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:42:57.946][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:42:57.946][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:42:57.946][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:42:57.960][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:00.096][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:00.102][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:00.110][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:00.112][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:00.112][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:00.112][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:43:00.126][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:43:00.126][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:43:00.142][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:43:00.154][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:43:00.160][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:43:00.164][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:43:00.164][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:43:00.174][D][jk_bms_ble:901]: Heating: OFF
+[01:43:00.179][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:43:00.182][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:43:00.190][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:43:00.198][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:43:00.207][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:43:00.213][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:43:00.214][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:43:00.214][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:43:00.227][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:43:00.230][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:02.091][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:02.106][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:02.106][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:02.106][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:02.106][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:02.122][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:43:02.132][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:43:02.138][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:43:02.138][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:43:02.153][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:43:02.161][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:43:02.164][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:43:02.169][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:43:02.169][D][jk_bms_ble:901]: Heating: OFF
+[01:43:02.169][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:43:02.185][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:43:02.185][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:43:02.201][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:43:02.201][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:43:02.201][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:43:02.216][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:43:02.216][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:43:02.216][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:43:02.216][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:04.269][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:04.277][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:04.277][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:04.285][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:04.287][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:04.294][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:43:04.294][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:43:04.311][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:43:04.311][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:43:04.327][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:43:04.327][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:43:04.339][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:43:04.344][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:43:04.344][D][jk_bms_ble:901]: Heating: OFF
+[01:43:04.353][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:43:04.360][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:43:04.360][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:43:04.369][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:43:04.380][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:43:04.385][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:43:04.389][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:43:04.394][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:43:04.398][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:43:04.398][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:06.386][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:06.393][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:06.399][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:06.399][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:06.408][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:06.414][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:43:06.418][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:43:06.428][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:43:06.434][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:43:06.442][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:43:06.442][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:43:06.442][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:43:06.460][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:43:06.460][D][jk_bms_ble:901]: Heating: OFF
+[01:43:06.460][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:43:06.478][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:43:06.478][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:43:06.478][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:43:06.490][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:43:06.490][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:43:06.506][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:43:06.506][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:43:06.506][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:43:06.506][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:08.787][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:08.794][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:08.800][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:08.800][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:08.808][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:08.811][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:43:08.822][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:43:08.832][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:43:08.834][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:43:08.844][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:43:08.844][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:43:08.854][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:43:08.860][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:43:08.860][D][jk_bms_ble:901]: Heating: OFF
+[01:43:08.870][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:43:08.876][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:43:08.876][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:43:08.886][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:43:08.893][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:43:08.902][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:43:08.902][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:43:08.909][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:43:08.909][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:43:08.918][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:09.729][W][reconnect_test:295]: Forcing BLE disconnect
+[01:43:09.742][I][esp32_ble_client:167]: [0] [A4:C1:38:0B:82:42] Disconnecting (conn_id: 0).
+[01:43:09.745][D][esp-idf:000][BTU_TASK]: W (215743) BT_HCI: hci cmd send: disconnect: hdl 0x0, rsn:0x13
+[01:43:09.868][D][esp-idf:000][BTU_TASK]: W (215866) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x16 dev_find 1
+[01:43:09.926][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:11.542][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:43:12.025][D][esp-idf:000][BTU_TASK]: W (218022) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:43:14.908][D][esp-idf:000][BTU_TASK]: W (220902) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:43:14.926][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:15.001][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:43:19.923][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:21.989]llcp prog: 583 1 283 0 0
+[01:43:22.038]llcp prog: 588 1 382 0 0
+[01:43:22.135]llcp prog: 597 1 481 0 0
+[01:43:22.226]llcp prog: 606 1 581 0 0
+[01:43:24.928][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:27.458][D][esp-idf:000][BTU_TASK]: W (233458) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:43:28.986][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:43:29.927][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:34.501][D][esp-idf:000][BTU_TASK]: W (240503) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[01:43:34.927][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:37.617][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:43:39.916][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:43.619][D][esp-idf:000][BTU_TASK]: W (249616) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[01:43:44.731][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[01:43:44.922][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:47.764][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[01:43:49.926][W][jk_bms_ble:537]: [A4:C1:38:0B:82:42] Not connected
+[01:43:52.979][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[01:43:52.979][I][firebase:389]: BLE connected, uploads paused for 30000 ms
+[01:43:52.979][I][jk_bms_ble:513]: Request device info
+[01:43:52.996][D][jk_bms_ble:550]: Write register: AA.55.90.EB.97.00.00.00.00.00.00.00.00.00.00.00.00.00.00.11 (20)
+[01:43:52.996][D][ble_client:056]: All clients established, services released
+[01:43:53.147][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:43:53.147][I][jk_bms_ble:1680]:   Uptime: 3492000 s
+[01:43:53.161][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:43:53.162][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:43:53.162][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:43:53.175][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:43:53.179][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:43:53.179][I][jk_bms_ble:1774]:   Hardware option: 
+[01:43:53.179][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:43:53.194][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:43:53.196][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:43:54.912][I][jk_bms_ble:542]: Request status notification
+[01:43:54.930][D][jk_bms_ble:550]: Write register: AA.55.90.EB.96.00.00.00.00.00.00.00.00.00.00.00.00.00.00.10 (20)
+[01:43:55.129][I][jk_bms_ble:1159]: Settings frame (300 bytes) received
+[01:43:55.129][I][jk_bms_ble:1371]:   Con. wire resistance 1: 0.000000 Ohm
+[01:43:55.141][I][jk_bms_ble:1371]:   Con. wire resistance 2: 0.000000 Ohm
+[01:43:55.146][I][jk_bms_ble:1371]:   Con. wire resistance 3: 0.000000 Ohm
+[01:43:55.157][I][jk_bms_ble:1371]:   Con. wire resistance 4: 0.000000 Ohm
+[01:43:55.163][I][jk_bms_ble:1371]:   Con. wire resistance 5: 0.000000 Ohm
+[01:43:55.163][I][jk_bms_ble:1371]:   Con. wire resistance 6: 0.000000 Ohm
+[01:43:55.173][I][jk_bms_ble:1371]:   Con. wire resistance 7: 0.000000 Ohm
+[01:43:55.179][I][jk_bms_ble:1371]:   Con. wire resistance 8: 0.000000 Ohm
+[01:43:55.189][I][jk_bms_ble:1371]:   Con. wire resistance 9: 0.000000 Ohm
+[01:43:55.189][I][jk_bms_ble:1371]:   Con. wire resistance 10: 0.000000 Ohm
+[01:43:55.196][I][jk_bms_ble:1371]:   Con. wire resistance 11: 0.000000 Ohm
+[01:43:55.205][I][jk_bms_ble:1371]:   Con. wire resistance 12: 0.000000 Ohm
+[01:43:55.213][I][jk_bms_ble:1371]:   Con. wire resistance 13: 0.000000 Ohm
+[01:43:55.213][I][jk_bms_ble:1371]:   Con. wire resistance 14: 0.000000 Ohm
+[01:43:55.213][I][jk_bms_ble:1371]:   Con. wire resistance 15: 0.000000 Ohm
+[01:43:55.229][I][jk_bms_ble:1371]:   Con. wire resistance 16: 0.000000 Ohm
+[01:43:55.236][I][jk_bms_ble:1371]:   Con. wire resistance 17: 0.000000 Ohm
+[01:43:55.244][I][jk_bms_ble:1371]:   Con. wire resistance 18: 0.000000 Ohm
+[01:43:55.246][I][jk_bms_ble:1371]:   Con. wire resistance 19: 0.000000 Ohm
+[01:43:55.246][I][jk_bms_ble:1371]:   Con. wire resistance 20: 0.000000 Ohm
+[01:43:55.263][I][jk_bms_ble:1371]:   Con. wire resistance 21: 0.000000 Ohm
+[01:43:55.272][I][jk_bms_ble:1371]:   Con. wire resistance 22: 0.000000 Ohm
+[01:43:55.277][I][jk_bms_ble:1371]:   Con. wire resistance 23: 0.000000 Ohm
+[01:43:55.279][I][jk_bms_ble:1371]:   Con. wire resistance 24: 0.000000 Ohm
+[01:43:55.279][I][jk_bms_ble:1371]:   Con. wire resistance 25: 0.000000 Ohm
+[01:43:55.296][I][jk_bms_ble:1371]:   Con. wire resistance 26: 0.000000 Ohm
+[01:43:55.296][I][jk_bms_ble:1371]:   Con. wire resistance 27: 0.000000 Ohm
+[01:43:55.308][I][jk_bms_ble:1371]:   Con. wire resistance 28: 0.000000 Ohm
+[01:43:55.313][I][jk_bms_ble:1371]:   Con. wire resistance 29: 0.000000 Ohm
+[01:43:55.313][I][jk_bms_ble:1371]:   Con. wire resistance 30: 0.000000 Ohm
+[01:43:55.324][I][jk_bms_ble:1371]:   Con. wire resistance 31: 0.000000 Ohm
+[01:43:55.329][I][jk_bms_ble:1371]:   Con. wire resistance 32: 0.000000 Ohm
+[01:43:55.329][I][jk_bms_ble:1379]:   Device address: 2
+[01:43:55.340][I][jk_bms_ble:1382]:   Precharge time: 0 s
+[01:43:55.346][I][jk_bms_ble:1404]:   Heating switch: OFF
+[01:43:55.349][I][jk_bms_ble:1407]:   GPS Heartbeat: OFF
+[01:43:55.349][I][jk_bms_ble:1413]:   Special charger: OFF
+[01:43:55.363][I][jk_bms_ble:1434]:   Data field enable control 0: 254
+[01:43:55.369][I][jk_bms_ble:1589]: Device info frame (300 bytes) received
+[01:43:55.375][I][jk_bms_ble:1680]:   Uptime: 3492000 s
+[01:43:55.379][I][jk_bms_ble:1686]:   Device name: 12v100aE25
+[01:43:55.379][I][jk_bms_ble:1689]:   Device passcode: 1234
+[01:43:55.379][I][jk_bms_ble:1704]:   Passcode: 6613
+[01:43:55.379][I][jk_bms_ble:1707]:   User data: JK-BMS
+[01:43:55.396][I][jk_bms_ble:1710]:   Setup passcode: 019127
+[01:43:55.396][I][jk_bms_ble:1774]:   Hardware option: 
+[01:43:55.396][I][jk_bms_ble:1824]:   RCV Time: 0.5 h
+[01:43:55.410][I][jk_bms_ble:1828]:   RFV Time: 5.0 h
+[01:43:55.413][I][jk_bms_ble:1843]:   Re-Bulk SOC: 1 %
+[01:43:55.579][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:55.588][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:55.596][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:55.596][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:55.596][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:55.596][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:43:55.613][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:43:55.627][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:43:55.629][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:43:55.638][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:43:55.646][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:43:55.646][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:43:55.646][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:43:55.662][D][jk_bms_ble:901]: Heating: OFF
+[01:43:55.662][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:43:55.662][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:43:55.679][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:43:55.684][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:43:55.692][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:43:55.696][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:43:55.696][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:43:55.696][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:43:55.712][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:43:55.712][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:57.694][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:57.698][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:57.705][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:57.710][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:57.711][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:57.721][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:43:57.728][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:43:57.737][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:43:57.744][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:43:57.751][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:43:57.752][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:43:57.761][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:43:57.764][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:43:57.764][D][jk_bms_ble:901]: Heating: OFF
+[01:43:57.777][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:43:57.780][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:43:57.780][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:43:57.795][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:43:57.795][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:43:57.810][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:43:57.813][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:43:57.814][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:43:57.823][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:43:57.827][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:43:59.980][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:43:59.980][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:43:59.995][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:43:59.995][D][jk_bms_ble:865]: Precharge: OFF
+[01:43:59.995][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:43:59.995][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:00.011][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:00.011][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:00.029][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:00.029][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:00.043][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:00.048][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:00.055][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:00.059][D][jk_bms_ble:901]: Heating: OFF
+[01:44:00.059][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:00.059][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:00.078][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:00.083][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:00.088][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:00.095][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:00.098][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:00.098][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:00.111][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:00.114][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:02.352][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:02.359][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:02.363][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:02.368][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:02.375][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:02.379][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:02.384][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:02.393][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:02.393][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:02.409][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:02.409][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:02.409][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:02.426][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:02.431][D][jk_bms_ble:901]: Heating: OFF
+[01:44:02.434][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:02.442][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:02.448][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:02.454][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:02.462][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:02.467][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:02.470][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:02.476][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:02.480][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:02.480][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:04.425][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:04.441][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:04.447][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:04.449][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:04.452][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:04.459][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:04.468][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:04.475][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:04.475][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:04.492][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:04.492][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:04.492][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:04.509][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:04.509][D][jk_bms_ble:901]: Heating: OFF
+[01:44:04.509][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:04.525][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:04.526][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:04.526][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:04.542][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:04.542][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:04.553][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:04.559][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:04.559][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:04.559][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:06.697][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:06.708][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:06.708][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:06.720][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:06.725][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:06.725][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:06.738][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:06.741][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:06.752][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:06.761][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:06.762][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:06.768][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:06.775][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:06.784][D][jk_bms_ble:901]: Heating: OFF
+[01:44:06.784][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:06.795][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:06.800][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:06.807][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:06.808][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:06.816][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:06.816][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:06.824][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:06.824][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:06.824][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:09.043][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:09.047][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:09.057][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:09.058][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:09.064][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:09.071][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:09.076][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:09.086][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:09.092][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:09.097][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:09.107][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:09.107][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:09.114][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:09.123][D][jk_bms_ble:901]: Heating: OFF
+[01:44:09.125][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:09.125][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:09.138][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:09.138][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:09.154][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:09.159][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:09.161][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:09.167][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:09.173][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:09.176][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:11.422][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:11.427][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:11.427][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:11.439][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:11.440][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:11.446][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:11.458][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:11.466][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:11.472][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:11.480][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:11.485][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:11.490][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:11.496][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:11.498][D][jk_bms_ble:901]: Heating: OFF
+[01:44:11.503][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:11.513][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:11.519][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:11.524][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:11.526][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:11.535][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:11.540][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:11.540][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:11.551][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:11.551][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:13.443][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:13.449][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:13.456][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:13.458][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:13.465][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:13.471][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:13.479][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:13.488][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:13.492][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:13.495][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:13.507][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:13.511][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:13.511][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:13.523][D][jk_bms_ble:901]: Heating: OFF
+[01:44:13.526][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:13.534][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:13.540][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:13.545][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:13.555][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:13.558][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:13.558][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:13.563][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:13.574][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:13.576][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:15.454][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:15.459][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:15.467][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:15.469][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:15.473][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:15.481][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:15.490][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:15.498][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:15.504][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:15.512][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:15.517][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:15.522][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:15.529][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:15.534][D][jk_bms_ble:901]: Heating: OFF
+[01:44:15.534][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:15.545][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:15.551][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:15.556][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:15.562][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:15.568][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:15.573][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:15.578][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:15.578][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:15.585][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:17.752][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:17.760][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:17.760][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:17.768][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:17.774][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:17.774][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:17.788][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:17.791][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:17.800][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:17.808][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:17.816][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:17.821][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:17.824][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:17.832][D][jk_bms_ble:901]: Heating: OFF
+[01:44:17.832][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:17.841][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:17.849][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:17.854][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:17.857][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:17.867][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:17.871][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:17.872][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:17.882][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:17.882][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:19.813][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:19.818][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:19.818][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:19.818][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:19.834][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:19.841][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:19.850][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:19.856][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:19.856][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:19.873][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:19.873][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:19.882][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:19.890][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:19.890][D][jk_bms_ble:901]: Heating: OFF
+[01:44:19.898][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:19.906][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:19.906][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:19.915][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:19.922][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:19.930][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:19.933][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:19.938][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:19.943][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:19.943][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:22.187][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:22.202][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:22.203][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:22.203][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:22.214][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:22.220][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:22.230][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:22.237][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:22.242][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:22.252][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:22.254][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:22.262][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:22.269][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:22.270][D][jk_bms_ble:901]: Heating: OFF
+[01:44:22.270][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:22.285][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:22.287][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:22.287][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:22.303][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:22.303][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:22.303][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:22.319][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:22.320][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:22.320][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:24.541][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:24.550][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:24.557][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:24.558][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:24.563][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:24.571][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:24.576][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:24.587][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:24.593][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:24.601][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:24.607][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:24.612][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:24.617][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:24.623][D][jk_bms_ble:901]: Heating: OFF
+[01:44:24.626][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:24.635][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:24.638][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:24.644][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:24.652][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:24.659][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:24.659][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:24.668][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:24.673][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:24.673][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:26.910][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:26.915][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:26.915][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:26.915][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:26.934][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:26.937][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:26.946][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:26.957][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:26.959][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:26.970][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:26.976][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:26.979][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:26.988][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:26.994][D][jk_bms_ble:901]: Heating: OFF
+[01:44:26.994][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:27.004][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:27.010][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:27.013][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:27.024][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:27.029][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:27.031][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:27.035][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:27.042][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:27.042][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:28.467][D][firebase:315]: upload start
+[01:44:29.816][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:44:29.832][D][http_request.idf:044]: Received response header, name: content-length, value: 929
+[01:44:29.832][W][component:513]: interval took a long time for an operation (1361 ms), max is 1310 ms
+[01:44:29.852][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:29.852][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:29.864][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:29.868][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:29.868][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:29.880][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:29.885][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:29.896][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:29.902][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:29.902][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:29.912][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:29.919][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:29.928][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:29.928][D][jk_bms_ble:901]: Heating: OFF
+[01:44:29.935][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:29.944][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:29.944][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:29.951][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:29.963][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:29.964][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:29.964][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:29.976][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:29.976][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:29.985][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:32.031][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:32.034][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:32.034][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:32.047][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:32.051][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:32.051][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:32.068][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:32.074][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:32.074][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:32.090][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:32.090][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:32.102][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:32.106][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:32.106][D][jk_bms_ble:901]: Heating: OFF
+[01:44:32.116][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:32.121][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:32.121][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:32.134][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:32.140][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:32.148][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:32.150][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:32.156][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:32.156][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:32.164][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:34.043][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:34.050][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:34.056][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:34.059][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:34.059][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:34.066][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:34.079][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:34.083][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:34.091][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:34.099][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:34.105][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:34.107][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:34.116][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:34.123][D][jk_bms_ble:901]: Heating: OFF
+[01:44:34.123][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:34.133][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:34.139][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:34.139][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:34.149][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:34.159][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:34.159][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:34.166][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:34.169][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:34.169][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:36.216][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:36.231][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:36.235][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:36.235][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:36.248][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:36.251][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:36.258][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:36.264][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:36.274][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:36.284][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:36.289][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:36.295][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:36.300][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:36.306][D][jk_bms_ble:901]: Heating: OFF
+[01:44:36.306][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:36.314][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:36.314][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:36.314][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:36.330][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:36.330][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:36.330][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:36.346][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:36.355][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:36.355][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:38.466][D][firebase:315]: upload start
+[01:44:39.659][D][http_request.idf:044]: Received response header, name: content-type, value: application/json; charset=utf-8
+[01:44:39.665][D][http_request.idf:044]: Received response header, name: content-length, value: 930
+[01:44:39.676][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:39.681][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:39.692][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:39.692][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:39.698][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:39.698][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:39.714][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:39.714][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:39.724][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:39.731][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:39.742][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:39.748][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:39.752][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:39.756][D][jk_bms_ble:901]: Heating: OFF
+[01:44:39.756][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:39.764][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:39.764][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:39.781][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:39.786][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:39.786][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:39.804][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:39.804][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:39.804][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:39.813][I][jk_bms_ble:928]: Emergency switch: OFF
+[01:44:41.913][I][jk_bms_ble:676]: Cell info frame (version 3, 300 bytes) received
+[01:44:41.919][D][jk_bms_ble:788]: Wire resistance warning bitmask: 0x00 0x00 0x00 0x00
+[01:44:41.928][D][jk_bms_ble:844]: Balancing indicator (legacy): NO
+[01:44:41.930][D][jk_bms_ble:865]: Precharge: OFF
+[01:44:41.936][D][jk_bms_ble:868]: User alarm: 0x00 0x00 (always 0xC5 0x09?)
+[01:44:41.939][D][jk_bms_ble:885]: Balancing indicator (new): NO
+[01:44:41.950][D][jk_bms_ble:887]: Discharge overcurrent protection release timer: 0
+[01:44:41.954][D][jk_bms_ble:888]: Discharge short circuit protection release timer: 0
+[01:44:41.963][D][jk_bms_ble:889]: Charge overcurrent protection release timer: 0
+[01:44:41.972][D][jk_bms_ble:890]: Charge short circuit protection release timer: 0
+[01:44:41.976][D][jk_bms_ble:891]: Undervoltage protection release timer: 0
+[01:44:41.982][D][jk_bms_ble:892]: Overvoltage protection release timer: 0
+[01:44:41.988][D][jk_bms_ble:893]: Temperature sensor absent bitmask: 255
+[01:44:41.993][D][jk_bms_ble:901]: Heating: OFF
+[01:44:41.996][D][jk_bms_ble:904]: Time emergency: 0 s
+[01:44:42.004][D][jk_bms_ble:905]: Discharge current correction factor: 10362
+[01:44:42.010][D][jk_bms_ble:906]: Charging current sensor voltage: 0.000
+[01:44:42.014][D][jk_bms_ble:907]: Discharging current sensor voltage: 0.010
+[01:44:42.024][D][jk_bms_ble:908]: Battery voltage correction factor: 1075851264.000000
+[01:44:42.030][D][jk_bms_ble:911]: Battery voltage: 13.09 V
+[01:44:42.030][D][jk_bms_ble:912]: Heating current: 0.000 A
+[01:44:42.030][D][jk_bms_ble:915]: Charger Plugged: OFF
+[01:44:42.043][D][jk_bms_ble:917]: PCL Module State: OFF
+[01:44:42.047][I][jk_bms_ble:928]: Emergency switch: OFF
