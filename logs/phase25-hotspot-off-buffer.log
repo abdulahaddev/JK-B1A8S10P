@@ -1,0 +1,779 @@
+# opened COM8 at 00:44:53 without reset
+[  0.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  0.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  2.53] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  2.53] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  4.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  4.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  7.20] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  7.20] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  9.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  9.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 11.54] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 11.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 13.92] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 13.92] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 16.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 16.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 18.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 18.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 21.05] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 21.05] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 23.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 23.47] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 25.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 25.84] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 28.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 28.17] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 30.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 30.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 32.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 32.59] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 34.91] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 34.91] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 37.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 37.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 39.72] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 39.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 42.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 42.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 44.42] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 44.42] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 46.78] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 46.78] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 49.18] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 49.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 51.22] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 51.23] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 53.54] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 53.54] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 55.90] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 55.90] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 58.27] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 58.27] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 60.64] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 60.65] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 63.04] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 63.04] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 65.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 65.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 66.22] [W][wifi_esp32:852]: Disconnected ssid='IoT' bssid=1E:82:C4:DE:46:46 reason='Unspecified'
+[ 66.23] [W][wifi:810]: Connection lost; reconnecting
+[ 66.27] [W][component:382]: wifi set Warning flag: scanning for networks
+[ 67.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 67.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 69.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 69.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 71.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 71.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 74.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 74.16] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 75.03] [I][wifi:1438]: - 'IoT' (1E:82:C4:DE:46:46) ▂▄▆█
+[ 75.04] [I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority 0, attempt 1/2 in phase SCAN_CONNECTING)...
+[ 76.52] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 76.52] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 78.87] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 78.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 79.88] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[ 79.89] [W][wifi:1678]: Connecting to network failed (callback)
+[ 79.90] [I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority 0, attempt 2/2 in phase SCAN_CONNECTING)...
+[ 79.91] [W][wifi_esp32:852]: Disconnected ssid='IoT' bssid=00:00:00:00:00:00 reason='Unspecified'
+[ 79.92] [W][wifi:1678]: Connecting to network failed (callback)
+[ 79.92] [W][wifi:736]: Restarting adapter
+[ 80.41] [W][wifi:1695]: Connecting to network failed
+[ 81.31] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 81.32] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 83.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 83.62] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 85.63] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 85.63] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 87.69] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 87.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 89.23] [W][wifi:1458]: No networks found
+[ 89.23] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[ 90.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 90.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 92.33] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 92.33] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 94.08] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[ 94.08] [W][wifi:1678]: Connecting to network failed (callback)
+[ 94.08] [W][wifi:736]: Restarting adapter
+[ 94.58] [W][wifi:1689]: Network no longer found
+[ 94.72] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 94.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 96.73] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 96.73] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 99.10] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 99.10] [I][jk_bms_ble:939]: Emergency switch: OFF
+[101.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[101.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[103.39] [W][wifi:1458]: No networks found
+[103.40] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[103.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[103.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[105.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[105.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[107.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[107.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[108.24] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[108.25] [W][wifi:1678]: Connecting to network failed (callback)
+[108.26] [W][wifi:736]: Restarting adapter
+[108.76] [W][wifi:1689]: Network no longer found
+[110.15] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[110.15] [I][jk_bms_ble:939]: Emergency switch: OFF
+[112.54] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[112.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[114.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[114.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[116.93] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[116.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[117.57] [W][wifi:1458]: No networks found
+[117.59] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[119.26] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[119.26] [I][jk_bms_ble:939]: Emergency switch: OFF
+[121.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[121.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[122.42] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[122.42] [W][wifi:1678]: Connecting to network failed (callback)
+[122.44] [W][wifi:736]: Restarting adapter
+[122.92] [W][wifi:1689]: Network no longer found
+[123.64] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[123.64] [I][jk_bms_ble:939]: Emergency switch: OFF
+[126.04] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[126.04] [I][jk_bms_ble:939]: Emergency switch: OFF
+[128.48] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[128.49] [I][jk_bms_ble:939]: Emergency switch: OFF
+[130.74] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[130.75] [I][jk_bms_ble:939]: Emergency switch: OFF
+[131.74] [W][wifi:1458]: No networks found
+[131.75] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[132.82] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[132.83] [I][jk_bms_ble:939]: Emergency switch: OFF
+[135.10] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[135.10] [I][jk_bms_ble:939]: Emergency switch: OFF
+[136.60] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[136.60] [W][wifi:1678]: Connecting to network failed (callback)
+[136.60] [W][wifi:736]: Restarting adapter
+[137.10] [W][wifi:1689]: Network no longer found
+[137.48] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[137.48] [I][jk_bms_ble:939]: Emergency switch: OFF
+[139.50] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[139.50] [I][jk_bms_ble:939]: Emergency switch: OFF
+[141.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[141.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[143.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[143.88] [I][jk_bms_ble:939]: Emergency switch: OFF
+[145.93] [W][wifi:1458]: No networks found
+[145.94] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[146.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[146.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[148.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[148.60] [I][jk_bms_ble:939]: Emergency switch: OFF
+[150.65] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[150.65] [I][jk_bms_ble:939]: Emergency switch: OFF
+[150.78] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[150.78] [W][wifi:1678]: Connecting to network failed (callback)
+[150.80] [W][wifi:736]: Restarting adapter
+[151.29] [W][wifi:1689]: Network no longer found
+[152.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[152.98] [I][jk_bms_ble:939]: Emergency switch: OFF
+[154.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[154.98] [I][jk_bms_ble:939]: Emergency switch: OFF
+[157.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[157.29] [I][jk_bms_ble:939]: Emergency switch: OFF
+[159.78] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[159.78] [I][jk_bms_ble:939]: Emergency switch: OFF
+[160.11] [W][wifi:1458]: No networks found
+[160.12] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[162.03] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[162.04] [I][jk_bms_ble:939]: Emergency switch: OFF
+[164.11] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[164.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[164.96] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[164.96] [W][wifi:1678]: Connecting to network failed (callback)
+[164.96] [W][wifi:736]: Restarting adapter
+[165.46] [W][wifi:1689]: Network no longer found
+[166.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[166.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[168.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[168.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[170.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[170.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[173.10] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[173.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[174.28] [W][wifi:1458]: No networks found
+[174.29] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[175.14] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[175.15] [I][jk_bms_ble:939]: Emergency switch: OFF
+[177.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[177.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[179.12] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[179.14] [W][wifi:1678]: Connecting to network failed (callback)
+[179.14] [W][wifi:736]: Restarting adapter
+[179.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[179.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[179.64] [W][wifi:1689]: Network no longer found
+[181.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[181.85] [I][jk_bms_ble:939]: Emergency switch: OFF
+[184.28] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[184.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[186.65] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[186.65] [I][jk_bms_ble:939]: Emergency switch: OFF
+[188.45] [W][wifi:1458]: No networks found
+[188.45] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[188.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[188.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[190.98] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[190.99] [I][jk_bms_ble:939]: Emergency switch: OFF
+[193.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[193.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[193.32] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[193.32] [W][wifi:1678]: Connecting to network failed (callback)
+[193.32] [W][wifi:736]: Restarting adapter
+[193.82] [W][wifi:1689]: Network no longer found
+[195.34] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[195.34] [I][jk_bms_ble:939]: Emergency switch: OFF
+[197.66] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[197.67] [I][jk_bms_ble:939]: Emergency switch: OFF
+[199.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[199.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[202.11] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[202.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[202.63] [W][wifi:1458]: No networks found
+[202.65] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[204.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[204.48] [I][jk_bms_ble:939]: Emergency switch: OFF
+[206.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[206.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[207.49] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[207.50] [W][wifi:1678]: Connecting to network failed (callback)
+[207.50] [W][wifi:736]: Restarting adapter
+[207.99] [W][wifi:1689]: Network no longer found
+[209.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[209.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[211.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[211.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[213.54] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[213.54] [I][jk_bms_ble:939]: Emergency switch: OFF
+[215.92] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[215.92] [I][jk_bms_ble:939]: Emergency switch: OFF
+[216.82] [W][wifi:1458]: No networks found
+[216.82] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[217.93] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[217.93] [I][jk_bms_ble:939]: Emergency switch: OFF
+[220.26] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[220.26] [I][jk_bms_ble:939]: Emergency switch: OFF
+[221.67] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[221.67] [W][wifi:1678]: Connecting to network failed (callback)
+[221.67] [W][wifi:736]: Restarting adapter
+[222.17] [W][wifi:1689]: Network no longer found
+[222.27] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[222.29] [I][jk_bms_ble:939]: Emergency switch: OFF
+[224.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[224.29] [I][jk_bms_ble:939]: Emergency switch: OFF
+[226.64] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[226.64] [I][jk_bms_ble:939]: Emergency switch: OFF
+[228.95] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[228.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[231.00] [W][wifi:1458]: No networks found
+[231.01] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[231.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[231.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[233.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[233.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[235.69] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[235.69] [I][jk_bms_ble:939]: Emergency switch: OFF
+[235.85] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[235.86] [W][wifi:1678]: Connecting to network failed (callback)
+[235.86] [W][wifi:736]: Restarting adapter
+[236.36] [W][wifi:1689]: Network no longer found
+[237.70] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[237.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[240.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[240.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[242.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[242.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[244.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[244.83] [I][jk_bms_ble:939]: Emergency switch: OFF
+[245.19] [W][wifi:1458]: No networks found
+[245.20] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[246.85] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[246.85] [I][jk_bms_ble:939]: Emergency switch: OFF
+[249.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[249.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[250.05] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[250.05] [W][wifi:1678]: Connecting to network failed (callback)
+[250.06] [W][wifi:736]: Restarting adapter
+[250.55] [W][wifi:1689]: Network no longer found
+[251.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[251.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[253.50] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[253.51] [I][jk_bms_ble:939]: Emergency switch: OFF
+[255.54] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[255.54] [I][jk_bms_ble:939]: Emergency switch: OFF
+[257.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[257.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[259.38] [W][wifi:1458]: No networks found
+[259.38] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[259.85] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[259.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[262.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[262.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[264.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[264.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[264.24] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[264.26] [W][wifi:1678]: Connecting to network failed (callback)
+[264.26] [W][wifi:736]: Restarting adapter
+[264.76] [W][wifi:1689]: Network no longer found
+[266.23] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[266.23] [I][jk_bms_ble:939]: Emergency switch: OFF
+[268.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[268.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[270.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[270.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[273.31] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[273.32] [I][jk_bms_ble:939]: Emergency switch: OFF
+[273.59] [W][wifi:1458]: No networks found
+[273.59] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[275.67] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[275.69] [I][jk_bms_ble:939]: Emergency switch: OFF
+[278.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[278.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[278.44] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[278.44] [W][wifi:1678]: Connecting to network failed (callback)
+[278.45] [W][wifi:736]: Restarting adapter
+[278.95] [W][wifi:1689]: Network no longer found
+[280.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[280.47] [I][jk_bms_ble:939]: Emergency switch: OFF
+[282.54] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[282.54] [I][jk_bms_ble:939]: Emergency switch: OFF
+[284.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[284.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[287.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[287.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[287.77] [W][wifi:1458]: No networks found
+[287.78] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[289.18] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[289.20] [I][jk_bms_ble:939]: Emergency switch: OFF
+[291.53] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[291.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[292.65] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[292.65] [W][wifi:1678]: Connecting to network failed (callback)
+[292.65] [W][wifi:736]: Restarting adapter
+[293.16] [W][wifi:1689]: Network no longer found
+[293.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[293.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[295.58] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[295.58] [I][jk_bms_ble:939]: Emergency switch: OFF
+[297.92] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[297.92] [I][jk_bms_ble:939]: Emergency switch: OFF
+[300.27] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[300.27] [I][jk_bms_ble:939]: Emergency switch: OFF
+[301.97] [W][wifi:1458]: No networks found
+[301.98] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[302.66] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[302.66] [I][jk_bms_ble:939]: Emergency switch: OFF
+[305.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[305.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[306.83] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[306.84] [W][wifi:1678]: Connecting to network failed (callback)
+[306.85] [W][wifi:736]: Restarting adapter
+[307.34] [W][wifi:1689]: Network no longer found
+[307.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[307.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[309.76] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[309.76] [I][jk_bms_ble:939]: Emergency switch: OFF
+[312.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[312.16] [I][jk_bms_ble:939]: Emergency switch: OFF
+[314.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[314.17] [I][jk_bms_ble:939]: Emergency switch: OFF
+[316.16] [W][wifi:1458]: No networks found
+[316.16] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[316.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[316.49] [I][jk_bms_ble:939]: Emergency switch: OFF
+[318.89] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[318.89] [I][jk_bms_ble:939]: Emergency switch: OFF
+[320.88] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[320.89] [I][jk_bms_ble:939]: Emergency switch: OFF
+[321.01] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[321.01] [W][wifi:1678]: Connecting to network failed (callback)
+[321.01] [W][wifi:736]: Restarting adapter
+[321.51] [W][wifi:1689]: Network no longer found
+[323.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[323.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[325.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[325.59] [I][jk_bms_ble:939]: Emergency switch: OFF
+[327.61] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[327.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[329.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[329.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[330.33] [W][wifi:1458]: No networks found
+[330.34] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[332.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[332.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[334.77] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[334.77] [I][jk_bms_ble:939]: Emergency switch: OFF
+[335.19] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[335.19] [W][wifi:1678]: Connecting to network failed (callback)
+[335.19] [W][wifi:736]: Restarting adapter
+[335.70] [W][wifi:1689]: Network no longer found
+[337.07] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[337.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[339.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[339.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[341.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[341.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[343.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[343.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[344.53] [W][wifi:1458]: No networks found
+[344.54] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[346.20] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[346.20] [I][jk_bms_ble:939]: Emergency switch: OFF
+[348.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[348.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[349.37] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[349.38] [W][wifi:1678]: Connecting to network failed (callback)
+[349.38] [W][wifi:736]: Restarting adapter
+[349.88] [W][wifi:1689]: Network no longer found
+[350.58] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[350.58] [I][jk_bms_ble:939]: Emergency switch: OFF
+[352.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[352.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[355.37] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[355.37] [I][jk_bms_ble:939]: Emergency switch: OFF
+[357.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[357.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[358.70] [W][wifi:1458]: No networks found
+[358.71] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[359.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[359.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[361.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[361.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[363.55] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[363.56] [W][wifi:1678]: Connecting to network failed (callback)
+[363.56] [W][wifi:736]: Restarting adapter
+[364.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[364.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[364.06] [W][wifi:1689]: Network no longer found
+[366.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[366.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[368.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[368.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[370.76] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[370.76] [I][jk_bms_ble:939]: Emergency switch: OFF
+[372.88] [W][wifi:1458]: No networks found
+[372.89] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[373.11] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[373.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[375.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[375.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[377.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[377.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[377.74] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[377.74] [W][wifi:1678]: Connecting to network failed (callback)
+[377.74] [W][wifi:736]: Restarting adapter
+[378.25] [W][wifi:1689]: Network no longer found
+[379.51] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[379.51] [I][jk_bms_ble:939]: Emergency switch: OFF
+[381.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[381.84] [I][jk_bms_ble:939]: Emergency switch: OFF
+[384.22] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[384.22] [I][jk_bms_ble:939]: Emergency switch: OFF
+[386.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[386.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[387.07] [W][wifi:1458]: No networks found
+[387.07] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase RETRY_HIDDEN)...
+[388.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[388.59] [I][jk_bms_ble:939]: Emergency switch: OFF
+[390.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[390.95] [I][jk_bms_ble:939]: Emergency switch: OFF
+[391.92] [W][wifi_esp32:843]: Disconnected ssid='IoT' reason='Probe Request Unsuccessful'
+[391.93] [W][wifi:1678]: Connecting to network failed (callback)
+[391.93] [W][wifi:736]: Restarting adapter
+[392.43] [W][wifi:1689]: Network no longer found
+[392.97] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[392.98] [I][jk_bms_ble:939]: Emergency switch: OFF
+[395.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[395.31] [I][jk_bms_ble:939]: Emergency switch: OFF
+[397.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[397.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[399.70] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[399.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[401.25] [I][wifi:1438]: - 'IoT' (1E:82:C4:DE:46:46) ▂▄▆█
+[401.27] [I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority -1, attempt 1/2 in phase SCAN_CONNECTING)...
+[402.05] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[402.05] [I][jk_bms_ble:939]: Emergency switch: OFF
+[402.38] [I][wifi:1575]: Connected
+[402.40] [W][component:405]: wifi cleared Warning flag
+[404.70] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[404.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[406.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[406.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[409.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[409.26] [I][jk_bms_ble:939]: Emergency switch: OFF
+[411.53] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[411.53] [I][jk_bms_ble:939]: Emergency switch: OFF
+[414.52] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[414.53] [I][jk_bms_ble:939]: Emergency switch: OFF
+[416.72] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[416.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[419.03] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[419.03] [I][jk_bms_ble:939]: Emergency switch: OFF
+[421.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[421.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[423.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[423.88] [I][jk_bms_ble:939]: Emergency switch: OFF
+[426.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[426.17] [I][jk_bms_ble:939]: Emergency switch: OFF
+[428.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[428.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[430.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[430.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[432.91] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[432.91] [I][jk_bms_ble:939]: Emergency switch: OFF
+[434.91] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[434.91] [I][jk_bms_ble:939]: Emergency switch: OFF
+[437.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[437.27] [I][jk_bms_ble:939]: Emergency switch: OFF
+[439.76] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[439.76] [I][jk_bms_ble:939]: Emergency switch: OFF
+[441.76] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[441.76] [I][jk_bms_ble:939]: Emergency switch: OFF
+[443.99] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[443.99] [I][jk_bms_ble:939]: Emergency switch: OFF
+[446.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[446.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[448.75] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[448.75] [I][jk_bms_ble:939]: Emergency switch: OFF
+[451.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[451.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[454.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[454.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[457.07] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[457.08] [I][jk_bms_ble:939]: Emergency switch: OFF
+[459.43] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[459.43] [I][jk_bms_ble:939]: Emergency switch: OFF
+[461.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[461.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[463.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[463.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[466.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[466.16] [I][jk_bms_ble:939]: Emergency switch: OFF
+[468.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[468.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[470.99] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[471.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[473.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[473.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[475.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[475.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[477.73] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[477.74] [I][jk_bms_ble:939]: Emergency switch: OFF
+[480.04] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[480.04] [I][jk_bms_ble:939]: Emergency switch: OFF
+[482.43] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[482.43] [I][jk_bms_ble:939]: Emergency switch: OFF
+[484.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[484.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[486.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[486.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[488.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[488.84] [I][jk_bms_ble:939]: Emergency switch: OFF
+[491.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[491.17] [I][jk_bms_ble:939]: Emergency switch: OFF
+[493.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[493.50] [I][jk_bms_ble:939]: Emergency switch: OFF
+[495.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[495.50] [I][jk_bms_ble:939]: Emergency switch: OFF
+[497.91] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[497.91] [I][jk_bms_ble:939]: Emergency switch: OFF
+[500.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[500.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[502.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[502.62] [I][jk_bms_ble:939]: Emergency switch: OFF
+[504.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[504.64] [I][jk_bms_ble:939]: Emergency switch: OFF
+[506.95] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[506.95] [I][jk_bms_ble:939]: Emergency switch: OFF
+[509.35] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[509.35] [I][jk_bms_ble:939]: Emergency switch: OFF
+[511.75] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[511.75] [I][jk_bms_ble:939]: Emergency switch: OFF
+[514.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[514.47] [I][jk_bms_ble:939]: Emergency switch: OFF
+[516.87] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[516.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[519.23] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[519.23] [I][jk_bms_ble:939]: Emergency switch: OFF
+[521.28] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[521.28] [I][jk_bms_ble:939]: Emergency switch: OFF
+[523.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[523.59] [I][jk_bms_ble:939]: Emergency switch: OFF
+[525.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[525.60] [I][jk_bms_ble:939]: Emergency switch: OFF
+[528.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[528.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[530.36] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[530.37] [I][jk_bms_ble:939]: Emergency switch: OFF
+[532.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[532.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[534.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[534.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[537.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[537.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[539.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[539.48] [I][jk_bms_ble:939]: Emergency switch: OFF
+[541.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[541.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[543.87] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[543.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[546.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[546.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[548.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[548.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[550.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[550.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[552.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[552.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[554.89] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[554.89] [I][jk_bms_ble:939]: Emergency switch: OFF
+[557.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[557.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[559.78] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[559.78] [I][jk_bms_ble:939]: Emergency switch: OFF
+[562.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[562.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[564.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[564.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[566.78] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[566.78] [I][jk_bms_ble:939]: Emergency switch: OFF
+[569.15] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[569.15] [I][jk_bms_ble:939]: Emergency switch: OFF
+[571.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[571.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[574.70] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[574.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[576.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[576.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[579.03] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[579.03] [I][jk_bms_ble:939]: Emergency switch: OFF
+[581.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[581.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[583.43] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[583.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[585.78] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[585.78] [I][jk_bms_ble:939]: Emergency switch: OFF
+[588.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[588.16] [I][jk_bms_ble:939]: Emergency switch: OFF
+[590.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[590.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[592.90] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[592.90] [I][jk_bms_ble:939]: Emergency switch: OFF
+[594.91] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[594.91] [I][jk_bms_ble:939]: Emergency switch: OFF
+[597.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[597.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[599.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[599.62] [I][jk_bms_ble:939]: Emergency switch: OFF
+[601.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[601.62] [I][jk_bms_ble:939]: Emergency switch: OFF
+[603.97] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[603.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[606.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[606.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[608.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[608.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[610.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[610.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[613.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[613.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[615.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[615.13] [I][jk_bms_ble:939]: Emergency switch: OFF
+[617.48] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[617.48] [I][jk_bms_ble:939]: Emergency switch: OFF
+[619.85] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[619.85] [I][jk_bms_ble:939]: Emergency switch: OFF
+[622.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[622.27] [I][jk_bms_ble:939]: Emergency switch: OFF
+[624.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[624.60] [I][jk_bms_ble:939]: Emergency switch: OFF
+[626.95] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[626.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[629.35] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[629.35] [I][jk_bms_ble:939]: Emergency switch: OFF
+[631.43] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[631.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[635.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[635.09] [I][jk_bms_ble:939]: Emergency switch: OFF
+[637.26] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[637.26] [I][jk_bms_ble:939]: Emergency switch: OFF
+[639.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[639.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[642.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[642.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[644.39] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[644.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[646.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[646.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[649.14] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[649.14] [I][jk_bms_ble:939]: Emergency switch: OFF
+[651.51] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[651.52] [I][jk_bms_ble:939]: Emergency switch: OFF
+[653.89] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[653.89] [I][jk_bms_ble:939]: Emergency switch: OFF
+[656.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[656.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[658.67] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[658.67] [I][jk_bms_ble:939]: Emergency switch: OFF
+[661.02] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[661.02] [I][jk_bms_ble:939]: Emergency switch: OFF
+[663.39] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[663.39] [I][jk_bms_ble:939]: Emergency switch: OFF
+[665.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[665.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[667.77] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[667.77] [I][jk_bms_ble:939]: Emergency switch: OFF
+[670.13] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[670.13] [I][jk_bms_ble:939]: Emergency switch: OFF
+[672.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[672.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[674.88] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[674.88] [I][jk_bms_ble:939]: Emergency switch: OFF
+[677.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[677.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[679.26] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[679.26] [I][jk_bms_ble:939]: Emergency switch: OFF
+[681.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[681.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[684.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[684.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[686.42] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[686.42] [I][jk_bms_ble:939]: Emergency switch: OFF
+[688.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[688.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[690.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[690.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[693.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[693.09] [I][jk_bms_ble:939]: Emergency switch: OFF
+[695.11] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[695.13] [I][jk_bms_ble:939]: Emergency switch: OFF
+[697.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[697.49] [I][jk_bms_ble:939]: Emergency switch: OFF
+[699.83] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[699.83] [I][jk_bms_ble:939]: Emergency switch: OFF
+[702.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[702.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[704.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[704.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[706.97] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[706.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[709.32] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[709.32] [I][jk_bms_ble:939]: Emergency switch: OFF
+[711.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[711.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[713.74] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[713.74] [I][jk_bms_ble:939]: Emergency switch: OFF
+[716.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[716.10] [I][jk_bms_ble:939]: Emergency switch: OFF
+[718.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[718.47] [I][jk_bms_ble:939]: Emergency switch: OFF

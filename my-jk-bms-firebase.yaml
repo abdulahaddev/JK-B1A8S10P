@@ -1,19 +1,20 @@
 substitutions:
   name: jk-bms
-  device_description: "Monitor and control JK-B1A8S10P via BLE with Status LEDs, WiFi, and OLED Display"
+  device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
   log_level: INFO             # DEBUG logs every sensor and delays the OLED redraw ~110ms; NONE turns logging OFF
   log_baud_rate: "115200"     # Change to 0 to turn OFF serial output
-  debug_interval: "15s"       # Change to 'never' to turn OFF the debug sensor
-  upload_interval: "10s"      # Firebase upload interval
-  red_led_pin: GPIO2          # D2 on ESP32 DevKit (BLE Red)
-  green_led_pin: GPIO4        # D4 on ESP32 DevKit (BLE Green)
-  wifi_red_led_pin: GPIO16    # D16 on ESP32 DevKit (WiFi Red)
-  wifi_green_led_pin: GPIO17  # D17 on ESP32 DevKit (WiFi Green)
+  sample_interval: "30s"      # One telemetry reading into the buffer
+  upload_check_interval: "10s"
+  upload_batch_max: "10"      # Buffered readings per upload request
+  upload_min_batch: "2"       # Upload once this many readings wait (about every 60s)...
+  upload_max_age_ms: "60000"  # ...or at least this often, so device diagnostics stay fresh
+  info_refresh_ms: "86400000" # Re-send the info node daily even if nothing changed
+  energy_interval_ms: "3600000"
   i2c_sda_pin: GPIO21         # D21 on ESP32 DevKit (OLED SDA)
   i2c_scl_pin: GPIO22         # D22 on ESP32 DevKit (OLED SCL)
-  firebase_url: !secret firebase_url
+  firebase_db_url: !secret firebase_db_url
   firebase_auth: !secret firebase_auth
 
 esphome:
@@ -22,20 +23,28 @@ esphome:
   comment: ${device_description}
   includes:
     - <esp_bt.h>
+    - telemetry_buffer.h
   on_boot:
-    priority: -100
-    then:
-      - script.execute: redraw_display
-      # Raise BLE TX power from the default to the max (+9 dBm) so the BMS reliably hears our
-      # connection request. Wait until the BLE controller is enabled (it starts in loop()).
-      - wait_until:
-          condition:
-            lambda: 'return esp_bt_controller_get_status() == ESP_BT_CONTROLLER_STATUS_ENABLED;'
-      - lambda: |-
-          esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9);
-          esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN, ESP_PWR_LVL_P9);
-          esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_CONN_HDL0, ESP_PWR_LVL_P9);
-          ESP_LOGI("ble_power", "BLE TX power set to +9 dBm (level %d)", esp_ble_tx_power_get(ESP_BLE_PWR_TYPE_DEFAULT));
+    - priority: 800
+      then:
+        # Restore buffered readings kept in RTC memory across a software reboot
+        - lambda: |-
+            telemetry::begin();
+            ESP_LOGI("telemetry", "Boot %u (%s), %u readings restored from RTC",
+                     (unsigned) telemetry::boot_count(), telemetry::reset_reason(), (unsigned) telemetry::size());
+    - priority: -100
+      then:
+        - script.execute: redraw_display
+        # Raise BLE TX power from the default to the max (+9 dBm) so the BMS reliably hears our
+        # connection request. Wait until the BLE controller is enabled (it starts in loop()).
+        - wait_until:
+            condition:
+              lambda: 'return esp_bt_controller_get_status() == ESP_BT_CONTROLLER_STATUS_ENABLED;'
+        - lambda: |-
+            esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9);
+            esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN, ESP_PWR_LVL_P9);
+            esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_CONN_HDL0, ESP_PWR_LVL_P9);
+            ESP_LOGI("ble_power", "BLE TX power set to +9 dBm (level %d)", esp_ble_tx_power_get(ESP_BLE_PWR_TYPE_DEFAULT));
 
 esp32:
   board: esp32dev
@@ -45,11 +54,15 @@ esp32:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+  # Connect straight to the configured network instead of scanning first: with BLE busy every
+  # 10ms, reconnect scans time out and WiFi stays down until the 15 min reboot_timeout.
+  fast_connect: true
   on_connect:
     then:
       - script.execute: redraw_display
   on_disconnect:
     then:
+      - lambda: 'id(wifi_disconnects)++;'
       - script.execute: redraw_display
 
 time:
@@ -89,22 +102,62 @@ display:
     id: oled_display
     update_interval: never  # redrawn by the redraw_display script on new data
     lambda: |-
-      // 1. Header (y=0..11)
-      it.print(2, 0, id(font_small), "JK-BMS");
+      using CS = esphome::esp32_ble_tracker::ClientState;
+      const uint32_t now = millis();
+      const bool fast_on = (now / 500) % 2 == 0;
+      const bool slow_on = (now / 1000) % 2 == 0;
 
-      // Connection Indicators in Header
-      auto ble_connected = (id(client0)->state() == esphome::esp32_ble_tracker::ClientState::ESTABLISHED ||
-                            id(client0)->state() == esphome::esp32_ble_tracker::ClientState::CONNECTED);
-      if (ble_connected) {
-        it.print(52, 0, id(font_small), "BT");
+      // 1. Header (y=0..11): title (or queued readings), BT icon, WiFi bars, SOC
+      const size_t queued = telemetry::size();
+      if (queued > ${upload_min_batch}) {
+        it.printf(2, 0, id(font_small), "Q%u", (unsigned) queued);
+      } else {
+        it.print(2, 0, id(font_small), "JK-BMS");
       }
 
-      bool wifi_connected = false;
-      if (esphome::wifi::global_wifi_component != nullptr) {
-        wifi_connected = esphome::wifi::global_wifi_component->is_connected();
+      // BT: solid when connected, fast blink while connecting, slow blink when disconnected.
+      // "!" when the BMS reports an error.
+      const auto bt = id(client0)->state();
+      bool bt_show = slow_on;
+      if (bt == CS::ESTABLISHED) {
+        bt_show = true;
+      } else if (bt == CS::CONNECTING || bt == CS::DISCOVERED || bt == CS::CONNECTED) {
+        bt_show = fast_on;
       }
-      if (wifi_connected) {
-        it.print(70, 0, id(font_small), "WF");
+      if (bt_show) {
+        const int x = 46, y = 1;
+        it.line(x + 0, y + 2, x + 6, y + 6);
+        it.line(x + 6, y + 6, x + 3, y + 9);
+        it.line(x + 3, y + 9, x + 3, y + 0);
+        it.line(x + 3, y + 0, x + 6, y + 3);
+        it.line(x + 6, y + 3, x + 0, y + 7);
+      }
+      const std::string &errors = id(bms_errors).state;
+      if (bt == CS::ESTABLISHED && !errors.empty() && errors != "None" && errors != "Offline") {
+        it.print(54, 0, id(font_small), "!");
+      }
+
+      // WiFi: signal bars when connected, all bars slow blinking when disconnected.
+      // "!" when the last Firebase upload failed.
+      auto *wifi = esphome::wifi::global_wifi_component;
+      const bool wifi_ok = wifi != nullptr && wifi->is_connected();
+      int bars = 0;
+      if (wifi_ok) {
+        const int rssi = wifi->wifi_rssi();
+        bars = rssi > -60 ? 4 : rssi > -70 ? 3 : rssi > -80 ? 2 : 1;
+      }
+      if (wifi_ok || slow_on) {
+        for (int i = 0; i < 4; i++) {
+          const int x = 62 + i * 3, h = 2 + i * 2;
+          if (!wifi_ok || i < bars) {
+            it.filled_rectangle(x, 10 - h, 2, h);
+          } else {
+            it.horizontal_line(x, 9, 2);
+          }
+        }
+      }
+      if (wifi_ok && id(firebase_error)) {
+        it.print(75, 0, id(font_small), "!");
       }
 
       if (id(bms_state_of_charge).has_state() && !std::isnan(id(bms_state_of_charge).state)) {
@@ -172,201 +225,235 @@ logger:
     ssd1306_base: WARN
     display: WARN
 
-# Output pins for Status LEDs:
-# - BLE:  D2 = Red,  D4 = Green
-# - WiFi: D16 = Red, D17 = Green
-output:
-  - platform: gpio
-    pin: ${red_led_pin}
-    id: led_ble_red
-  - platform: gpio
-    pin: ${green_led_pin}
-    id: led_ble_green
-  - platform: gpio
-    pin: ${wifi_red_led_pin}
-    id: led_wifi_red
-  - platform: gpio
-    pin: ${wifi_green_led_pin}
-    id: led_wifi_green
-
 globals:
-  - id: bms_fresh_frame   # a new BMS frame arrived since the last upload
+  - id: bms_fresh_frame   # a new BMS frame arrived since the last buffered reading
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: wifi_tx_pulse
+  - id: firebase_error    # last upload failed
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: ble_rx_pulse
+  - id: wifi_disconnects
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: ble_disconnects
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: last_upload_ms
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_batch_n    # readings included in the request in flight
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: info_sig          # last seen values of the info node, to detect changes
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+  - id: info_dirty
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: firebase_error
+  - id: info_sent_ms
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: info_in_flight
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: last_energy_ms
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: energy_in_flight
     type: bool
     restore_value: no
     initial_value: 'false'
 
-# State machine for LEDs:
-# 1. BLE LEDs (D2 Red, D4 Green):
-#    - BLE Scan / Idle: Red blinks normal (500ms ON / 500ms OFF), Green OFF
-#    - Connecting: Red blinks fast (100ms toggle), Green OFF
-#    - Connected: Red OFF, Green ON
-# 2. WiFi LEDs (D16 Red, D17 Green):
-#    - Disconnected / Connecting: Red blinks normal (500ms ON / 500ms OFF), Green OFF
-#    - Connected: Red OFF, Green ON (Red fast blink on Firebase error)
 interval:
-  - interval: 100ms
+  # Redraw twice a second only while a status icon is blinking
+  - interval: 500ms
+    then:
+      - if:
+          condition:
+            lambda: |-
+              auto *wifi = esphome::wifi::global_wifi_component;
+              return id(client0)->state() != esphome::esp32_ble_tracker::ClientState::ESTABLISHED ||
+                     wifi == nullptr || !wifi->is_connected();
+          then:
+            - script.execute: redraw_display
+
+  # Store one reading every sample_interval, and notice changes in the slow-moving info values
+  - interval: ${sample_interval}
     then:
       - lambda: |-
-          static uint32_t tick = 0;
-          tick++;
-
-          // ==================== BLE LED LOGIC ====================
-          auto ble_st = id(client0)->state();
-          bool bms_has_error = false;
-          if (id(bms_errors).state != "" && id(bms_errors).state != "None") {
-            bms_has_error = true;
-          }
-          
-          if (ble_st == esphome::esp32_ble_tracker::ClientState::ESTABLISHED ||
-              ble_st == esphome::esp32_ble_tracker::ClientState::CONNECTED) {
-            if (bms_has_error) {
-              id(led_ble_green)->turn_off();
-              if (tick % 2 == 0) id(led_ble_red)->turn_on();
-              else id(led_ble_red)->turn_off();
-            } else {
-              id(led_ble_red)->turn_off();
-              if (id(ble_rx_pulse)) {
-                id(led_ble_green)->turn_off();
-                id(ble_rx_pulse) = false;
-              } else {
-                id(led_ble_green)->turn_on();
-              }
-            }
-          } else if (ble_st == esphome::esp32_ble_tracker::ClientState::CONNECTING ||
-                     ble_st == esphome::esp32_ble_tracker::ClientState::DISCOVERED) {
-            // Connecting: Blink faster (100ms toggle), Green is OFF
-            id(led_ble_green)->turn_off();
-            if (tick % 2 == 0) {
-              id(led_ble_red)->turn_on();
-            } else {
-              id(led_ble_red)->turn_off();
-            }
-          } else {
-            // BLE Scan / Idle / Disconnected: Blink normal (500ms ON, 500ms OFF)
-            id(led_ble_green)->turn_off();
-            if ((tick % 10) < 5) {
-              id(led_ble_red)->turn_on();
-            } else {
-              id(led_ble_red)->turn_off();
+          if (id(client0)->connected()) {
+            char sig[256];
+            snprintf(sig, sizeof(sig), "%s|%d%d%d%d|%.0f|%.3f %.3f %.3f %.3f|%.0f|%.0f|%s|%s|%s|%s|%s",
+                     id(bms_errors).state.c_str(), (int) id(bms_charging_switch).state,
+                     (int) id(bms_discharging_switch).state, (int) id(bms_balancer_switch).state,
+                     (int) id(bms_heating).state, id(bms_charging_cycles).state,
+                     id(bms_cell_resistance_1).state, id(bms_cell_resistance_2).state,
+                     id(bms_cell_resistance_3).state, id(bms_cell_resistance_4).state,
+                     id(bms_state_of_health).state, id(bms_full_charge_capacity).state,
+                     id(bms_device_model).state.c_str(), id(bms_hardware_version).state.c_str(),
+                     id(bms_software_version).state.c_str(), id(bms_serial_number).state.c_str(),
+                     id(bms_manufacturing_date).state.c_str());
+            if (id(info_sig) != sig || millis() - id(info_sent_ms) >= ${info_refresh_ms}) {
+              id(info_sig) = sig;
+              id(info_dirty) = true;
             }
           }
 
-          // ==================== WIFI LED LOGIC ====================
-          bool wifi_connected = false;
-          if (esphome::wifi::global_wifi_component != nullptr) {
-            wifi_connected = esphome::wifi::global_wifi_component->is_connected();
+          if (!id(bms_fresh_frame) || !id(sntp_time).now().is_valid()) return;
+          const float core[] = {id(bms_total_voltage).state, id(bms_current).state,
+                                id(bms_cell_voltage_1).state, id(bms_cell_voltage_2).state,
+                                id(bms_cell_voltage_3).state, id(bms_cell_voltage_4).state,
+                                id(bms_capacity_remaining).state, id(bms_state_of_charge).state};
+          for (float v : core) {
+            if (std::isnan(v)) return;
           }
+          id(bms_fresh_frame) = false;
 
-          if (wifi_connected) {
-            if (id(firebase_error)) {
-              id(led_wifi_green)->turn_off();
-              if (tick % 2 == 0) id(led_wifi_red)->turn_on();
-              else id(led_wifi_red)->turn_off();
-            } else {
-              id(led_wifi_red)->turn_off();
-              if (id(wifi_tx_pulse)) {
-                id(led_wifi_green)->turn_off();
-                id(wifi_tx_pulse) = false;
-              } else {
-                id(led_wifi_green)->turn_on();
-              }
-            }
-          } else {
-            // Disconnected / Connecting: Blink normal (500ms ON, 500ms OFF), Green is OFF
-            id(led_wifi_green)->turn_off();
-            if ((tick % 10) < 5) {
-              id(led_wifi_red)->turn_on();
-            } else {
-              id(led_wifi_red)->turn_off();
-            }
-          }
+          telemetry::Record r{};
+          r.ts = id(sntp_time).now().timestamp;
+          r.total_mv = lroundf(id(bms_total_voltage).state * 1000.0f);
+          r.current_10ma = telemetry::scaled(id(bms_current).state, 100.0f);
+          r.cell_mv[0] = lroundf(id(bms_cell_voltage_1).state * 1000.0f);
+          r.cell_mv[1] = lroundf(id(bms_cell_voltage_2).state * 1000.0f);
+          r.cell_mv[2] = lroundf(id(bms_cell_voltage_3).state * 1000.0f);
+          r.cell_mv[3] = lroundf(id(bms_cell_voltage_4).state * 1000.0f);
+          r.capacity_10mah = lroundf(id(bms_capacity_remaining).state * 100.0f);
+          r.soc = lroundf(id(bms_state_of_charge).state);
+          r.balancing_ma = telemetry::scaled(id(bms_balancing_current).state, 1000.0f);
+          r.temp_dc[0] = telemetry::scaled(id(bms_mosfet_temperature).state, 10.0f);
+          r.temp_dc[1] = telemetry::scaled(id(bms_temperature_sensor_1).state, 10.0f);
+          r.temp_dc[2] = telemetry::scaled(id(bms_temperature_sensor_2).state, 10.0f);
+          if (id(bms_charging).state) r.flags |= telemetry::CHARGING;
+          if (id(bms_discharging).state) r.flags |= telemetry::DISCHARGING;
+          if (id(bms_balancing).state) r.flags |= telemetry::BALANCING;
+          telemetry::push(r);
 
-  # Upload one reading per interval to telemetry/<unix_ts>.json, only when the BMS is online
-  - interval: ${upload_interval}
+  # One multi-path PATCH writes buffered readings, device diagnostics, and (when due) the info
+  # node and an hourly energy counter. Readings leave the buffer only after Firebase replies 2xx.
+  - interval: ${upload_check_interval}
     id: firebase_upload_interval
     then:
       - if:
           condition:
             and:
               - wifi.connected:
-              - binary_sensor.is_on: bms_online_status
               - lambda: 'return id(sntp_time).now().is_valid();'
-              # online_status stays on for a while after a BLE drop; don't re-upload old values
-              - lambda: 'return id(bms_fresh_frame);'
+              - lambda: |-
+                  return telemetry::size() >= ${upload_min_batch} || id(info_dirty) ||
+                         millis() - id(last_upload_ms) >= ${upload_max_age_ms};
           then:
-            - lambda: |-
-                id(wifi_tx_pulse) = true;
-                id(bms_fresh_frame) = false;
             - http_request.send:
-                method: PUT
-                url: !lambda |-
-                  return "${firebase_url}/" + std::to_string(id(sntp_time).now().timestamp) + ".json?auth=${firebase_auth}";
+                method: PATCH
+                url: "${firebase_db_url}/.json?auth=${firebase_auth}"
                 request_headers:
                   Content-Type: application/json
                 json: |-
-                  root["esp32_free_memory"] = id(bms_esp32_free_memory).state;
-                  root["cell_voltage_1"] = id(bms_cell_voltage_1).state;
-                  root["cell_voltage_2"] = id(bms_cell_voltage_2).state;
-                  root["cell_voltage_3"] = id(bms_cell_voltage_3).state;
-                  root["cell_voltage_4"] = id(bms_cell_voltage_4).state;
-                  root["cell_resistance_1"] = id(bms_cell_resistance_1).state;
-                  root["cell_resistance_2"] = id(bms_cell_resistance_2).state;
-                  root["cell_resistance_3"] = id(bms_cell_resistance_3).state;
-                  root["cell_resistance_4"] = id(bms_cell_resistance_4).state;
-                  root["total_voltage"] = id(bms_total_voltage).state;
-                  root["current"] = id(bms_current).state;
-                  root["power"] = id(bms_power).state;
-                  root["charging_power"] = id(bms_charging_power).state;
-                  root["discharging_power"] = id(bms_discharging_power).state;
-                  root["balancing_current"] = id(bms_balancing_current).state;
-                  root["min_cell_voltage"] = id(bms_min_cell_voltage).state;
-                  root["max_cell_voltage"] = id(bms_max_cell_voltage).state;
-                  root["min_voltage_cell"] = id(bms_min_voltage_cell).state;
-                  root["max_voltage_cell"] = id(bms_max_voltage_cell).state;
-                  root["delta_cell_voltage"] = id(bms_delta_cell_voltage).state;
-                  root["average_cell_voltage"] = id(bms_average_cell_voltage).state;
-                  root["state_of_charge"] = id(bms_state_of_charge).state;
-                  root["state_of_health"] = id(bms_state_of_health).state;
-                  root["capacity_remaining"] = id(bms_capacity_remaining).state;
-                  root["full_charge_capacity"] = id(bms_full_charge_capacity).state;
-                  root["charging_cycles"] = id(bms_charging_cycles).state;
-                  root["total_charging_cycle_capacity"] = id(bms_total_charging_cycle_capacity).state;
-                  root["mosfet_temperature"] = id(bms_mosfet_temperature).state;
-                  root["temperature_sensor_1"] = id(bms_temperature_sensor_1).state;
-                  root["temperature_sensor_2"] = id(bms_temperature_sensor_2).state;
-                  root["total_runtime"] = id(bms_total_runtime).state;
-                  root["smart_sleep_countdown"] = id(bms_smart_sleep_countdown).state;
-                  // Booleans as 0/1 to match the existing data in Firebase
-                  root["charging"] = int(id(bms_charging).state);
-                  root["discharging"] = int(id(bms_discharging).state);
-                  root["balancing"] = int(id(bms_balancing).state);
-                  root["heating"] = int(id(bms_heating).state);
-                  root["online_status"] = int(id(bms_online_status).state);
-                  root["charging_switch"] = int(id(bms_charging_switch).state);
-                  root["discharging_switch"] = int(id(bms_discharging_switch).state);
-                  root["balancer_switch"] = int(id(bms_balancer_switch).state);
+                  const uint32_t now_ts = id(sntp_time).now().timestamp;
+
+                  const size_t n = std::min(telemetry::size(), (size_t) ${upload_batch_max});
+                  id(upload_batch_n) = n;
+                  for (size_t i = 0; i < n; i++) {
+                    const telemetry::Record &r = telemetry::peek(i);
+                    JsonObject o = root[std::string("telemetry/") + std::to_string(r.ts)].to<JsonObject>();
+                    o["total_voltage"] = r.total_mv / 1000.0;
+                    if (r.current_10ma != telemetry::NO_VALUE) o["current"] = r.current_10ma / 100.0;
+                    for (int c = 0; c < 4; c++) o["cell_voltage_" + std::to_string(c + 1)] = r.cell_mv[c] / 1000.0;
+                    o["capacity_remaining"] = r.capacity_10mah / 100.0;
+                    o["state_of_charge"] = r.soc;
+                    if (r.balancing_ma != telemetry::NO_VALUE) o["balancing_current"] = r.balancing_ma / 1000.0;
+                    const char *temp_keys[] = {"mosfet_temperature", "temperature_sensor_1", "temperature_sensor_2"};
+                    for (int t = 0; t < 3; t++) {
+                      if (r.temp_dc[t] != telemetry::NO_VALUE) o[temp_keys[t]] = r.temp_dc[t] / 10.0;
+                    }
+                    o["charging"] = (r.flags & telemetry::CHARGING) ? 1 : 0;
+                    o["discharging"] = (r.flags & telemetry::DISCHARGING) ? 1 : 0;
+                    o["balancing"] = (r.flags & telemetry::BALANCING) ? 1 : 0;
+                  }
+
+                  auto *wifi = esphome::wifi::global_wifi_component;
+                  JsonObject d = root["device"].to<JsonObject>();
+                  d["last_seen"] = now_ts;
+                  d["uptime_s"] = millis() / 1000;
+                  d["boot_count"] = telemetry::boot_count();
+                  d["reset_reason"] = telemetry::reset_reason();
+                  d["wifi_rssi"] = wifi != nullptr ? wifi->wifi_rssi() : 0;
+                  d["wifi_disconnects"] = id(wifi_disconnects);
+                  d["ble_connected"] = id(client0)->connected() ? 1 : 0;
+                  d["ble_disconnects"] = id(ble_disconnects);
+                  d["free_heap"] = esp_get_free_heap_size();
+                  d["min_free_heap"] = esp_get_minimum_free_heap_size();
+                  d["buffered"] = telemetry::size();
+                  d["dropped"] = telemetry::dropped;
+
+                  id(info_in_flight) = id(info_dirty);
+                  if (id(info_dirty)) {
+                    auto num = [](JsonObject obj, const char *key, float v) {
+                      if (!std::isnan(v)) obj[key] = v;
+                    };
+                    JsonObject inf = root["info"].to<JsonObject>();
+                    inf["updated"] = now_ts;
+                    inf["errors"] = id(bms_errors).state;
+                    inf["charging_switch"] = id(bms_charging_switch).state ? 1 : 0;
+                    inf["discharging_switch"] = id(bms_discharging_switch).state ? 1 : 0;
+                    inf["balancer_switch"] = id(bms_balancer_switch).state ? 1 : 0;
+                    inf["heating"] = id(bms_heating).state ? 1 : 0;
+                    num(inf, "charging_cycles", id(bms_charging_cycles).state);
+                    num(inf, "cell_resistance_1", id(bms_cell_resistance_1).state);
+                    num(inf, "cell_resistance_2", id(bms_cell_resistance_2).state);
+                    num(inf, "cell_resistance_3", id(bms_cell_resistance_3).state);
+                    num(inf, "cell_resistance_4", id(bms_cell_resistance_4).state);
+                    num(inf, "state_of_health", id(bms_state_of_health).state);
+                    num(inf, "full_charge_capacity", id(bms_full_charge_capacity).state);
+                    inf["device_model"] = id(bms_device_model).state;
+                    inf["hardware_version"] = id(bms_hardware_version).state;
+                    inf["software_version"] = id(bms_software_version).state;
+                    inf["serial_number"] = id(bms_serial_number).state;
+                    inf["manufacturing_date"] = id(bms_manufacturing_date).state;
+                  }
+
+                  const float energy = id(bms_total_charging_cycle_capacity).state;
+                  id(energy_in_flight) = !std::isnan(energy) &&
+                      (id(last_energy_ms) == 0 || millis() - id(last_energy_ms) >= ${energy_interval_ms});
+                  if (id(energy_in_flight)) {
+                    root[std::string("energy/") + std::to_string(now_ts)] = energy;
+                  }
                 on_response:
                   then:
                     - lambda: |-
-                        id(firebase_error) = response->status_code < 200 || response->status_code >= 300;
-                        if (id(firebase_error)) ESP_LOGW("firebase", "Upload failed with code %d", response->status_code);
+                        const bool ok = response->status_code >= 200 && response->status_code < 300;
+                        id(firebase_error) = !ok;
+                        id(last_upload_ms) = millis();
+                        if (ok) {
+                          telemetry::discard(id(upload_batch_n));
+                          if (id(info_in_flight)) {
+                            id(info_dirty) = false;
+                            id(info_sent_ms) = millis();
+                          }
+                          if (id(energy_in_flight)) id(last_energy_ms) = millis();
+                        } else {
+                          ESP_LOGW("firebase", "Upload failed with code %d", response->status_code);
+                        }
+                        id(info_in_flight) = false;
+                        id(energy_in_flight) = false;
                 on_error:
                   then:
                     - lambda: |-
                         id(firebase_error) = true;
-                        ESP_LOGE("firebase", "HTTP request error");
+                        id(last_upload_ms) = millis();
+                        id(info_in_flight) = false;
+                        id(energy_in_flight) = false;
+                        ESP_LOGE("firebase", "HTTP request error, %u readings buffered", (unsigned) telemetry::size());
 
 # Short scan window (~9% duty) leaves radio time for the BMS connection and WiFi
 esp32_ble_tracker:
@@ -383,6 +470,7 @@ ble_client:
         - script.execute: redraw_display
     on_disconnect:
       then:
+        - lambda: 'id(ble_disconnects)++;'
         - script.execute: redraw_display
 
 # Redraw the OLED when data or connection state changes instead of polling.
@@ -402,18 +490,20 @@ jk_bms_ble:
     throttle: 2s
 
 sensor:
-  - platform: template
-    name: "ESP32 Free Memory"
-    id: bms_esp32_free_memory
-    unit_of_measurement: "bytes"
-    update_interval: ${debug_interval}
-    lambda: |-
-      return esp_get_free_heap_size();
-
   - platform: jk_bms_ble
     jk_bms_ble_id: bms0
 
-    # Cell Voltages (1-8)
+    # Every reading (30s)
+    total_voltage:
+      name: "Total Voltage"
+      id: bms_total_voltage
+      on_value:
+        then:
+          - lambda: 'id(bms_fresh_frame) = true;'
+          - script.execute: redraw_display
+    current:
+      name: "Current"
+      id: bms_current
     cell_voltage_1:
       name: "Cell Voltage 1"
       id: bms_cell_voltage_1
@@ -426,8 +516,40 @@ sensor:
     cell_voltage_4:
       name: "Cell Voltage 4"
       id: bms_cell_voltage_4
+    capacity_remaining:
+      name: "Capacity Remaining"
+      id: bms_capacity_remaining
+    state_of_charge:
+      name: "State of Charge"
+      id: bms_state_of_charge
+    balancing_current:
+      name: "Balancing Current"
+      id: bms_balancing_current
+    mosfet_temperature:
+      name: "MOSFET Temperature"
+      id: bms_mosfet_temperature
+    temperature_sensor_1:
+      name: "Temperature Sensor 1"
+      id: bms_temperature_sensor_1
+    temperature_sensor_2:
+      name: "Temperature Sensor 2"
+      id: bms_temperature_sensor_2
 
-    # Cell Resistances (1-4)
+    # Hourly
+    total_charging_cycle_capacity:
+      name: "Total Charging Cycle Capacity"
+      id: bms_total_charging_cycle_capacity
+
+    # Info node (on change, at least daily)
+    charging_cycles:
+      name: "Charging Cycles"
+      id: bms_charging_cycles
+    state_of_health:
+      name: "State of Health"
+      id: bms_state_of_health
+    full_charge_capacity:
+      name: "Full Charge Capacity"
+      id: bms_full_charge_capacity
     cell_resistance_1:
       name: "Cell Resistance 1"
       id: bms_cell_resistance_1
@@ -441,106 +563,12 @@ sensor:
       name: "Cell Resistance 4"
       id: bms_cell_resistance_4
 
-    # Overall Battery Metrics
-    total_voltage:
-      name: "Total Voltage"
-      id: bms_total_voltage
-      on_value:
-        then:
-          - lambda: |-
-              id(ble_rx_pulse) = true;
-              id(bms_fresh_frame) = true;
-          - script.execute: redraw_display
-    current:
-      name: "Current"
-      id: bms_current
-    power:
-      name: "Power"
-      id: bms_power
-    charging_power:
-      name: "Charging Power"
-      id: bms_charging_power
-    discharging_power:
-      name: "Discharging Power"
-      id: bms_discharging_power
-    balancing_current:
-      name: "Balancing Current"
-      id: bms_balancing_current
-
-    # Cell Statistics
-    min_cell_voltage:
-      name: "Min Cell Voltage"
-      id: bms_min_cell_voltage
-    max_cell_voltage:
-      name: "Max Cell Voltage"
-      id: bms_max_cell_voltage
-    min_voltage_cell:
-      name: "Min Voltage Cell"
-      id: bms_min_voltage_cell
-    max_voltage_cell:
-      name: "Max Voltage Cell"
-      id: bms_max_voltage_cell
-    delta_cell_voltage:
-      name: "Delta Cell Voltage"
-      id: bms_delta_cell_voltage
-    average_cell_voltage:
-      name: "Average Cell Voltage"
-      id: bms_average_cell_voltage
-
-    # Battery Capacity & State
-    state_of_charge:
-      name: "State of Charge"
-      id: bms_state_of_charge
-    state_of_health:
-      name: "State of Health"
-      id: bms_state_of_health
-    capacity_remaining:
-      name: "Capacity Remaining"
-      id: bms_capacity_remaining
-    full_charge_capacity:
-      name: "Full Charge Capacity"
-      id: bms_full_charge_capacity
-    charging_cycles:
-      name: "Charging Cycles"
-      id: bms_charging_cycles
-    total_charging_cycle_capacity:
-      name: "Total Charging Cycle Capacity"
-      id: bms_total_charging_cycle_capacity
-
-    # Temperatures
-    mosfet_temperature:
-      name: "MOSFET Temperature"
-      id: bms_mosfet_temperature
-    temperature_sensor_1:
-      name: "Temperature Sensor 1"
-      id: bms_temperature_sensor_1
-    temperature_sensor_2:
-      name: "Temperature Sensor 2"
-      id: bms_temperature_sensor_2
-
-    # Diagnostic Counters
-    total_runtime:
-      name: "Total Runtime"
-      id: bms_total_runtime
-    smart_sleep_countdown:
-      name: "Smart Sleep Countdown"
-      id: bms_smart_sleep_countdown
-
 text_sensor:
   - platform: jk_bms_ble
     jk_bms_ble_id: bms0
     errors:
       name: "Errors"
       id: bms_errors
-    errors_bitmask_hex:
-      name: "Errors Bitmask Hex"
-      id: bms_errors_bitmask_hex
-    balancer_status:
-      name: "Balancer Status"
-      id: bms_balancer_status
-    total_runtime_formatted:
-      name: "Total Runtime Formatted"
-      id: bms_total_runtime_formatted
     software_version:
       name: "Software Version"
       id: bms_software_version

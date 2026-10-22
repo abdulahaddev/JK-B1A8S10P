@@ -27,6 +27,20 @@ pinned to the commit this project was tested with (see `external_components` in 
 esphome run my-jk-bms-firebase.yaml --device COM8
 ```
 
+## Firebase layout (`my-jk-bms-firebase.yaml`)
+
+One multi-path `PATCH` to the database root about once a minute (sooner while catching up):
+
+| Path | When | Contents |
+|---|---|---|
+| `telemetry/<unix_ts>` | every 30 s reading | `total_voltage`, `current`, `cell_voltage_1..4`, `capacity_remaining`, `state_of_charge`, `balancing_current`, `mosfet_temperature`, `temperature_sensor_1/2`, `charging`, `discharging`, `balancing` |
+| `device` | every upload | `last_seen`, `uptime_s`, `boot_count`, `reset_reason`, `wifi_rssi`, `wifi_disconnects`, `ble_connected`, `ble_disconnects`, `free_heap`, `min_free_heap`, `buffered`, `dropped` |
+| `info` | on change, at least daily | `errors`, switches, `heating`, `charging_cycles`, `cell_resistance_1..4`, `state_of_health`, `full_charge_capacity`, device model/versions/serial/date |
+| `energy/<unix_ts>` | hourly | `total_charging_cycle_capacity` (Ah) |
+
+Readings wait in a buffer (`telemetry_buffer.h`) until Firebase confirms them: the newest 280 in RTC
+memory (survive software reboots), older ones in a 580-reading RAM ring. About 7 hours at 30 s.
+
 ## Logs
 
 `logs/` holds serial logs from test runs. They include the BMS passcodes printed in the device
