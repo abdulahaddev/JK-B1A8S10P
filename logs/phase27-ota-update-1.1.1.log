@@ -1,0 +1,661 @@
+# opened COM8 at 02:16:41 without reset
+[  0.72] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  0.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  3.10] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  3.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  5.48] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  5.48] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  8.65] [I][http_request.ota:041]: Starting update
+[  8.65] [I][ota:105]: Downloading 1.1.1
+[  8.65] [I][esp32_ble_client:167]: [0] [A4:C1:38:0B:82:42] Disconnecting (conn_id: 0).
+[  8.67] [I][http_request.ota:258]: Connecting to: https://static.wafacredence.com/jk-bms-1.1.1.ota.bin.md5
+[ 10.60] [I][http_request.ota:094]: Connecting to: https://static.wafacredence.com/jk-bms-1.1.1.ota.bin
+[ 18.08] [I][esp-idf:000]: E (624173) transport_base: esp_tls_conn_read error, errno=No more processes
+[ 18.09] [I][esp-idf:000]: W (624175) HTTP_CLIENT: esp_transport_read returned:0 and errno:11 
+[ 22.08] [E][http_request.ota:141]: Error reading data: -28679
+[ 22.08] [E][ota:112]: download failed 1.1.1 (try 1/3)
+[ 22.09] [W][component:513]: interval took a long time for an operation (14981 ms), max is 1410 ms
+[ 22.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 22.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 22.11] [W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[ 22.13] [I][esp-idf:000][BTU_TASK]: W (614751) BT_HCI: hci cmd send: disconnect: hdl 0x0, rsn:0x13
+[ 22.14] [I][esp-idf:000][BTU_TASK]: W (614801) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x16 dev_find 1
+[ 22.14] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 23.35] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 24.23] [I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[ 25.36] [I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[ 25.41] [I][jk_bms_ble:523]: Request device info
+[ 25.68] [I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[ 25.68] [I][jk_bms_ble:1686]:   Uptime: 3580200 s
+[ 25.69] [I][jk_bms_ble:1697]:   Device passcode: 1234
+[ 25.69] [I][jk_bms_ble:1712]:   Passcode: 6613
+[ 25.69] [I][jk_bms_ble:1715]:   User data: JK-BMS
+[ 25.70] [I][jk_bms_ble:1718]:   Setup passcode: 019127
+[ 25.71] [I][jk_bms_ble:1782]:   Hardware option: 
+[ 25.71] [I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[ 25.71] [I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[ 25.72] [I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[ 27.15] [I][jk_bms_ble:553]: Request status notification
+[ 27.31] [I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[ 27.32] [I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[ 27.32] [I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[ 27.33] [I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[ 27.34] [I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[ 27.34] [I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[ 27.35] [I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[ 27.36] [I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[ 27.36] [I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[ 27.37] [I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[ 27.37] [I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[ 27.38] [I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[ 27.39] [I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[ 27.39] [I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[ 27.40] [I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[ 27.41] [I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[ 27.41] [I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[ 27.42] [I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[ 27.42] [I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[ 27.43] [I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[ 27.44] [I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[ 27.44] [I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[ 27.45] [I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[ 27.46] [I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[ 27.46] [I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[ 27.47] [I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[ 27.47] [I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[ 27.48] [I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[ 27.49] [I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[ 27.50] [I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[ 27.50] [I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[ 27.51] [I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[ 27.51] [I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[ 27.52] [I][jk_bms_ble:1391]:   Precharge time: 0 s
+[ 27.52] [I][jk_bms_ble:1413]:   Heating switch: OFF
+[ 27.53] [I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[ 27.53] [I][jk_bms_ble:1422]:   Special charger: OFF
+[ 27.54] [I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[ 27.55] [I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[ 27.55] [I][jk_bms_ble:1686]:   Uptime: 3580200 s
+[ 27.55] [I][jk_bms_ble:1697]:   Device passcode: 1234
+[ 27.56] [I][jk_bms_ble:1712]:   Passcode: 6613
+[ 27.56] [I][jk_bms_ble:1715]:   User data: JK-BMS
+[ 27.57] [I][jk_bms_ble:1718]:   Setup passcode: 019127
+[ 27.57] [I][jk_bms_ble:1782]:   Hardware option: 
+[ 27.57] [I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[ 27.57] [I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[ 27.57] [I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[ 27.85] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 27.85] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 30.23] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 30.23] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 32.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 32.62] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 35.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 35.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 37.36] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 37.36] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 39.73] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 39.73] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 41.74] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 41.74] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 43.78] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 43.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 46.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 46.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 48.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 48.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 50.83] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 50.83] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 53.18] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 53.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 55.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 55.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 57.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 57.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 60.32] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 60.32] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 62.33] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 62.33] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 64.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 64.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 67.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 67.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 69.42] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 69.42] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 71.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 71.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 74.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 74.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 76.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 76.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 78.90] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 78.92] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 80.93] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 80.93] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 83.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 83.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 86.07] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 86.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 88.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 88.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 90.83] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 90.83] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 93.22] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 93.22] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 95.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 95.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 97.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 97.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 99.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 99.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[102.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[102.29] [I][jk_bms_ble:939]: Emergency switch: OFF
+[104.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[104.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[107.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[107.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[109.42] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[109.42] [I][jk_bms_ble:939]: Emergency switch: OFF
+[111.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[111.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[114.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[114.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[116.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[116.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[118.95] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[118.95] [I][jk_bms_ble:939]: Emergency switch: OFF
+[121.28] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[121.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[123.67] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[123.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[126.05] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[126.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[128.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[128.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[130.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[130.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[133.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[133.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[135.18] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[135.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[137.53] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[137.53] [I][jk_bms_ble:939]: Emergency switch: OFF
+[139.54] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[139.54] [I][jk_bms_ble:939]: Emergency switch: OFF
+[141.93] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[141.93] [I][jk_bms_ble:939]: Emergency switch: OFF
+[144.13] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[144.13] [I][jk_bms_ble:939]: Emergency switch: OFF
+[146.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[146.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[148.63] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[148.63] [I][jk_bms_ble:939]: Emergency switch: OFF
+[151.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[151.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[153.37] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[153.37] [I][jk_bms_ble:939]: Emergency switch: OFF
+[155.37] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[155.37] [I][jk_bms_ble:939]: Emergency switch: OFF
+[157.75] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[157.75] [I][jk_bms_ble:939]: Emergency switch: OFF
+[160.15] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[160.15] [I][jk_bms_ble:939]: Emergency switch: OFF
+[162.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[162.49] [I][jk_bms_ble:939]: Emergency switch: OFF
+[164.87] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[164.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[167.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[167.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[169.61] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[169.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[171.61] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[171.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[174.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[174.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[176.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[176.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[178.74] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[178.74] [I][jk_bms_ble:939]: Emergency switch: OFF
+[181.11] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[181.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[183.48] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[183.48] [I][jk_bms_ble:939]: Emergency switch: OFF
+[185.88] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[185.88] [I][jk_bms_ble:939]: Emergency switch: OFF
+[187.90] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[187.90] [I][jk_bms_ble:939]: Emergency switch: OFF
+[190.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[190.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[192.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[192.59] [I][jk_bms_ble:939]: Emergency switch: OFF
+[194.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[194.60] [I][jk_bms_ble:939]: Emergency switch: OFF
+[196.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[196.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[199.33] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[199.33] [I][jk_bms_ble:939]: Emergency switch: OFF
+[201.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[201.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[203.73] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[203.73] [I][jk_bms_ble:939]: Emergency switch: OFF
+[206.05] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[206.05] [I][jk_bms_ble:939]: Emergency switch: OFF
+[208.42] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[208.42] [I][jk_bms_ble:939]: Emergency switch: OFF
+[210.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[210.47] [I][jk_bms_ble:939]: Emergency switch: OFF
+[212.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[212.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[215.15] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[215.15] [I][jk_bms_ble:939]: Emergency switch: OFF
+[217.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[217.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[219.91] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[219.91] [I][jk_bms_ble:939]: Emergency switch: OFF
+[222.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[222.29] [I][jk_bms_ble:939]: Emergency switch: OFF
+[224.69] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[224.69] [I][jk_bms_ble:939]: Emergency switch: OFF
+[227.04] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[227.04] [I][jk_bms_ble:939]: Emergency switch: OFF
+[229.07] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[229.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[231.39] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[231.39] [I][jk_bms_ble:939]: Emergency switch: OFF
+[233.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[233.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[235.75] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[235.75] [I][jk_bms_ble:939]: Emergency switch: OFF
+[238.14] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[238.14] [I][jk_bms_ble:939]: Emergency switch: OFF
+[240.51] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[240.51] [I][jk_bms_ble:939]: Emergency switch: OFF
+[242.87] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[242.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[245.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[245.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[247.63] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[247.63] [I][jk_bms_ble:939]: Emergency switch: OFF
+[250.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[250.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[252.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[252.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[254.75] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[254.75] [I][jk_bms_ble:939]: Emergency switch: OFF
+[256.77] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[256.77] [I][jk_bms_ble:939]: Emergency switch: OFF
+[259.14] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[259.14] [I][jk_bms_ble:939]: Emergency switch: OFF
+[261.50] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[261.50] [I][jk_bms_ble:939]: Emergency switch: OFF
+[263.83] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[263.84] [I][jk_bms_ble:939]: Emergency switch: OFF
+[265.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[265.84] [I][jk_bms_ble:939]: Emergency switch: OFF
+[267.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[267.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[270.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[270.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[272.58] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[272.58] [I][jk_bms_ble:939]: Emergency switch: OFF
+[274.97] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[274.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[277.35] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[277.35] [I][jk_bms_ble:939]: Emergency switch: OFF
+[279.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[279.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[282.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[282.09] [I][jk_bms_ble:939]: Emergency switch: OFF
+[284.50] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[284.50] [I][jk_bms_ble:939]: Emergency switch: OFF
+[286.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[286.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[289.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[289.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[291.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[291.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[293.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[293.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[295.97] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[295.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[298.32] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[298.32] [I][jk_bms_ble:939]: Emergency switch: OFF
+[300.70] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[300.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[303.11] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[303.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[305.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[305.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[306.41] [I][safe_mode:142]: Boot seems successful; resetting boot loop counter
+[308.69] [I][http_request.ota:041]: Starting update
+[308.69] [I][ota:105]: Downloading 1.1.1
+[308.70] [I][esp32_ble_client:167]: [0] [A4:C1:38:0B:82:42] Disconnecting (conn_id: 0).
+[308.71] [I][http_request.ota:258]: Connecting to: https://static.wafacredence.com/jk-bms-1.1.1.ota.bin.md5
+[308.93] [I][esp-idf:000]: E (915017) esp-tls-mbedtls: mbedtls_ssl_handshake returned -0x4290
+[308.93] [I][esp-idf:000]: E (915018) esp-tls: Failed to open new connection
+[308.94] [I][esp-idf:000]: E (915018) transport_base: Failed to open a new connection
+[308.95] [I][esp-idf:000]: E (915021) HTTP_CLIENT: Connection failed, sock < 0
+[308.95] [E][component:389]: http_request set Error flag: unspecified
+[308.96] [E][http_request.idf:139]: HTTP Request failed: ESP_ERR_HTTP_CONNECT
+[308.97] [E][http_request.ota:261]: Failed to connect to MD5 URL
+[308.97] [E][ota:112]: download failed 1.1.1 (try 2/3)
+[308.98] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[308.98] [I][jk_bms_ble:939]: Emergency switch: OFF
+[308.99] [W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[309.00] [I][esp-idf:000][BTU_TASK]: W (914789) BT_HCI: hci cmd send: disconnect: hdl 0x0, rsn:0x13
+[309.01] [I][esp-idf:000][BTU_TASK]: W (914902) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x16 dev_find 1
+[309.03] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[309.40] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[309.89] [I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[309.93] [E][component:414]: http_request cleared Error flag
+[311.19] [I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[311.23] [I][jk_bms_ble:523]: Request device info
+[311.43] [I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[311.43] [I][jk_bms_ble:1686]:   Uptime: 3580500 s
+[311.43] [I][jk_bms_ble:1697]:   Device passcode: 1234
+[311.44] [I][jk_bms_ble:1712]:   Passcode: 6613
+[311.44] [I][jk_bms_ble:1715]:   User data: JK-BMS
+[311.45] [I][jk_bms_ble:1718]:   Setup passcode: 019127
+[311.46] [I][jk_bms_ble:1782]:   Hardware option: 
+[311.46] [I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[311.46] [I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[311.47] [I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[314.03] [I][jk_bms_ble:553]: Request status notification
+[314.18] [I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[314.18] [I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[314.19] [I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[314.19] [I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[314.20] [I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[314.21] [I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[314.21] [I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[314.22] [I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[314.23] [I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[314.23] [I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[314.24] [I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[314.25] [I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[314.25] [I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[314.26] [I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[314.26] [I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[314.27] [I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[314.28] [I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[314.28] [I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[314.29] [I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[314.29] [I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[314.30] [I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[314.31] [I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[314.32] [I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[314.32] [I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[314.33] [I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[314.33] [I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[314.33] [I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[314.34] [I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[314.34] [I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[314.36] [I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[314.37] [I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[314.37] [I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[314.38] [I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[314.38] [I][jk_bms_ble:1391]:   Precharge time: 0 s
+[314.39] [I][jk_bms_ble:1413]:   Heating switch: OFF
+[314.39] [I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[314.40] [I][jk_bms_ble:1422]:   Special charger: OFF
+[314.40] [I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[314.41] [I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[314.41] [I][jk_bms_ble:1686]:   Uptime: 3580500 s
+[314.42] [I][jk_bms_ble:1697]:   Device passcode: 1234
+[314.42] [I][jk_bms_ble:1712]:   Passcode: 6613
+[314.43] [I][jk_bms_ble:1715]:   User data: JK-BMS
+[314.43] [I][jk_bms_ble:1718]:   Setup passcode: 019127
+[314.44] [I][jk_bms_ble:1782]:   Hardware option: 
+[314.44] [I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[314.45] [I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[314.45] [I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[314.74] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[314.74] [I][jk_bms_ble:939]: Emergency switch: OFF
+[317.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[317.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[319.14] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[319.14] [I][jk_bms_ble:939]: Emergency switch: OFF
+[321.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[321.49] [I][jk_bms_ble:939]: Emergency switch: OFF
+[323.64] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[323.64] [I][jk_bms_ble:939]: Emergency switch: OFF
+[325.83] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[325.83] [I][jk_bms_ble:939]: Emergency switch: OFF
+[328.22] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[328.22] [I][jk_bms_ble:939]: Emergency switch: OFF
+[330.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[330.60] [I][jk_bms_ble:939]: Emergency switch: OFF
+[332.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[332.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[334.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[334.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[337.33] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[337.33] [I][jk_bms_ble:939]: Emergency switch: OFF
+[339.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[339.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[342.08] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[342.08] [I][jk_bms_ble:939]: Emergency switch: OFF
+[344.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[344.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[346.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[346.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[348.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[348.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[351.15] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[351.15] [I][jk_bms_ble:939]: Emergency switch: OFF
+[353.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[353.17] [I][jk_bms_ble:939]: Emergency switch: OFF
+[355.52] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[355.52] [I][jk_bms_ble:939]: Emergency switch: OFF
+[357.97] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[357.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[360.28] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[360.28] [I][jk_bms_ble:939]: Emergency switch: OFF
+[362.64] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[362.64] [I][jk_bms_ble:939]: Emergency switch: OFF
+[365.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[365.02] [I][jk_bms_ble:939]: Emergency switch: OFF
+[367.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[367.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[369.82] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[369.82] [I][jk_bms_ble:939]: Emergency switch: OFF
+[372.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[372.16] [I][jk_bms_ble:939]: Emergency switch: OFF
+[374.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[374.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[376.63] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[376.63] [I][jk_bms_ble:939]: Emergency switch: OFF
+[378.88] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[378.89] [I][jk_bms_ble:939]: Emergency switch: OFF
+[380.91] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[380.91] [I][jk_bms_ble:939]: Emergency switch: OFF
+[383.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[383.84] [I][jk_bms_ble:939]: Emergency switch: OFF
+[386.02] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[386.02] [I][jk_bms_ble:939]: Emergency switch: OFF
+[388.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[388.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[390.76] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[390.76] [I][jk_bms_ble:939]: Emergency switch: OFF
+[393.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[393.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[395.53] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[395.53] [I][jk_bms_ble:939]: Emergency switch: OFF
+[397.92] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[397.93] [I][jk_bms_ble:939]: Emergency switch: OFF
+[400.32] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[400.32] [I][jk_bms_ble:939]: Emergency switch: OFF
+[402.66] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[402.66] [I][jk_bms_ble:939]: Emergency switch: OFF
+[405.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[405.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[407.42] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[407.42] [I][jk_bms_ble:939]: Emergency switch: OFF
+[409.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[409.47] [I][jk_bms_ble:939]: Emergency switch: OFF
+[411.82] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[411.82] [I][jk_bms_ble:939]: Emergency switch: OFF
+[414.22] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[414.22] [I][jk_bms_ble:939]: Emergency switch: OFF
+[416.52] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[416.53] [I][jk_bms_ble:939]: Emergency switch: OFF
+[418.88] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[418.88] [I][jk_bms_ble:939]: Emergency switch: OFF
+[421.28] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[421.28] [I][jk_bms_ble:939]: Emergency switch: OFF
+[423.63] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[423.63] [I][jk_bms_ble:939]: Emergency switch: OFF
+[426.05] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[426.05] [I][jk_bms_ble:939]: Emergency switch: OFF
+[428.04] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[428.05] [I][jk_bms_ble:939]: Emergency switch: OFF
+[430.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[430.50] [I][jk_bms_ble:939]: Emergency switch: OFF
+[432.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[432.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[435.11] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[435.11] [I][jk_bms_ble:939]: Emergency switch: OFF
+[437.52] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[437.52] [I][jk_bms_ble:939]: Emergency switch: OFF
+[439.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[439.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[441.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[441.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[444.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[444.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[446.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[446.60] [I][jk_bms_ble:939]: Emergency switch: OFF
+[448.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[448.62] [I][jk_bms_ble:939]: Emergency switch: OFF
+[450.95] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[450.97] [I][jk_bms_ble:939]: Emergency switch: OFF
+[453.32] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[453.32] [I][jk_bms_ble:939]: Emergency switch: OFF
+[455.35] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[455.35] [I][jk_bms_ble:939]: Emergency switch: OFF
+[457.69] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[457.69] [I][jk_bms_ble:939]: Emergency switch: OFF
+[460.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[460.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[462.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[462.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[464.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[464.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[466.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[466.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[468.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[468.82] [I][jk_bms_ble:939]: Emergency switch: OFF
+[471.20] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[471.20] [I][jk_bms_ble:939]: Emergency switch: OFF
+[473.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[473.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[475.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[475.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[477.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[477.95] [I][jk_bms_ble:939]: Emergency switch: OFF
+[480.28] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[480.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[482.67] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[482.67] [I][jk_bms_ble:939]: Emergency switch: OFF
+[485.02] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[485.02] [I][jk_bms_ble:939]: Emergency switch: OFF
+[487.03] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[487.03] [I][jk_bms_ble:939]: Emergency switch: OFF
+[489.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[489.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[491.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[491.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[493.76] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[493.77] [I][jk_bms_ble:939]: Emergency switch: OFF
+[495.77] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[495.77] [I][jk_bms_ble:939]: Emergency switch: OFF
+[498.07] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[498.08] [I][jk_bms_ble:939]: Emergency switch: OFF
+[500.17] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[500.17] [I][jk_bms_ble:939]: Emergency switch: OFF
+[503.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[503.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[506.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[506.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[508.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[508.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[510.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[510.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[512.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[512.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[515.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[515.12] [I][jk_bms_ble:939]: Emergency switch: OFF
+[517.13] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[517.13] [I][jk_bms_ble:939]: Emergency switch: OFF
+[519.51] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[519.51] [I][jk_bms_ble:939]: Emergency switch: OFF
+[521.88] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[521.88] [I][jk_bms_ble:939]: Emergency switch: OFF
+[524.22] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[524.23] [I][jk_bms_ble:939]: Emergency switch: OFF
+[526.61] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[526.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[529.00] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[529.00] [I][jk_bms_ble:939]: Emergency switch: OFF
+[531.01] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[531.01] [I][jk_bms_ble:939]: Emergency switch: OFF
+[533.37] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[533.37] [I][jk_bms_ble:939]: Emergency switch: OFF
+[535.73] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[535.73] [I][jk_bms_ble:939]: Emergency switch: OFF
+[538.08] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[538.08] [I][jk_bms_ble:939]: Emergency switch: OFF
+[540.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[540.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[542.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[542.84] [I][jk_bms_ble:939]: Emergency switch: OFF
+[545.21] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[545.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[547.61] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[547.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[549.63] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[549.63] [I][jk_bms_ble:939]: Emergency switch: OFF
+[551.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[551.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[553.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[553.95] [I][jk_bms_ble:939]: Emergency switch: OFF
+[556.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[556.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[558.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[558.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[560.66] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[560.66] [I][jk_bms_ble:939]: Emergency switch: OFF
+[563.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[563.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[565.82] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[565.82] [I][jk_bms_ble:939]: Emergency switch: OFF
+[568.20] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[568.20] [I][jk_bms_ble:939]: Emergency switch: OFF
+[570.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[570.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[572.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[572.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[575.34] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[575.34] [I][jk_bms_ble:939]: Emergency switch: OFF
+[577.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[577.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[579.68] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[579.68] [I][jk_bms_ble:939]: Emergency switch: OFF
+[581.69] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[581.69] [I][jk_bms_ble:939]: Emergency switch: OFF
+[584.06] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[584.06] [I][jk_bms_ble:939]: Emergency switch: OFF
+[586.42] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[586.43] [I][jk_bms_ble:939]: Emergency switch: OFF
+[588.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[588.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[590.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[590.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[593.15] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[593.15] [I][jk_bms_ble:939]: Emergency switch: OFF
+[595.49] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[595.49] [I][jk_bms_ble:939]: Emergency switch: OFF
+[597.51] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[597.51] [I][jk_bms_ble:939]: Emergency switch: OFF
+[599.52] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[599.53] [I][jk_bms_ble:939]: Emergency switch: OFF

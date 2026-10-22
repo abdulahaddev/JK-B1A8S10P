@@ -1,0 +1,860 @@
+# opened COM8 at 02:39:34 without reset
+[  2.34] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  2.34] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  4.70] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  4.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  7.08] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  7.08] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  9.45] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  9.45] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 11.85] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 11.85] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 14.20] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 14.20] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 16.58] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 16.58] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 18.96] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 18.96] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 21.33] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 21.34] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 23.72] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 23.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 26.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 26.09] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 28.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 28.09] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 30.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 30.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 32.83] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 32.83] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 35.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 35.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 37.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 37.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 39.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 39.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 42.33] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 42.33] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 44.71] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 44.71] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 47.07] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 47.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 49.07] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 49.07] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 51.44] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 51.44] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 53.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 53.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 56.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 56.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 58.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 58.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 60.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 60.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 63.31] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 63.31] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 65.31] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 65.31] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 67.66] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 67.66] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 70.04] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 70.05] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 72.05] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 72.05] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 74.41] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 74.41] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 76.79] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 76.79] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 79.16] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 79.16] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 81.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 81.56] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 83.93] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 83.93] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 86.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 86.29] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 89.87] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 89.87] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 92.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 92.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 94.59] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 94.59] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 96.99] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 96.99] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 99.35] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 99.35] [I][jk_bms_ble:939]: Emergency switch: OFF
+[101.72] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[101.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[103.72] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[103.72] [I][jk_bms_ble:939]: Emergency switch: OFF
+[106.12] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[106.13] [I][jk_bms_ble:939]: Emergency switch: OFF
+[108.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[108.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[110.46] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[110.46] [I][jk_bms_ble:939]: Emergency switch: OFF
+[112.81] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[112.81] [I][jk_bms_ble:939]: Emergency switch: OFF
+[115.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[115.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[118.64] [W][component:513]: interval took a long time for an operation (2012 ms), max is 1570 ms
+[119.71] [W][component:513]: esp32_ble took a long time for an operation (1066 ms), max is 440 ms
+[119.72] [I][ota:666]: BLE stopped for download, free heap 106044
+[119.72] [I][http_request.ota:041]: Starting update
+[119.73] [I][ota:105]: Downloading 1.2.1
+[119.73] [E][esp32_ble_tracker:237]: Cannot stop scan: STOPPING
+[119.74] [I][esp32_ble_client:167]: [0] [A4:C1:38:0B:82:42] Disconnecting (conn_id: 0).
+[119.75] [W][esp32_ble_client:228]: [0] [A4:C1:38:0B:82:42] esp_ble_gattc_close error, status=259
+[119.76] [I][http_request.ota:258]: Connecting to: https://static.wafacredence.com/jk-bms-1.2.1.ota.bin.md5
+[122.43] [I][http_request.ota:094]: Connecting to: https://static.wafacredence.com/jk-bms-1.2.1.ota.bin
+[179.38] [I][http_request.ota:176]: Done in 60 seconds
+[180.18] [I][http_request.ota:204]: Update complete
+[180.19] [I][app:271]: Rebooting safely
+[180.28] ets Jul 29 2019 12:21:46
+[180.28] 
+[180.29] rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[180.29] configsip: 0, SPIWP:0xee
+[180.30] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[180.30] mode:DIO, clock div:2
+[180.30] load:0x3fff0030,len:6248
+[180.31] load:0x40078000,len:15932
+[180.31] ho 0 tail 12 room 4
+[180.31] load:0x40080400,len:3896
+[180.31] entry 0x40080638
+[180.32] I (29) boot: ESP-IDF 5.5.4 2nd stage bootloader
+[180.32] I (29) boot: Multicore bootloader
+[180.32] I (29) boot: chip revision: v3.1
+[180.33] I (29) boot.esp32: SPI Speed      : 40MHz
+[180.33] I (33) boot.esp32: SPI Mode       : DIO
+[180.33] I (36) boot.esp32: SPI Flash Size : 4MB
+[180.34] I (40) boot: Enabling RNG early entropy source...
+[180.34] I (44) boot: Partition Table:
+[180.35] I (47) boot: ## Label            Usage          Type ST Offset   Length
+[180.35] I (53) boot:  0 otadata          OTA data         01 00 00009000 00002000
+[180.36] I (60) boot:  1 phy_init         RF data          01 01 0000b000 00001000
+[180.37] I (66) boot:  2 app0             OTA app          00 10 00010000 001c0000
+[180.37] I (73) boot:  3 app1             OTA app          00 11 001d0000 001c0000
+[180.38] I (79) boot:  4 nvs              WiFi data        01 02 00390000 00070000
+[180.38] I (86) boot: End of partition table
+[180.40] I (114) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3572ch (218924) map
+[180.48] I (189) esp_image: segment 1: paddr=00205754 vaddr=3ffbdb60 size=057c8h ( 22472) load
+[180.49] I (197) esp_image: segment 2: paddr=0020af24 vaddr=40080000 size=050f4h ( 20724) load
+[180.50] I (206) esp_image: segment 3: paddr=00210020 vaddr=400d0020 size=e37fch (931836) map
+[180.81] I (524) esp_image: segment 4: paddr=002f3824 vaddr=400850f4 size=15348h ( 86856) load
+[180.85] I (558) esp_image: segment 5: paddr=00308b74 vaddr=50001eac size=00020h (    32) load
+[180.86] I (572) boot: Loaded app from partition at offset 0x1d0000
+[180.86] I (572) boot: Disabling RNG early entropy source...
+[180.99] [I][logger:122]: Log initialized
+[181.01] [I][app:060]: Running through setup()
+[181.01] [I][telemetry:049]: Boot 2 (software), 1 readings restored from RTC
+[181.02] [I][ota:069]: Firmware 1.2.1, verifying 1.2.1
+[181.18] [I][wifi:699]: Starting fast_connect (config) 'IoT'
+[181.19] [I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase INITIAL_CONNECT)...
+[181.19] [I][app:117]: setup() finished successfully!
+[181.23] [W][component:382]: wifi set Warning flag: associating to network
+[181.66] [W][component:513]: esp32_ble took a long time for an operation (422 ms), max is 50 ms
+[181.67] [I][app:151]: ESPHome version 2026.6.5 compiled on 2026-10-23 02:34:08 +0600
+[181.67] [I][app:153]: Project abdulahaddev.jk-bms version 1.2.1
+[181.68] [I][app:158]: ESP32 Chip: ESP32 rev3.1, 2 core(s)
+[181.69] [W][app:171]: Chip rev >= 3.0 detected. Set minimum_chip_revision: "3.1" under esp32 > framework > advanced to reduce binary size
+[181.70] [W][app:198]: Bootloader supports SRAM1 as IRAM (+40KB). Set sram1_as_iram: true under esp32 > framework > advanced
+[181.72] [I][ble_power:082]: BLE TX power set to +9 dBm (level 7)
+[182.01] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[182.48] [I][esp-idf:000][BTU_TASK]: W (3776) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[182.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[183.30] [I][esp-idf:000][BTU_TASK]: W (4589) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[186.90] [I][wifi:1575]: Connected
+[186.92] [W][component:405]: wifi cleared Warning flag
+[187.39] [I][esp-idf:000][BTU_TASK]: W (8684) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[187.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[187.80] [I][esp-idf:000][BTU_TASK]: W (9090) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[188.00] [I][esp-idf:000][BTU_TASK]: W (9296) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[188.41] [I][esp-idf:000][BTU_TASK]: W (9703) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[188.81] [I][esp-idf:000][BTU_TASK]: W (10106) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[189.63] [I][esp-idf:000][BTU_TASK]: W (10920) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[190.64] [I][esp-idf:000][BTU_TASK]: W (11935) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[192.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[193.32] [I][esp-idf:000][BTU_TASK]: W (14610) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[194.96] [I][esp-idf:000][BTU_TASK]: W (16260) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[194.97] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[194.98] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[195.11] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[195.79] [I][esp-idf:000][BTU_TASK]: W (17085) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[196.20] [I][esp-idf:000][BTU_TASK]: W (17486) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[196.40] [I][esp-idf:000][BTU_TASK]: W (17697) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[196.81] [I][esp-idf:000][BTU_TASK]: W (18105) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[197.23] [I][esp-idf:000][BTU_TASK]: W (18525) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[197.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[198.28] [I][esp-idf:000][BTU_TASK]: W (19545) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[198.66] [I][esp-idf:000][BTU_TASK]: W (19950) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[199.06] [I][esp-idf:000][BTU_TASK]: W (20355) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[199.28] [I][esp-idf:000][BTU_TASK]: W (20565) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[199.68] [I][esp-idf:000][BTU_TASK]: W (20970) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[199.89] [I][esp-idf:000][BTU_TASK]: W (21180) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[199.89] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[199.90] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[200.06] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[200.71] [I][esp-idf:000][BTU_TASK]: W (22005) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[201.32] [I][esp-idf:000][BTU_TASK]: W (22617) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[201.94] [I][esp-idf:000][BTU_TASK]: W (23235) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[202.34] [I][esp-idf:000][BTU_TASK]: W (23637) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[202.78] [I][esp-idf:000][BTU_TASK]: W (24057) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[202.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[203.17] [I][esp-idf:000][BTU_TASK]: W (24465) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[203.57] [I][esp-idf:000][BTU_TASK]: W (24867) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[206.01] [I][esp-idf:000][BTU_TASK]: W (27300) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[206.42] [I][esp-idf:000][BTU_TASK]: W (27717) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[207.45] [I][esp-idf:000][BTU_TASK]: W (28737) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[207.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[209.70] [I][esp-idf:000][BTU_TASK]: W (30991) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[209.71] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[209.71] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[210.67] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[211.78] [I][esp-idf:000][BTU_TASK]: W (33046) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[212.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[213.19] [I][esp-idf:000][BTU_TASK]: W (34485) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[215.04] [I][esp-idf:000][BTU_TASK]: W (36330) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[215.28] [I][esp-idf:000][BTU_TASK]: W (36538) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[215.65] [I][esp-idf:000][BTU_TASK]: W (36945) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[216.06] [I][esp-idf:000][BTU_TASK]: W (37347) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[216.28] [I][esp-idf:000][BTU_TASK]: W (37561) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[216.68] [I][esp-idf:000][BTU_TASK]: W (37977) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[217.50] [I][esp-idf:000][BTU_TASK]: W (38790) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[217.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[217.90] [I][esp-idf:000][BTU_TASK]: W (39196) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[218.30] [I][esp-idf:000][BTU_TASK]: W (39598) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[218.31] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[218.32] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[218.66] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[219.12] [I][esp-idf:000][BTU_TASK]: W (40410) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[220.54] [I][esp-idf:000][BTU_TASK]: W (41836) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[221.36] [I][esp-idf:000][BTU_TASK]: W (42657) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[221.78] [I][esp-idf:000][BTU_TASK]: W (43066) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[222.18] [I][esp-idf:000][BTU_TASK]: W (43471) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[222.39] [I][esp-idf:000][BTU_TASK]: W (43681) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[222.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[222.80] [I][esp-idf:000][BTU_TASK]: W (44098) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[223.62] [I][esp-idf:000][BTU_TASK]: W (44911) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[224.02] [I][esp-idf:000][BTU_TASK]: W (45316) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[224.28] [I][esp-idf:000][BTU_TASK]: W (45538) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[225.28] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[225.28] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[225.30] [I][esp-idf:000][BTU_TASK]: W (46546) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[225.61] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[227.10] [I][esp-idf:000][BTU_TASK]: W (48389) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[227.31] [I][esp-idf:000][BTU_TASK]: W (48601) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[227.71] [I][esp-idf:000][BTU_TASK]: W (49006) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[227.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[228.12] [I][esp-idf:000][BTU_TASK]: W (49409) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[228.53] [I][esp-idf:000][BTU_TASK]: W (49827) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[229.53] [I][esp-idf:000][BTU_TASK]: W (50836) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[230.78] [I][esp-idf:000][BTU_TASK]: W (52066) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[232.19] [I][esp-idf:000][BTU_TASK]: W (53490) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[232.60] [I][esp-idf:000][BTU_TASK]: W (53895) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[232.77] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[233.44] [I][esp-idf:000][BTU_TASK]: W (54736) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[234.88] [I][esp-idf:000][BTU_TASK]: W (56176) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[234.88] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[234.89] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[236.47] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[236.93] [I][esp-idf:000][BTU_TASK]: W (58227) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[237.78] [I][esp-idf:000][BTU_TASK]: W (59056) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[237.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[238.16] [I][esp-idf:000][BTU_TASK]: W (59461) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[238.99] [I][esp-idf:000][BTU_TASK]: W (60298) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[239.41] [I][esp-idf:000][BTU_TASK]: W (60706) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[240.27] [I][esp-idf:000][BTU_TASK]: W (61528) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[240.64] [I][esp-idf:000][BTU_TASK]: W (61936) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[241.04] [I][esp-idf:000][BTU_TASK]: W (62341) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[241.87] [I][esp-idf:000][BTU_TASK]: W (63166) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[242.77] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[243.29] [I][esp-idf:000][BTU_TASK]: W (64590) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[243.50] [I][esp-idf:000][BTU_TASK]: W (64801) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[243.51] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[243.52] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[243.67] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[244.12] [I][esp-idf:000][BTU_TASK]: W (65428) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[244.56] [I][esp-idf:000][BTU_TASK]: W (65847) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[247.47] [I][ota:604]: updated to 1.2.1, confirmed
+[247.49] [W][component:513]: interval took a long time for an operation (1781 ms), max is 50 ms
+[247.50] [I][esp-idf:000][BTU_TASK]: W (67681) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[247.51] [I][esp-idf:000][BTU_TASK]: W (68101) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[247.61] [I][esp-idf:000][BTU_TASK]: W (68912) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[247.77] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[248.04] [I][esp-idf:000][BTU_TASK]: W (69328) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[248.43] [I][esp-idf:000][BTU_TASK]: W (69721) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[249.04] [I][esp-idf:000][BTU_TASK]: W (70336) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[249.66] [I][esp-idf:000][BTU_TASK]: W (70948) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[250.06] [I][esp-idf:000][BTU_TASK]: W (71356) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[250.46] [I][esp-idf:000][BTU_TASK]: W (71761) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[250.47] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[250.48] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[250.63] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[251.30] [I][esp-idf:000][BTU_TASK]: W (72598) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[252.12] [I][esp-idf:000][BTU_TASK]: W (73411) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[252.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[252.96] [I][esp-idf:000][BTU_TASK]: W (74248) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[253.97] [I][esp-idf:000][BTU_TASK]: W (75256) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[254.37] [I][esp-idf:000][BTU_TASK]: W (75661) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[255.04] [I][esp-idf:000][BTU_TASK]: W (76288) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[255.40] [I][esp-idf:000][BTU_TASK]: W (76696) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[255.81] [I][esp-idf:000][BTU_TASK]: W (77101) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[256.23] [I][esp-idf:000][BTU_TASK]: W (77518) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[256.64] [I][esp-idf:000][BTU_TASK]: W (77938) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[257.05] [I][esp-idf:000][BTU_TASK]: W (78346) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[257.06] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[257.07] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[257.40] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[257.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[257.86] [I][esp-idf:000][BTU_TASK]: W (79156) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[258.27] [I][esp-idf:000][BTU_TASK]: W (79558) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[258.67] [I][esp-idf:000][BTU_TASK]: W (79967) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[259.08] [I][esp-idf:000][BTU_TASK]: W (80372) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[259.71] [I][esp-idf:000][BTU_TASK]: W (80998) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[260.73] [I][esp-idf:000][BTU_TASK]: W (82018) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[261.55] [I][esp-idf:000][BTU_TASK]: W (82846) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[262.37] [I][esp-idf:000][BTU_TASK]: W (83668) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[262.58] [I][esp-idf:000][BTU_TASK]: W (83878) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[262.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[264.87] [I][esp-idf:000][BTU_TASK]: W (86160) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[265.68] [I][esp-idf:000][BTU_TASK]: W (86972) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[265.69] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[265.69] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[266.66] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[266.91] [I][esp-idf:000][BTU_TASK]: W (88198) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[267.33] [I][esp-idf:000][BTU_TASK]: W (88621) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[267.73] [I][esp-idf:000][BTU_TASK]: W (89028) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[267.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[268.14] [I][esp-idf:000][BTU_TASK]: W (89432) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[268.96] [I][esp-idf:000][BTU_TASK]: W (90258) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[269.37] [I][esp-idf:000][BTU_TASK]: W (90662) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[270.19] [I][esp-idf:000][BTU_TASK]: W (91488) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[271.04] [I][esp-idf:000][BTU_TASK]: W (92310) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[272.43] [I][esp-idf:000][BTU_TASK]: W (93721) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[272.64] [I][esp-idf:000][BTU_TASK]: W (93931) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[272.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[273.05] [I][esp-idf:000][BTU_TASK]: W (94348) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[273.06] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[273.07] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[273.65] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[273.87] [I][esp-idf:000][BTU_TASK]: W (95161) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[274.69] [I][esp-idf:000][BTU_TASK]: W (95987) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[275.54] [I][esp-idf:000][BTU_TASK]: W (96813) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[275.94] [I][esp-idf:000][BTU_TASK]: W (97229) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[276.33] [I][esp-idf:000][BTU_TASK]: W (97623) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[277.16] [I][esp-idf:000][BTU_TASK]: W (98448) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[277.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[277.98] [I][esp-idf:000][BTU_TASK]: W (99272) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[278.80] [I][esp-idf:000][BTU_TASK]: W (100097) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[279.21] [I][esp-idf:000][BTU_TASK]: W (100502) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[280.04] [I][esp-idf:000][BTU_TASK]: W (101312) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[282.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[282.89] [I][esp-idf:000][BTU_TASK]: W (104189) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[282.90] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[282.91] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[283.24] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[284.13] [I][esp-idf:000][BTU_TASK]: W (105422) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[284.55] [I][esp-idf:000][BTU_TASK]: W (105837) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[284.94] [I][esp-idf:000][BTU_TASK]: W (106233) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[285.35] [I][esp-idf:000][BTU_TASK]: W (106636) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[286.17] [I][esp-idf:000][BTU_TASK]: W (107460) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[287.42] [I][esp-idf:000][BTU_TASK]: W (108707) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[287.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[288.23] [I][esp-idf:000][BTU_TASK]: W (109517) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[288.63] [I][esp-idf:000][BTU_TASK]: W (109922) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[289.47] [I][esp-idf:000][BTU_TASK]: W (110759) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[290.28] [I][esp-idf:000][BTU_TASK]: W (111572) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[290.69] [I][esp-idf:000][BTU_TASK]: W (111989) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[290.70] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[290.71] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[291.23] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[291.70] [I][esp-idf:000][BTU_TASK]: W (112996) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[292.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[294.38] [I][esp-idf:000][BTU_TASK]: W (115667) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[294.79] [I][esp-idf:000][BTU_TASK]: W (116087) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[296.23] [I][esp-idf:000][BTU_TASK]: W (117527) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[297.06] [I][esp-idf:000][BTU_TASK]: W (118349) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[297.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[298.48] [I][esp-idf:000][BTU_TASK]: W (119777) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[299.31] [I][esp-idf:000][BTU_TASK]: W (120602) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[300.12] [I][esp-idf:000][BTU_TASK]: W (121412) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[300.33] [I][esp-idf:000][BTU_TASK]: W (121622) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[301.14] [I][esp-idf:000][BTU_TASK]: W (122432) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[301.95] [I][esp-idf:000][BTU_TASK]: W (123243) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[301.96] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[301.96] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[302.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[302.93] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[303.18] [I][esp-idf:000][BTU_TASK]: W (124472) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[303.60] [I][esp-idf:000][BTU_TASK]: W (124889) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[304.04] [I][esp-idf:000][BTU_TASK]: W (125310) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[304.42] [I][esp-idf:000][BTU_TASK]: W (125717) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[305.86] [I][esp-idf:000][BTU_TASK]: W (127157) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[306.68] [I][esp-idf:000][BTU_TASK]: W (127967) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[307.48] [I][esp-idf:000][BTU_TASK]: W (128776) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[307.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[307.89] [I][esp-idf:000][BTU_TASK]: W (129183) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[308.71] [I][esp-idf:000][BTU_TASK]: W (130007) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[309.54] [I][esp-idf:000][BTU_TASK]: W (130833) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[310.35] [I][esp-idf:000][BTU_TASK]: W (131643) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[310.35] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[310.36] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[311.32] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[311.80] [I][esp-idf:000][BTU_TASK]: W (133098) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[312.78] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[313.23] [I][esp-idf:000][BTU_TASK]: W (134522) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[314.06] [I][esp-idf:000][BTU_TASK]: W (135347) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[314.67] [I][esp-idf:000][BTU_TASK]: W (135962) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[315.08] [I][esp-idf:000][BTU_TASK]: W (136380) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[315.54] [I][esp-idf:000][BTU_TASK]: W (136800) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[321.10] [W][component:513]: interval took a long time for an operation (5391 ms), max is 1790 ms
+[321.10] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[321.12] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[321.12] [I][esp-idf:000][BTU_TASK]: W (137610) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[321.13] [I][esp-idf:000][BTU_TASK]: W (139263) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[321.15] [I][esp-idf:000][BTU_TASK]: W (139668) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[321.15] [I][esp-idf:000][BTU_TASK]: W (140909) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[321.17] [I][esp-idf:000][BTU_TASK]: W (141317) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[321.17] [W][component:513]: logger took a long time for an operation (51 ms), max is 50 ms
+[321.19] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[321.82] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[322.07] [I][esp-idf:000][BTU_TASK]: W (143372) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[322.90] [I][esp-idf:000][BTU_TASK]: W (144197) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[324.14] [I][esp-idf:000][BTU_TASK]: W (145439) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[324.55] [I][esp-idf:000][BTU_TASK]: W (145847) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[324.96] [I][esp-idf:000][BTU_TASK]: W (146252) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[326.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[326.40] [I][esp-idf:000][BTU_TASK]: W (147689) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[329.46] [I][esp-idf:000][BTU_TASK]: W (150749) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[331.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[331.49] [I][esp-idf:000][BTU_TASK]: W (152789) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[332.74] [I][esp-idf:000][BTU_TASK]: W (154037) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[333.57] [I][esp-idf:000][BTU_TASK]: W (154859) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[333.98] [I][esp-idf:000][BTU_TASK]: W (155281) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[333.99] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[334.00] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[334.97] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[335.64] [I][esp-idf:000][BTU_TASK]: W (156930) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[336.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[337.06] [I][esp-idf:000][BTU_TASK]: W (158358) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[337.89] [I][esp-idf:000][BTU_TASK]: W (159180) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[339.31] [I][esp-idf:000][BTU_TASK]: W (160608) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[339.72] [I][esp-idf:000][BTU_TASK]: W (161014) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[340.54] [I][esp-idf:000][BTU_TASK]: W (161837) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[341.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[341.37] [I][esp-idf:000][BTU_TASK]: W (162660) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[343.20] [I][esp-idf:000][BTU_TASK]: W (164493) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[344.03] [I][esp-idf:000][BTU_TASK]: W (165318) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[344.43] [I][esp-idf:000][BTU_TASK]: W (165728) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[345.70] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[345.71] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[345.72] [I][esp-idf:000][BTU_TASK]: W (166955) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[346.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[346.24] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[346.49] [I][esp-idf:000][BTU_TASK]: W (167778) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[347.31] [I][esp-idf:000][BTU_TASK]: W (168600) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[348.12] [I][esp-idf:000][BTU_TASK]: W (169414) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[348.54] [I][esp-idf:000][BTU_TASK]: W (169830) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[350.39] [I][esp-idf:000][BTU_TASK]: W (171678) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[351.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[351.20] [I][esp-idf:000][BTU_TASK]: W (172488) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[352.02] [I][esp-idf:000][BTU_TASK]: W (173310) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[353.46] [I][esp-idf:000][BTU_TASK]: W (174750) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[353.86] [I][esp-idf:000][BTU_TASK]: W (175159) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[354.27] [I][esp-idf:000][BTU_TASK]: W (175564) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[355.51] [I][esp-idf:000][BTU_TASK]: W (176809) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[355.52] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[355.53] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[356.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[356.49] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[356.75] [I][esp-idf:000][BTU_TASK]: W (178038) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[358.20] [I][esp-idf:000][BTU_TASK]: W (179464) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[358.59] [I][esp-idf:000][BTU_TASK]: W (179880) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[359.42] [I][esp-idf:000][BTU_TASK]: W (180708) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[360.85] [I][esp-idf:000][BTU_TASK]: W (182148) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[361.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[361.70] [I][esp-idf:000][BTU_TASK]: W (182970) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[362.10] [I][esp-idf:000][BTU_TASK]: W (183391) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[362.49] [I][esp-idf:000][BTU_TASK]: W (183783) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[362.70] [I][esp-idf:000][BTU_TASK]: W (183994) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[363.12] [I][esp-idf:000][BTU_TASK]: W (184411) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[363.72] [I][esp-idf:000][BTU_TASK]: W (185013) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[363.73] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[363.73] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[363.89] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[364.14] [I][esp-idf:000][BTU_TASK]: W (185434) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[364.77] [I][esp-idf:000][BTU_TASK]: W (186060) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[366.00] [I][esp-idf:000][BTU_TASK]: W (187290) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[366.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[366.40] [I][esp-idf:000][BTU_TASK]: W (187698) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[367.23] [I][esp-idf:000][BTU_TASK]: W (188520) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[367.64] [I][esp-idf:000][BTU_TASK]: W (188928) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[368.45] [I][esp-idf:000][BTU_TASK]: W (189753) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[368.70] [I][esp-idf:000][BTU_TASK]: W (189964) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[371.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[371.97] [I][esp-idf:000][BTU_TASK]: W (193260) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[372.38] [I][esp-idf:000][BTU_TASK]: W (193668) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[372.78] [I][esp-idf:000][BTU_TASK]: W (194073) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[372.78] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[372.79] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[376.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[376.24] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[377.49] [I][esp-idf:000][BTU_TASK]: W (198783) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[378.74] [I][esp-idf:000][BTU_TASK]: W (200030) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[380.16] [I][esp-idf:000][BTU_TASK]: W (201450) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[380.57] [I][esp-idf:000][BTU_TASK]: W (201858) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[381.15] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[381.39] [I][esp-idf:000][BTU_TASK]: W (202680) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[381.79] [I][esp-idf:000][BTU_TASK]: W (203088) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[383.22] [I][esp-idf:000][BTU_TASK]: W (204510) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[385.47] [I][esp-idf:000][BTU_TASK]: W (206763) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[385.70] [I][esp-idf:000][BTU_TASK]: W (206974) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[386.93] [I][esp-idf:000][BTU_TASK]: W (207783) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[386.94] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[389.36] [I][esp-idf:000][BTU_TASK]: W (210660) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[389.36] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[389.38] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[391.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[394.49] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[396.75] [I][esp-idf:000][BTU_TASK]: W (218047) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[396.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[398.19] [I][esp-idf:000][BTU_TASK]: W (219482) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[400.04] [I][esp-idf:000][BTU_TASK]: W (221333) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[400.86] [I][esp-idf:000][BTU_TASK]: W (222151) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[401.27] [I][esp-idf:000][BTU_TASK]: W (222560) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[401.67] [I][esp-idf:000][BTU_TASK]: W (222963) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[401.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[402.50] [I][esp-idf:000][BTU_TASK]: W (223790) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[402.90] [I][esp-idf:000][BTU_TASK]: W (224196) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[403.72] [I][esp-idf:000][BTU_TASK]: W (225019) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[404.55] [I][esp-idf:000][BTU_TASK]: W (225841) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[405.36] [I][esp-idf:000][BTU_TASK]: W (226656) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[405.37] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[405.38] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[405.71] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[406.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[407.02] [I][esp-idf:000][BTU_TASK]: W (228319) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[407.43] [I][esp-idf:000][BTU_TASK]: W (228721) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[407.83] [I][esp-idf:000][BTU_TASK]: W (229128) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[408.84] [I][esp-idf:000][BTU_TASK]: W (230134) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[410.07] [I][esp-idf:000][BTU_TASK]: W (231366) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[410.48] [I][esp-idf:000][BTU_TASK]: W (231770) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[410.88] [I][esp-idf:000][BTU_TASK]: W (232174) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[411.09] [I][esp-idf:000][BTU_TASK]: W (232384) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[411.91] [I][esp-idf:000][BTU_TASK]: W (233209) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[411.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[412.32] [I][esp-idf:000][BTU_TASK]: W (233619) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[413.14] [I][esp-idf:000][BTU_TASK]: W (234440) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[413.15] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[413.16] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[414.13] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[414.38] [I][esp-idf:000][BTU_TASK]: W (235670) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[415.20] [I][esp-idf:000][BTU_TASK]: W (236492) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[415.61] [I][esp-idf:000][BTU_TASK]: W (236900) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[416.43] [I][esp-idf:000][BTU_TASK]: W (237722) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[416.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[417.03] [I][esp-idf:000][BTU_TASK]: W (238322) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[418.26] [I][esp-idf:000][BTU_TASK]: W (239556) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[419.09] [I][esp-idf:000][BTU_TASK]: W (240380) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[419.91] [I][esp-idf:000][BTU_TASK]: W (241205) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[420.12] [I][esp-idf:000][BTU_TASK]: W (241415) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[420.54] [I][esp-idf:000][BTU_TASK]: W (241833) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[421.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[422.38] [I][esp-idf:000][BTU_TASK]: W (243679) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[422.39] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[422.40] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[422.71] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[423.20] [I][esp-idf:000][BTU_TASK]: W (244490) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[424.22] [I][esp-idf:000][BTU_TASK]: W (245510) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[425.04] [I][esp-idf:000][BTU_TASK]: W (246332) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[425.47] [I][esp-idf:000][BTU_TASK]: W (246740) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[425.85] [I][esp-idf:000][BTU_TASK]: W (247145) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[426.27] [I][esp-idf:000][BTU_TASK]: W (247561) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[426.68] [I][esp-idf:000][BTU_TASK]: W (247970) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[426.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[427.08] [I][esp-idf:000][BTU_TASK]: W (248375) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[427.29] [I][esp-idf:000][BTU_TASK]: W (248585) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[428.12] [I][esp-idf:000][BTU_TASK]: W (249410) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[428.97] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[428.98] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[428.99] [I][esp-idf:000][BTU_TASK]: W (250232) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[429.97] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[430.38] [I][esp-idf:000][BTU_TASK]: W (251671) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[430.80] [I][esp-idf:000][BTU_TASK]: W (252091) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[431.19] [I][esp-idf:000][BTU_TASK]: W (252485) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[431.40] [I][esp-idf:000][BTU_TASK]: W (252695) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[431.80] [I][esp-idf:000][BTU_TASK]: W (253099) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[431.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[433.25] [I][esp-idf:000][BTU_TASK]: W (254540) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[434.07] [I][esp-idf:000][BTU_TASK]: W (255362) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[435.50] [I][esp-idf:000][BTU_TASK]: W (256790) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[436.32] [I][esp-idf:000][BTU_TASK]: W (257612) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[436.73] [I][esp-idf:000][BTU_TASK]: W (258020) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[436.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[437.54] [I][esp-idf:000][BTU_TASK]: W (258842) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[437.55] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[437.56] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[438.10] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[438.99] [I][esp-idf:000][BTU_TASK]: W (260285) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[439.41] [I][esp-idf:000][BTU_TASK]: W (260702) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[440.64] [I][esp-idf:000][BTU_TASK]: W (261935) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[441.47] [I][esp-idf:000][BTU_TASK]: W (262743) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[441.87] [I][esp-idf:000][BTU_TASK]: W (263162) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[441.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[443.30] [I][esp-idf:000][BTU_TASK]: W (264590) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[444.12] [I][esp-idf:000][BTU_TASK]: W (265415) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[444.54] [I][esp-idf:000][BTU_TASK]: W (265831) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[444.97] [I][esp-idf:000][BTU_TASK]: W (266240) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[445.35] [I][esp-idf:000][BTU_TASK]: W (266645) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[446.16] [I][esp-idf:000][BTU_TASK]: W (267456) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[446.17] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[446.18] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[446.33] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[446.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[447.00] [I][esp-idf:000][BTU_TASK]: W (268292) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[447.41] [I][esp-idf:000][BTU_TASK]: W (268700) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[447.81] [I][esp-idf:000][BTU_TASK]: W (269105) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[448.64] [I][esp-idf:000][BTU_TASK]: W (269930) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[449.04] [I][esp-idf:000][BTU_TASK]: W (270335) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[449.88] [I][esp-idf:000][BTU_TASK]: W (271172) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[450.90] [I][esp-idf:000][BTU_TASK]: W (272192) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[451.71] [I][esp-idf:000][BTU_TASK]: W (273005) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[451.92] [I][esp-idf:000][BTU_TASK]: W (273215) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[451.93] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[453.59] [I][esp-idf:000][BTU_TASK]: W (274880) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[456.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[457.89] [I][esp-idf:000][BTU_TASK]: W (279182) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[457.90] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[457.90] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[458.04] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[458.28] [I][esp-idf:000][BTU_TASK]: W (279575) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[458.52] [I][esp-idf:000][BTU_TASK]: W (279785) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[458.70] [I][esp-idf:000][BTU_TASK]: W (279995) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[459.53] [I][esp-idf:000][BTU_TASK]: W (280820) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[460.35] [I][esp-idf:000][BTU_TASK]: W (281644) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[460.76] [I][esp-idf:000][BTU_TASK]: W (282052) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[461.16] [I][esp-idf:000][BTU_TASK]: W (282452) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[461.57] [I][esp-idf:000][BTU_TASK]: W (282860) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[461.97] [I][esp-idf:000][BTU_TASK]: W (283265) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[461.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[462.80] [I][esp-idf:000][BTU_TASK]: W (284090) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[463.62] [I][esp-idf:000][BTU_TASK]: W (284915) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[463.63] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[463.64] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[463.75] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[464.24] [I][esp-idf:000][BTU_TASK]: W (285530) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[465.06] [I][esp-idf:000][BTU_TASK]: W (286352) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[466.89] [I][esp-idf:000][BTU_TASK]: W (288185) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[466.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[467.10] [I][esp-idf:000][BTU_TASK]: W (288396) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[468.12] [I][esp-idf:000][BTU_TASK]: W (289412) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[470.79] [I][esp-idf:000][BTU_TASK]: W (292087) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[471.62] [I][esp-idf:000][BTU_TASK]: W (292911) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[471.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[472.44] [I][esp-idf:000][BTU_TASK]: W (293733) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[473.46] [I][esp-idf:000][BTU_TASK]: W (294753) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[473.87] [I][esp-idf:000][BTU_TASK]: W (295162) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[474.28] [I][esp-idf:000][BTU_TASK]: W (295581) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[474.29] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[474.30] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[475.27] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[475.51] [I][esp-idf:000][BTU_TASK]: W (296794) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[476.33] [I][esp-idf:000][BTU_TASK]: W (297621) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[476.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[477.75] [I][esp-idf:000][BTU_TASK]: W (299046) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[480.42] [I][esp-idf:000][BTU_TASK]: W (301716) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[480.84] [I][esp-idf:000][BTU_TASK]: W (302132) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[481.86] [I][esp-idf:000][BTU_TASK]: W (303154) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[481.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[483.29] [W][component:513]: interval took a long time for an operation (1171 ms), max is 50 ms
+[484.73] [I][esp-idf:000][BTU_TASK]: W (306021) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[485.13] [I][esp-idf:000][BTU_TASK]: W (306426) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[486.36] [I][esp-idf:000][BTU_TASK]: W (307656) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[486.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[487.17] [I][esp-idf:000][BTU_TASK]: W (308467) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[488.61] [I][esp-idf:000][BTU_TASK]: W (309905) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[488.62] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[488.63] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[489.59] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[490.25] [I][esp-idf:000][BTU_TASK]: W (311546) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[491.07] [I][esp-idf:000][BTU_TASK]: W (312365) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[491.48] [I][esp-idf:000][BTU_TASK]: W (312773) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[491.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[494.54] [I][esp-idf:000][BTU_TASK]: W (315831) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[495.96] [I][esp-idf:000][BTU_TASK]: W (317256) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[496.17] [I][esp-idf:000][BTU_TASK]: W (317466) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[496.96] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[498.41] [I][esp-idf:000][BTU_TASK]: W (319716) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[498.63] [I][esp-idf:000][BTU_TASK]: W (319926) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[498.83] [I][esp-idf:000][BTU_TASK]: W (320136) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[499.24] [I][esp-idf:000][BTU_TASK]: W (320541) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[500.06] [I][esp-idf:000][BTU_TASK]: W (321368) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[500.08] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[500.09] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[500.67] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[501.09] [I][esp-idf:000][BTU_TASK]: W (322386) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[501.51] [I][esp-idf:000][BTU_TASK]: W (322803) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[501.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[503.34] [I][esp-idf:000][BTU_TASK]: W (324633) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[504.57] [I][esp-idf:000][BTU_TASK]: W (325866) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[504.78] [I][esp-idf:000][BTU_TASK]: W (326079) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[505.61] [I][esp-idf:000][BTU_TASK]: W (326906) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[506.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[508.46] [I][esp-idf:000][BTU_TASK]: W (329751) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[509.28] [I][esp-idf:000][BTU_TASK]: W (330573) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[510.12] [I][esp-idf:000][BTU_TASK]: W (331414) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[510.51] [I][esp-idf:000][BTU_TASK]: W (331806) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[510.72] [I][esp-idf:000][BTU_TASK]: W (332017) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[510.73] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[510.74] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[511.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[512.35] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[513.00] [I][esp-idf:000][BTU_TASK]: W (334294) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[514.86] [I][esp-idf:000][BTU_TASK]: W (336152) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[515.27] [I][esp-idf:000][BTU_TASK]: W (336561) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[515.67] [I][esp-idf:000][BTU_TASK]: W (336966) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[516.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[517.53] [I][esp-idf:000][BTU_TASK]: W (338824) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[517.94] [I][esp-idf:000][BTU_TASK]: W (339232) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[518.34] [I][esp-idf:000][BTU_TASK]: W (339634) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[518.76] [I][esp-idf:000][BTU_TASK]: W (340052) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[519.15] [I][esp-idf:000][BTU_TASK]: W (340446) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[519.36] [I][esp-idf:000][BTU_TASK]: W (340656) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[520.37] [I][esp-idf:000][BTU_TASK]: W (341674) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[520.39] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[520.39] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[521.55] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[521.97] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[522.23] [I][esp-idf:000][BTU_TASK]: W (343522) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[523.05] [I][esp-idf:000][BTU_TASK]: W (344343) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[525.51] [I][esp-idf:000][BTU_TASK]: W (346803) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[527.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[527.96] [I][esp-idf:000][BTU_TASK]: W (349251) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[528.36] [I][esp-idf:000][BTU_TASK]: W (349657) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[529.17] [I][esp-idf:000][BTU_TASK]: W (350467) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[529.38] [I][esp-idf:000][BTU_TASK]: W (350677) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[529.79] [I][esp-idf:000][BTU_TASK]: W (351082) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[530.21] [I][esp-idf:000][BTU_TASK]: W (351502) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[531.23] [I][esp-idf:000][BTU_TASK]: W (352522) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[531.63] [I][esp-idf:000][BTU_TASK]: W (352926) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[531.64] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[531.65] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[532.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[532.61] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[533.69] [I][esp-idf:000][BTU_TASK]: W (354982) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[534.50] [I][esp-idf:000][BTU_TASK]: W (355792) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[534.92] [I][esp-idf:000][BTU_TASK]: W (356212) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[535.32] [I][esp-idf:000][BTU_TASK]: W (356617) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[537.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[538.01] [I][esp-idf:000][BTU_TASK]: W (359303) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[538.41] [I][esp-idf:000][BTU_TASK]: W (359707) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[539.85] [I][esp-idf:000][BTU_TASK]: W (361144) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[540.66] [I][esp-idf:000][BTU_TASK]: W (361957) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[540.87] [I][esp-idf:000][BTU_TASK]: W (362167) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[541.08] [I][esp-idf:000][BTU_TASK]: W (362375) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[541.88] [I][esp-idf:000][BTU_TASK]: W (363184) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[541.90] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[541.90] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[542.24] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[542.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[543.33] [I][esp-idf:000][BTU_TASK]: W (364624) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[543.72] [I][esp-idf:000][BTU_TASK]: W (365017) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[543.97] [I][esp-idf:000][BTU_TASK]: W (365229) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[544.14] [I][esp-idf:000][BTU_TASK]: W (365437) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[546.00] [I][esp-idf:000][BTU_TASK]: W (367295) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[546.42] [I][esp-idf:000][BTU_TASK]: W (367714) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[546.83] [I][esp-idf:000][BTU_TASK]: W (368123) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[547.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[547.65] [I][esp-idf:000][BTU_TASK]: W (368947) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[548.48] [I][esp-idf:000][BTU_TASK]: W (369772) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[549.71] [I][esp-idf:000][BTU_TASK]: W (371002) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[550.53] [I][esp-idf:000][BTU_TASK]: W (371827) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[550.54] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[550.55] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[551.09] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[551.76] [I][esp-idf:000][BTU_TASK]: W (373057) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[552.18] [I][esp-idf:000][BTU_TASK]: W (373474) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[552.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[555.47] [I][esp-idf:000][BTU_TASK]: W (376744) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[556.29] [I][esp-idf:000][BTU_TASK]: W (377587) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[557.10] [I][esp-idf:000][BTU_TASK]: W (378397) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[557.31] [I][esp-idf:000][BTU_TASK]: W (378607) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[557.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[558.14] [I][esp-idf:000][BTU_TASK]: W (379437) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[558.97] [I][esp-idf:000][BTU_TASK]: W (380254) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[559.79] [I][esp-idf:000][BTU_TASK]: W (381083) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[561.23] [I][esp-idf:000][BTU_TASK]: W (382523) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[561.64] [I][esp-idf:000][BTU_TASK]: W (382942) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[561.65] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[561.66] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[562.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[562.82] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[563.91] [I][esp-idf:000][BTU_TASK]: W (385204) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[565.14] [I][esp-idf:000][BTU_TASK]: W (386438) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[565.35] [I][esp-idf:000][BTU_TASK]: W (386645) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[565.77] [I][esp-idf:000][BTU_TASK]: W (387065) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[566.16] [I][esp-idf:000][BTU_TASK]: W (387457) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[566.37] [I][esp-idf:000][BTU_TASK]: W (387668) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[566.78] [I][esp-idf:000][BTU_TASK]: W (388073) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[567.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[567.59] [I][esp-idf:000][BTU_TASK]: W (388883) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[567.80] [I][esp-idf:000][BTU_TASK]: W (389093) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[568.20] [I][esp-idf:000][BTU_TASK]: W (389498) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[569.01] [I][esp-idf:000][BTU_TASK]: W (390308) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[569.02] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[569.03] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[569.99] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[570.66] [I][esp-idf:000][BTU_TASK]: W (391954) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[572.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[572.49] [I][esp-idf:000][BTU_TASK]: W (393788) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[572.90] [I][esp-idf:000][BTU_TASK]: W (394193) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[573.72] [I][esp-idf:000][BTU_TASK]: W (395017) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[574.13] [I][esp-idf:000][BTU_TASK]: W (395423) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[574.97] [I][esp-idf:000][BTU_TASK]: W (396245) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[575.16] [I][esp-idf:000][BTU_TASK]: W (396455) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[575.97] [I][esp-idf:000][BTU_TASK]: W (397268) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[576.39] [I][esp-idf:000][BTU_TASK]: W (397685) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[577.20] [I][esp-idf:000][BTU_TASK]: W (398495) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[577.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[577.60] [I][esp-idf:000][BTU_TASK]: W (398903) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[577.61] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[577.62] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[578.59] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[578.84] [I][esp-idf:000][BTU_TASK]: W (400133) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[579.24] [I][esp-idf:000][BTU_TASK]: W (400538) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[580.07] [I][esp-idf:000][BTU_TASK]: W (401363) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[581.49] [I][esp-idf:000][BTU_TASK]: W (402785) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[581.90] [I][esp-idf:000][BTU_TASK]: W (403195) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[582.30] [I][esp-idf:000][BTU_TASK]: W (403597) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[582.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[583.13] [I][esp-idf:000][BTU_TASK]: W (404424) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[584.15] [I][esp-idf:000][BTU_TASK]: W (405445) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[584.97] [I][esp-idf:000][BTU_TASK]: W (406267) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[585.38] [I][esp-idf:000][BTU_TASK]: W (406675) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[585.78] [I][esp-idf:000][BTU_TASK]: W (407079) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[585.79] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[585.80] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[586.17] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[586.40] [I][esp-idf:000][BTU_TASK]: W (407693) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[587.22] [I][esp-idf:000][BTU_TASK]: W (408517) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[587.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[587.61] [I][esp-idf:000][BTU_TASK]: W (408908) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[588.87] [I][esp-idf:000][BTU_TASK]: W (410165) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[589.28] [I][esp-idf:000][BTU_TASK]: W (410574) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[590.10] [I][esp-idf:000][BTU_TASK]: W (411395) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[590.51] [I][esp-idf:000][BTU_TASK]: W (411804) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[590.91] [I][esp-idf:000][BTU_TASK]: W (412209) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[591.74] [I][esp-idf:000][BTU_TASK]: W (413034) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[592.16] [I][esp-idf:000][BTU_TASK]: W (413453) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[592.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[593.58] [I][esp-idf:000][BTU_TASK]: W (414879) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[593.59] [E][esp32_ble_client:325]: [0] [A4:C1:38:0B:82:42] ESP_GATTC_OPEN_EVT in DISCONNECTING state (status=133)
+[593.60] [W][esp32_ble_client:224]: [0] [A4:C1:38:0B:82:42] Connection open error, status=133
+[594.54] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[595.04] [I][esp-idf:000][BTU_TASK]: W (416333) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[597.42] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[597.90] [I][esp-idf:000][BTU_TASK]: W (419195) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[598.71] [I][esp-idf:000][BTU_TASK]: W (420005) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[599.52] [I][esp-idf:000][BTU_TASK]: W (420819) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[599.93] [I][esp-idf:000][BTU_TASK]: W (421224) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1
+[600.33] [I][esp-idf:000][BTU_TASK]: W (421629) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x3e dev_find 1

@@ -1,0 +1,548 @@
+INFO ESPHome 2026.6.5
+INFO Reading configuration my-jk-bms-firebase.yaml...
+INFO Updating https://github.com/syssi/esphome-jk-bms.git@58385c78dc7248bd7bc1040677b05a46a5be42d3
+INFO Generating C++ source...
+INFO Detected timezone 'Asia/Dhaka'
+INFO Compiling app... Build path: D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms
+Processing [36m[1mjk-bms[0m (board: esp32dev; framework: espidf; platform: https://github.com/pioarduino/platform-espressif32/releases/download/55.03.39/platform-espressif32.zip)
+[1m--------------------------------------------------------------------------------[0m
+[0mHARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+[0m - contrib-piohome @ 3.4.4 
+[0m - framework-espidf @ 3.50504.0 (5.5.4) 
+[0m - tool-cmake @ 4.0.3 
+[0m - tool-esp-rom-elfs @ 2024.10.11 
+[0m - tool-esptoolpy @ 5.3.0 
+[0m - tool-ninja @ 1.13.1 
+[0m - tool-scons @ 4.40801.0 (4.8.1) 
+[0m - tool-xtensa-esp-elf-gdb @ 17.1.0+20260402 
+[0m - toolchain-xtensa-esp-elf @ 14.2.0+20260121
+[33mUsing Python 3.11.8 environment at: C:\Users\hi\.platformio\penv\.espidf-5.5.4
+[0mReading CMake configuration...
+[0mNo dependencies
+[0mRAM:   [===       ]  27.3% (used 89464 bytes from 327680 bytes)
+[0mFlash: [=======   ]  70.6% (used 1294927 bytes from 1835008 bytes)
+========================= [[32m[1mSUCCESS[0m] Took 23.66 seconds =========================[0m
+INFO Build Info: config_hash=0x8f8f85cd build_time_str=2026-10-23 04:22:56 +0600
+INFO Successfully compiled program.
+esptool v5.3.0
+Serial port COM8:
+Connecting.....
+Connected to ESP32 on COM8:
+Chip type:          ESP32-D0WD-V3 (revision v3.1)
+Features:           Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+Crystal frequency:  40MHz
+MAC:                5c:01:3b:68:84:3c
+
+Uploading stub flasher...
+Running stub flasher...
+Stub flasher running.
+Changing baud rate to 460800...
+Changed.
+
+Configuring flash size...
+Auto-detected flash size: 4MB
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\firmware.bin' at 0x00010000...
+Flash will be erased from 0x00010000 to 0x0014cfff...
+Compressed 1295424 bytes to 851629...
+Writing at 0x00010000 [                              ]   0.0% 0/851629 bytes... Writing at 0x0001c94a [                              ]   1.9% 16384/851629 bytes... Writing at 0x0002a40b [>                             ]   3.8% 32768/851629 bytes... Writing at 0x00035235 [>                             ]   5.8% 49152/851629 bytes... Writing at 0x0003cb84 [=>                            ]   7.7% 65536/851629 bytes... Writing at 0x000432e0 [=>                            ]   9.6% 81920/851629 bytes... Writing at 0x0004dc80 [==>                           ]  11.5% 98304/851629 bytes... Writing at 0x00053be1 [===>                          ]  13.5% 114688/851629 bytes... Writing at 0x00058efa [===>                          ]  15.4% 131072/851629 bytes... Writing at 0x0005e9d0 [====>                         ]  17.3% 147456/851629 bytes... Writing at 0x00063d29 [====>                         ]  19.2% 163840/851629 bytes... Writing at 0x00069370 [=====>                        ]  21.2% 180224/851629 bytes... Writing at 0x0006f209 [=====>                        ]  23.1% 196608/851629 bytes... Writing at 0x000745e7 [======>                       ]  25.0% 212992/851629 bytes... Writing at 0x00079b2a [=======>                      ]  26.9% 229376/851629 bytes... Writing at 0x0007eecb [=======>                      ]  28.9% 245760/851629 bytes... Writing at 0x00084c08 [========>                     ]  30.8% 262144/851629 bytes... Writing at 0x0008a910 [========>                     ]  32.7% 278528/851629 bytes... Writing at 0x000907e8 [=========>                    ]  34.6% 294912/851629 bytes... Writing at 0x00095e1d [=========>                    ]  36.6% 311296/851629 bytes... Writing at 0x0009b64c [==========>                   ]  38.5% 327680/851629 bytes... Writing at 0x000a08f1 [===========>                  ]  40.4% 344064/851629 bytes... Writing at 0x000a61c0 [===========>                  ]  42.3% 360448/851629 bytes... Writing at 0x000abdad [============>                 ]  44.2% 376832/851629 bytes... Writing at 0x000b1183 [============>                 ]  46.2% 393216/851629 bytes... Writing at 0x000b62ff [=============>                ]  48.1% 409600/851629 bytes... Writing at 0x000bb6ff [==============>               ]  50.0% 425984/851629 bytes... Writing at 0x000c0c29 [==============>               ]  51.9% 442368/851629 bytes... Writing at 0x000c60a9 [===============>              ]  53.9% 458752/851629 bytes... Writing at 0x000cb229 [===============>              ]  55.8% 475136/851629 bytes... Writing at 0x000d0ab3 [================>             ]  57.7% 491520/851629 bytes... Writing at 0x000d61f1 [================>             ]  59.6% 507904/851629 bytes... Writing at 0x000dba2b [=================>            ]  61.6% 524288/851629 bytes... Writing at 0x000e09ba [==================>           ]  63.5% 540672/851629 bytes... Writing at 0x000e5f17 [==================>           ]  65.4% 557056/851629 bytes... Writing at 0x000eb472 [===================>          ]  67.3% 573440/851629 bytes... Writing at 0x000f1479 [===================>          ]  69.3% 589824/851629 bytes... Writing at 0x000f6cf3 [====================>         ]  71.2% 606208/851629 bytes... Writing at 0x000fc2e1 [====================>         ]  73.1% 622592/851629 bytes... Writing at 0x00101da3 [=====================>        ]  75.0% 638976/851629 bytes... Writing at 0x001079c4 [======================>       ]  77.0% 655360/851629 bytes... Writing at 0x0010d51b [======================>       ]  78.9% 671744/851629 bytes... Writing at 0x00112e22 [=======================>      ]  80.8% 688128/851629 bytes... Writing at 0x00118a14 [=======================>      ]  82.7% 704512/851629 bytes... Writing at 0x0011e0e9 [========================>     ]  84.6% 720896/851629 bytes... Writing at 0x00124a14 [========================>     ]  86.6% 737280/851629 bytes... Writing at 0x0012ad31 [=========================>    ]  88.5% 753664/851629 bytes... Writing at 0x00130517 [==========================>   ]  90.4% 770048/851629 bytes... Writing at 0x0013665b [==========================>   ]  92.3% 786432/851629 bytes... Writing at 0x0013bba0 [===========================>  ]  94.3% 802816/851629 bytes... Writing at 0x00141512 [===========================>  ]  96.2% 819200/851629 bytes... Writing at 0x00146cf8 [============================> ]  98.1% 835584/851629 bytes... Writing at 0x0014c440 [==============================] 100.0% 851629/851629 bytes... 
+Wrote 1295424 bytes (851629 compressed) at 0x00010000 in 20.8 seconds (498.1 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\bootloader.bin' at 0x00001000...
+SHA digest in image updated.
+Flash will be erased from 0x00001000 to 0x00007fff...
+Compressed 26160 bytes to 16537...
+Writing at 0x00001000 [                              ]   0.0% 0/16537 bytes... Writing at 0x00007564 [============================> ]  99.1% 16384/16537 bytes... Writing at 0x00007630 [==============================] 100.0% 16537/16537 bytes... 
+Wrote 26160 bytes (16537 compressed) at 0x00001000 in 0.6 seconds (324.4 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\partitions.bin' at 0x00008000...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Compressed 3072 bytes to 133...
+Writing at 0x00008000 [                              ]   0.0% 0/133 bytes... Writing at 0x00008c00 [==============================] 100.0% 133/133 bytes... 
+Wrote 3072 bytes (133 compressed) at 0x00008000 in 0.0 seconds (733.1 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Writing 'D:\Project\BMS\JK-B1A8S10P\.esphome\build\jk-bms\.pioenvs\jk-bms\ota_data_initial.bin' at 0x00009000...
+Flash will be erased from 0x00009000 to 0x0000afff...
+Compressed 8192 bytes to 31...
+Writing at 0x00009000 [                              ]   0.0% 0/31 bytes... Writing at 0x0000b000 [==============================] 100.0% 31/31 bytes... 
+Wrote 8192 bytes (31 compressed) at 0x00009000 in 0.1 seconds (914.6 kbit/s).
+Verifying written data...
+Hash of data verified.
+
+Hard resetting via RTS pin...
+INFO Successfully uploaded program.
+INFO Starting log output from COM8 with baud rate 115200
+[04:30:01.099]\xc0 x\x80\x80\x80\x80x\x80x\x80x\x80 \x80\xf8\x80\x80 \x80 x \xab\xb9\xe9\xf6ets Jul 29 2019 12:21:46
+
+[04:30:01.105]rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[04:30:01.107]configsip: 0, SPIWP:0xee
+[04:30:01.112]clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[04:30:01.116]mode:DIO, clock div:2
+[04:30:01.118]load:0x3fff0030,len:6248
+[04:30:01.120]load:0x40078000,len:15932
+[04:30:01.120]ho 0 tail 12 room 4
+[04:30:01.122]load:0x40080400,len:3896
+[04:30:01.122]entry 0x40080638
+[04:30:01.122]I (29) boot: ESP-IDF 5.5.4 2nd stage bootloader
+[04:30:01.122]I (29) boot: Multicore bootloader
+[04:30:01.137]I (30) boot: chip revision: v3.1
+[04:30:01.142]I (30) boot.esp32: SPI Speed      : 40MHz
+[04:30:01.145]I (33) boot.esp32: SPI Mode       : DIO
+[04:30:01.148]I (36) boot.esp32: SPI Flash Size : 4MB
+[04:30:01.153]I (40) boot: Enabling RNG early entropy source...
+[04:30:01.156]I (44) boot: Partition Table:
+[04:30:01.162]I (47) boot: ## Label            Usage          Type ST Offset   Length
+[04:30:01.168]I (53) boot:  0 otadata          OTA data         01 00 00009000 00002000
+[04:30:01.172]I (60) boot:  1 phy_init         RF data          01 01 0000b000 00001000
+[04:30:01.172]I (66) boot:  2 app0             OTA app          00 10 00010000 001c0000
+[04:30:01.187]I (73) boot:  3 app1             OTA app          00 11 001d0000 001c0000
+[04:30:01.187]I (79) boot:  4 nvs              WiFi data        01 02 00390000 00070000
+[04:30:01.199]I (86) boot: End of partition table
+[04:30:01.200]I (89) boot: No factory image, trying OTA 0
+[04:30:01.207]I (93) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=35c0ch (220172) map
+[04:30:01.269]I (176) esp_image: segment 1: paddr=00045c34 vaddr=3ffbdb60 size=057e8h ( 22504) load
+[04:30:01.284]I (184) esp_image: segment 2: paddr=0004b424 vaddr=40080000 size=04bf4h ( 19444) load
+[04:30:01.284]I (192) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=e644ch (943180) map
+[04:30:01.615]I (515) esp_image: segment 4: paddr=00136474 vaddr=40084bf4 size=15f1ch ( 89884) load
+[04:30:01.653]I (550) esp_image: segment 5: paddr=0014c398 vaddr=50001eac size=00080h (   128) load
+[04:30:01.666]I (563) boot: Loaded app from partition at offset 0x10000
+[04:30:01.679]I (578) boot: Set actual ota_seq=1 in otadata[0]
+[04:30:01.684]I (578) boot: Disabling RNG early entropy source...
+[04:30:01.811][I][logger:122]: Log initialized
+[04:30:01.828][I][app:060]: Running through setup()
+[04:30:01.828][I][telemetry:054]: Boot 1 (power_on), 0 readings restored from RTC
+[04:30:01.828][I][ota:077]: Firmware 1.2.5, idle
+[04:30:01.980][I][wifi:699]: Starting fast_connect (config) 'IoT'
+[04:30:01.995][I][wifi:1097]: Connecting to 'IoT' (any) (priority 0, attempt 1/1 in phase INITIAL_CONNECT)...
+[04:30:01.999][I][app:117]: setup() finished successfully!
+[04:30:02.035][W][component:382]: wifi set Warning flag: associating to network
+[04:30:02.458][W][component:513]: esp32_ble took a long time for an operation (428 ms), max is 50 ms
+[04:30:02.458][I][app:151]: ESPHome version 2026.6.5 compiled on 2026-10-23 04:22:56 +0600
+[04:30:02.474][I][app:153]: Project abdulahaddev.jk-bms version 1.2.5
+[04:30:02.474][I][app:158]: ESP32 Chip: ESP32 rev3.1, 2 core(s)
+[04:30:02.490][W][app:171]: Chip rev >= 3.0 detected. Set minimum_chip_revision: "3.1" under esp32 > framework > advanced to reduce binary size
+[04:30:02.502][W][app:198]: Bootloader supports SRAM1 as IRAM (+40KB). Set sram1_as_iram: true under esp32 > framework > advanced
+[04:30:02.520][I][ble_power:090]: BLE TX power set to +9 dBm (level 7)
+[04:30:03.289][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[04:30:03.473][W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[04:30:03.706][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[04:30:05.092][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[04:30:05.128][I][jk_bms_ble:523]: Request device info
+[04:30:07.725][I][wifi:1575]: Connected
+[04:30:07.747][W][component:405]: wifi cleared Warning flag
+[04:30:08.472][I][jk_bms_ble:553]: Request status notification
+[04:30:08.659][I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[04:30:08.665][W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[04:30:08.673][I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[04:30:08.679][I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[04:30:08.685][I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[04:30:08.691][I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[04:30:08.699][I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[04:30:08.704][I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[04:30:08.710][I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[04:30:08.715][I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[04:30:08.724][I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[04:30:08.730][I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[04:30:08.735][I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[04:30:08.741][I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[04:30:08.749][I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[04:30:08.755][I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[04:30:08.759][I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[04:30:08.768][I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[04:30:08.774][I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[04:30:08.779][I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[04:30:08.785][I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[04:30:08.793][I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[04:30:08.799][I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[04:30:08.804][I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[04:30:08.812][I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[04:30:08.818][I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[04:30:08.824][I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[04:30:08.829][I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[04:30:08.837][I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[04:30:08.843][I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[04:30:08.849][I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[04:30:08.857][I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[04:30:08.863][I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[04:30:08.868][I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[04:30:08.874][I][jk_bms_ble:1391]:   Precharge time: 0 s
+[04:30:08.879][I][jk_bms_ble:1413]:   Heating switch: OFF
+[04:30:08.882][I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[04:30:08.888][I][jk_bms_ble:1422]:   Special charger: OFF
+[04:30:08.893][I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[04:30:08.899][I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[04:30:08.905][I][jk_bms_ble:1686]:   Uptime: 3588300 s
+[04:30:08.910][I][jk_bms_ble:1697]:   Device passcode: 1234
+[04:30:08.913][I][jk_bms_ble:1712]:   Passcode: 6613
+[04:30:08.918][I][jk_bms_ble:1715]:   User data: JK-BMS
+[04:30:08.923][I][jk_bms_ble:1718]:   Setup passcode: 019127
+[04:30:08.923][I][jk_bms_ble:1782]:   Hardware option: 
+[04:30:08.923][I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[04:30:08.938][I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[04:30:08.941][I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[04:30:13.472][I][jk_bms_ble:553]: Request status notification
+[04:30:13.620][I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[04:30:13.626][I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[04:30:13.632][I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[04:30:13.637][I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[04:30:13.645][I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[04:30:13.647][I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[04:30:13.647][I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[04:30:13.661][I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[04:30:13.670][I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[04:30:13.676][I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[04:30:13.681][I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[04:30:13.687][I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[04:30:13.696][I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[04:30:13.701][I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[04:30:13.707][I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[04:30:13.715][I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[04:30:13.720][I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[04:30:13.726][I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[04:30:13.728][I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[04:30:13.728][I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[04:30:13.745][I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[04:30:13.751][I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[04:30:13.759][I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[04:30:13.759][I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[04:30:13.759][I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[04:30:13.775][I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[04:30:13.784][I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[04:30:13.788][I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[04:30:13.791][I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[04:30:13.791][I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[04:30:13.807][I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[04:30:13.807][I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[04:30:13.807][I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[04:30:13.822][I][jk_bms_ble:1391]:   Precharge time: 0 s
+[04:30:13.822][I][jk_bms_ble:1413]:   Heating switch: OFF
+[04:30:13.822][I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[04:30:13.838][I][jk_bms_ble:1422]:   Special charger: OFF
+[04:30:13.838][I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[04:30:13.838][I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[04:30:13.854][I][jk_bms_ble:1686]:   Uptime: 3588300 s
+[04:30:13.854][I][jk_bms_ble:1697]:   Device passcode: 1234
+[04:30:13.867][I][jk_bms_ble:1712]:   Passcode: 6613
+[04:30:13.870][I][jk_bms_ble:1715]:   User data: JK-BMS
+[04:30:13.870][I][jk_bms_ble:1718]:   Setup passcode: 019127
+[04:30:13.881][I][jk_bms_ble:1782]:   Hardware option: 
+[04:30:13.881][I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[04:30:13.888][I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[04:30:13.888][I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[04:30:18.466][I][jk_bms_ble:553]: Request status notification
+[04:30:18.596][I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[04:30:18.604][I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[04:30:18.610][I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[04:30:18.613][I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[04:30:18.625][I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[04:30:18.629][I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[04:30:18.629][I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[04:30:18.629][I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[04:30:18.645][I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[04:30:18.645][I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[04:30:18.660][I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[04:30:18.660][I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[04:30:18.660][I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[04:30:18.676][I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[04:30:18.676][I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[04:30:18.691][I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[04:30:18.691][I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[04:30:18.691][I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[04:30:18.710][I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[04:30:18.710][I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[04:30:18.723][I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[04:30:18.725][I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[04:30:18.725][I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[04:30:18.739][I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[04:30:18.739][I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[04:30:18.739][I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[04:30:18.762][I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[04:30:18.762][I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[04:30:18.771][I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[04:30:18.771][I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[04:30:18.787][I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[04:30:18.787][I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[04:30:18.787][I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[04:30:18.802][I][jk_bms_ble:1391]:   Precharge time: 0 s
+[04:30:18.811][I][jk_bms_ble:1413]:   Heating switch: OFF
+[04:30:18.812][I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[04:30:18.819][I][jk_bms_ble:1422]:   Special charger: OFF
+[04:30:18.819][I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[04:30:18.826][I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[04:30:18.835][I][jk_bms_ble:1686]:   Uptime: 3588300 s
+[04:30:18.835][I][jk_bms_ble:1697]:   Device passcode: 1234
+[04:30:18.835][I][jk_bms_ble:1712]:   Passcode: 6613
+[04:30:18.835][I][jk_bms_ble:1715]:   User data: JK-BMS
+[04:30:18.851][I][jk_bms_ble:1718]:   Setup passcode: 019127
+[04:30:18.851][I][jk_bms_ble:1782]:   Hardware option: 
+[04:30:18.863][I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[04:30:18.868][I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[04:30:18.873][I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[04:30:23.466][I][jk_bms_ble:553]: Request status notification
+[04:30:23.586][I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[04:30:23.593][I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[04:30:23.593][I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[04:30:23.593][I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[04:30:23.609][I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[04:30:23.609][I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[04:30:23.624][I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[04:30:23.624][I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[04:30:23.640][I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[04:30:23.644][I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[04:30:23.644][I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[04:30:23.656][I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[04:30:23.656][I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[04:30:23.656][I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[04:30:23.672][I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[04:30:23.682][I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[04:30:23.687][I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[04:30:23.687][I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[04:30:23.687][I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[04:30:23.705][I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[04:30:23.714][I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[04:30:23.719][I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[04:30:23.728][I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[04:30:23.734][I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[04:30:23.739][I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[04:30:23.744][I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[04:30:23.744][I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[04:30:23.744][I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[04:30:23.760][I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[04:30:23.760][I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[04:30:23.775][I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[04:30:23.781][I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[04:30:23.788][I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[04:30:23.791][I][jk_bms_ble:1391]:   Precharge time: 0 s
+[04:30:23.791][I][jk_bms_ble:1413]:   Heating switch: OFF
+[04:30:23.791][I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[04:30:23.807][I][jk_bms_ble:1422]:   Special charger: OFF
+[04:30:23.807][I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[04:30:23.823][I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[04:30:23.823][I][jk_bms_ble:1686]:   Uptime: 3588300 s
+[04:30:23.823][I][jk_bms_ble:1697]:   Device passcode: 1234
+[04:30:23.823][I][jk_bms_ble:1712]:   Passcode: 6613
+[04:30:23.839][I][jk_bms_ble:1715]:   User data: JK-BMS
+[04:30:23.845][I][jk_bms_ble:1718]:   Setup passcode: 019127
+[04:30:23.845][I][jk_bms_ble:1782]:   Hardware option: 
+[04:30:23.853][I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[04:30:23.858][I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[04:30:23.863][I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[04:30:28.473][I][jk_bms_ble:553]: Request status notification
+[04:30:28.594][I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[04:30:28.605][I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[04:30:28.605][I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[04:30:28.605][I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[04:30:28.623][I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[04:30:28.623][I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[04:30:28.623][I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[04:30:28.639][I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[04:30:28.639][I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[04:30:28.655][I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[04:30:28.657][I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[04:30:28.657][I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[04:30:28.675][I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[04:30:28.681][I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[04:30:28.686][I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[04:30:28.694][I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[04:30:28.701][I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[04:30:28.703][I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[04:30:28.703][I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[04:30:28.719][I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[04:30:28.719][I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[04:30:28.719][I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[04:30:28.739][I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[04:30:28.742][I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[04:30:28.742][I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[04:30:28.751][I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[04:30:28.760][I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[04:30:28.767][I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[04:30:28.775][I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[04:30:28.783][I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[04:30:28.783][I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[04:30:28.795][I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[04:30:28.799][I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[04:30:28.799][I][jk_bms_ble:1391]:   Precharge time: 0 s
+[04:30:28.799][I][jk_bms_ble:1413]:   Heating switch: OFF
+[04:30:28.799][I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[04:30:28.815][I][jk_bms_ble:1422]:   Special charger: OFF
+[04:30:28.815][I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[04:30:28.831][I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[04:30:28.831][I][jk_bms_ble:1686]:   Uptime: 3588300 s
+[04:30:28.831][I][jk_bms_ble:1697]:   Device passcode: 1234
+[04:30:28.846][I][jk_bms_ble:1712]:   Passcode: 6613
+[04:30:28.846][I][jk_bms_ble:1715]:   User data: JK-BMS
+[04:30:28.846][I][jk_bms_ble:1718]:   Setup passcode: 019127
+[04:30:28.846][I][jk_bms_ble:1782]:   Hardware option: 
+[04:30:28.864][I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[04:30:28.869][I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[04:30:28.874][I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[04:30:33.473][I][jk_bms_ble:553]: Request status notification
+[04:30:34.255][I][esp-idf:000][BTU_TASK]: W (47804) BT_HCI: hcif disc complete: hdl 0x0, rsn 0x8 dev_find 1
+[04:30:34.375][I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[04:30:34.782][I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[04:30:35.914][I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[04:30:35.920][I][jk_bms_ble:523]: Request device info
+[04:30:36.087][I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[04:30:36.087][I][jk_bms_ble:1686]:   Uptime: 3588300 s
+[04:30:36.103][I][jk_bms_ble:1697]:   Device passcode: 1234
+[04:30:36.103][I][jk_bms_ble:1712]:   Passcode: 6613
+[04:30:36.103][I][jk_bms_ble:1715]:   User data: JK-BMS
+[04:30:36.116][I][jk_bms_ble:1718]:   Setup passcode: 019127
+[04:30:36.119][I][jk_bms_ble:1782]:   Hardware option: 
+[04:30:36.119][I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[04:30:36.119][I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[04:30:36.134][I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[04:30:38.463][I][jk_bms_ble:553]: Request status notification
+[04:30:38.605][I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[04:30:38.611][I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[04:30:38.616][I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[04:30:38.622][I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[04:30:38.631][I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[04:30:38.636][I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[04:30:38.641][I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[04:30:38.647][I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[04:30:38.656][I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[04:30:38.661][I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[04:30:38.667][I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[04:30:38.672][I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[04:30:38.680][I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[04:30:38.686][I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[04:30:38.692][I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[04:30:38.700][I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[04:30:38.705][I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[04:30:38.711][I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[04:30:38.716][I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[04:30:38.725][I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[04:30:38.730][I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[04:30:38.736][I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[04:30:38.745][I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[04:30:38.750][I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[04:30:38.755][I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[04:30:38.761][I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[04:30:38.769][I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[04:30:38.774][I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[04:30:38.780][I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[04:30:38.789][I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[04:30:38.794][I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[04:30:38.799][I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[04:30:38.806][I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[04:30:38.811][I][jk_bms_ble:1391]:   Precharge time: 0 s
+[04:30:38.816][I][jk_bms_ble:1413]:   Heating switch: OFF
+[04:30:38.819][I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[04:30:38.825][I][jk_bms_ble:1422]:   Special charger: OFF
+[04:30:38.830][I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[04:30:38.838][I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[04:30:38.842][I][jk_bms_ble:1686]:   Uptime: 3588300 s
+[04:30:38.847][I][jk_bms_ble:1697]:   Device passcode: 1234
+[04:30:38.852][I][jk_bms_ble:1712]:   Passcode: 6613
+[04:30:38.856][I][jk_bms_ble:1715]:   User data: JK-BMS
+[04:30:38.860][I][jk_bms_ble:1718]:   Setup passcode: 019127
+[04:30:38.867][I][jk_bms_ble:1782]:   Hardware option: 
+[04:30:38.869][I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[04:30:38.875][I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[04:30:38.879][I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[04:30:39.164][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:39.167][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:41.525][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:41.525][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:44.246][W][component:513]: interval took a long time for an operation (1721 ms), max is 50 ms
+[04:30:44.247][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:44.247][W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[04:30:44.263][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:46.314][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:46.314][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:48.646][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:48.650][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:51.024][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:51.029][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:53.405][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:53.410][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:55.805][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:55.820][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:30:58.175][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:30:58.180][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:00.506][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:00.520][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:02.915][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:02.920][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:05.285][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:05.289][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:07.284][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:07.289][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:09.665][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:09.670][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:12.016][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:12.017][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:14.032][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:14.051][W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[04:31:14.052][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:16.383][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:16.399][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:18.756][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:18.760][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:21.113][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:21.113][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:23.125][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:23.129][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:25.506][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:25.506][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:27.884][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:27.884][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:30.226][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:30.231][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:32.625][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:32.629][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:34.985][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:34.989][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:37.341][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:37.341][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:39.355][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:39.359][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:41.705][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:41.709][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:44.084][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:44.087][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:46.475][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:46.480][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:48.876][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:48.881][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:51.235][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:51.239][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:53.592][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:53.608][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:55.981][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:55.981][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:31:58.337][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:31:58.352][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:00.714][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:00.714][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:03.103][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:03.103][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:05.465][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:05.470][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:07.468][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:07.468][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:09.846][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:09.846][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:12.215][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:12.215][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:14.471][W][component:513]: interval took a long time for an operation (1913 ms), max is 1730 ms
+[04:32:14.477][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:14.485][W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[04:32:14.488][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:16.552][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:16.568][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:18.934][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:18.950][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:21.309][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:21.309][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:23.681][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:23.681][I][jk_bms_ble:939]: Emergency switch: OFF
+[04:32:26.065][I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[04:32:26.066][I][jk_bms_ble:939]: Emergency switch: OFF

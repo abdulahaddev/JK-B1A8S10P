@@ -1,0 +1,26 @@
+# opened COM8 at 03:18:52 without reset
+[  4.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[  9.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 14.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 19.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 24.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 29.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 34.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 39.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 44.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 49.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 54.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 59.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 64.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 69.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 74.98] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 79.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 84.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 89.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 94.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 99.99] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[105.22] [W][component:513]: interval took a long time for an operation (1863 ms), max is 1610 ms
+[105.27] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[110.27] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[115.27] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[120.27] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected

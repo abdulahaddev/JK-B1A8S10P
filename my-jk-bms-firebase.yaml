@@ -1,5 +1,6 @@
 substitutions:
   name: jk-bms
+  fw_version: "1.2.6"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -7,7 +8,12 @@ substitutions:
   log_baud_rate: "115200"     # Change to 0 to turn OFF serial output
   sample_interval: "30s"      # One telemetry reading into the buffer
   upload_check_interval: "10s"
-  upload_batch_max: "10"      # Buffered readings per upload request
+  upload_batch_max: "10"      # Most buffered readings per upload request
+  # The batch is sized from free heap at upload time. Measured: TLS + request needs ~34 KB, each
+  # reading in the batch ~1 KB (10 readings took min free heap from 30 KB to 22 KB).
+  upload_tls_heap: "34000"
+  upload_heap_per_reading: "1000"
+  upload_heap_reserve: "24000" # Free heap to keep while the request is in flight
   upload_min_batch: "2"       # Upload once this many readings wait (about every 60s)...
   upload_max_age_ms: "60000"  # ...or at least this often, so device diagnostics stay fresh
   info_refresh_ms: "86400000" # Re-send the info node daily even if nothing changed
@@ -16,13 +22,29 @@ substitutions:
   i2c_scl_pin: GPIO22         # D22 on ESP32 DevKit (OLED SCL)
   firebase_db_url: !secret firebase_db_url
   firebase_auth: !secret firebase_auth
+  ota_base_url: !secret ota_base_url
+  ota_username: !secret ota_username
+  ota_password: !secret ota_password
+  ota_check_interval: "5min"  # How often to read the control/ota signal from Firebase
+  ota_verify_timeout_ms: "600000"  # New firmware must upload to Firebase within 10 min or it rolls back
+  ota_max_tries: "3"          # Download attempts per signalled version
+  radio_reset_fallback_ms: "120000"  # Radio reset after a software reset even without a successful upload
+  ota_text_long_ms: "600000"  # OTA text replaces BAL/DSG this long after a failure or rollback
+  ota_text_short_ms: "120000" # ...and this long after a confirmed update
+  ble_dot_ms: "300"           # Dot at the BT icon after each BMS frame (~every 2.4 s)
+  upload_dot_ms: "1000"       # Dot at the WiFi icon after each successful upload (~once a minute)
 
 esphome:
   name: ${name}
   friendly_name: ${name}
   comment: ${device_description}
+  project:
+    name: abdulahaddev.jk-bms
+    version: ${fw_version}
   includes:
     - <esp_bt.h>
+    - <esp_ota_ops.h>
+    - <esp_sleep.h>
     - telemetry_buffer.h
   on_boot:
     - priority: 800
@@ -32,6 +54,37 @@ esphome:
             telemetry::begin();
             ESP_LOGI("telemetry", "Boot %u (%s), %u readings restored from RTC",
                      (unsigned) telemetry::boot_count(), telemetry::reset_reason(), (unsigned) telemetry::size());
+    - priority: 600
+      then:
+        # OTA state after boot: a fresh image waits for its first good upload (see firebase_upload_interval);
+        # if we booted the old image again after an attempted update, that update was rolled back.
+        - lambda: |-
+            esp_ota_img_states_t state;
+            id(ota_pending_verify) = esp_ota_get_state_partition(esp_ota_get_running_partition(), &state) == ESP_OK &&
+                                     state == ESP_OTA_IMG_PENDING_VERIFY;
+            if (id(ota_pending_verify)) {
+              id(ota_status) = "verifying ${fw_version}";
+              id(ota_display) = "OTA verifying ${fw_version}";
+            } else if (id(ota_attempt_hash) != 0) {
+              if (id(ota_attempt_hash) != fnv1_hash("${fw_version}")) {
+                id(ota_failed_hash) = id(ota_attempt_hash);
+                id(ota_status) = "rolled back, running ${fw_version}";
+                id(ota_display) = "OTA rolled back";
+                id(ota_show_until) = millis() + ${ota_text_long_ms};
+              }
+              id(ota_attempt_hash) = 0;
+              global_preferences->sync();
+            }
+            ESP_LOGI("ota", "Firmware ${fw_version}, %s", id(ota_status).c_str());
+            // After a software reset (OTA reboot, crash, watchdog) BLE cannot connect to the BMS until the
+            // radio is powered down; a 1 s deep sleep does that (see radio_reset).
+            switch (esp_reset_reason()) {
+              case ESP_RST_SW: case ESP_RST_PANIC: case ESP_RST_INT_WDT: case ESP_RST_TASK_WDT: case ESP_RST_WDT:
+                id(needs_radio_reset) = true;
+                break;
+              default:
+                break;
+            }
     - priority: -100
       then:
         - script.execute: redraw_display
@@ -50,6 +103,45 @@ esp32:
   board: esp32dev
   framework:
     type: esp-idf
+    advanced:
+      enable_ota_rollback: true  # Bootloader returns to the previous firmware if a new one is never confirmed
+
+# Required for OTA rollback. Normally confirms a boot after boot_is_good_after; we confirm earlier,
+# on the first successful Firebase upload, so this only acts as a late fallback.
+safe_mode:
+  boot_is_good_after: 15min
+
+ota:
+  # Local network flashing from the ESPHome CLI when on site
+  - platform: esphome
+    password: !secret ota_local_password
+  # Remote update: downloads jk-bms-<version>.ota.bin when control/ota in Firebase asks for it
+  - platform: http_request
+    id: ota_http
+    on_begin:
+      then:
+        - lambda: 'ESP_LOGI("ota", "Downloading %s", id(ota_target).c_str());'
+    on_error:
+      then:
+        - lambda: |-
+            id(ota_status) = "download failed " + id(ota_target) + " (try " + std::to_string(id(ota_tries)) + "/${ota_max_tries})";
+            id(ota_attempt_hash) = 0;
+            global_preferences->sync();
+            ESP_LOGE("ota", "%s", id(ota_status).c_str());
+            id(ota_display) = "OTA failed (" + std::to_string(id(ota_tries)) + "/${ota_max_tries})";
+            id(ota_show_until) = millis() + ${ota_text_long_ms};
+            id(client0)->set_auto_connect(true);
+        - ble.enable:
+        - script.execute: redraw_display
+    # The download blocks the main loop, so redraw directly every 10%
+    on_progress:
+      then:
+        - lambda: |-
+            const int step = (int) x / 10;
+            if (step == id(ota_progress_step)) return;
+            id(ota_progress_step) = step;
+            id(ota_display) = "OTA " + id(ota_target) + " " + std::to_string(step * 10) + "%";
+            id(oled_display).update();
 
 wifi:
   ssid: !secret wifi_ssid
@@ -73,7 +165,7 @@ time:
 # the ESP32. Extend the watchdog during a request and keep each request short.
 http_request:
   verify_ssl: false
-  timeout: 4s
+  timeout: 8s   # per read; a phone hotspot can pause mid-download (4s stalled the OTA)
   watchdog_timeout: 15s
 
 # I2C Bus for 0.96" OLED Display (SDA: D21, SCL: D22)
@@ -125,16 +217,20 @@ display:
         bt_show = fast_on;
       }
       if (bt_show) {
-        const int x = 46, y = 1;
+        const int x = 44, y = 1;
         it.line(x + 0, y + 2, x + 6, y + 6);
         it.line(x + 6, y + 6, x + 3, y + 9);
         it.line(x + 3, y + 9, x + 3, y + 0);
         it.line(x + 3, y + 0, x + 6, y + 3);
         it.line(x + 6, y + 3, x + 0, y + 7);
       }
+      // Activity dot: flashes when a BMS frame arrives
+      if (id(ble_rx_ms) != 0 && now - id(ble_rx_ms) < ${ble_dot_ms}) {
+        it.filled_rectangle(51, 0, 2, 2);  // upper right of the BT icon
+      }
       const std::string &errors = id(bms_errors).state;
       if (bt == CS::ESTABLISHED && !errors.empty() && errors != "None" && errors != "Offline") {
-        it.print(54, 0, id(font_small), "!");
+        it.print(55, 0, id(font_small), "!");
       }
 
       // WiFi: signal bars when connected, all bars slow blinking when disconnected.
@@ -156,8 +252,12 @@ display:
           }
         }
       }
+      // Activity dot: flashes when an upload to Firebase succeeds
+      if (id(fb_tx_ms) != 0 && now - id(fb_tx_ms) < ${upload_dot_ms}) {
+        it.filled_rectangle(73, 0, 2, 2);  // upper right of the WiFi bars
+      }
       if (wifi_ok && id(firebase_error)) {
-        it.print(75, 0, id(font_small), "!");
+        it.print(77, 0, id(font_small), "!");
       }
 
       if (id(bms_state_of_charge).has_state() && !std::isnan(id(bms_state_of_charge).state)) {
@@ -186,7 +286,11 @@ display:
       // Divider Line 2
       it.line(0, 46, 127, 46);
 
-      // 4. Balancer & Discharge ON/OFF Status (y=49..62)
+      // 4. Bottom row (y=49..62): OTA state while an update runs or just finished, else BAL/DSG
+      if (id(ota_pending_verify) || (int32_t) (id(ota_show_until) - now) > 0) {
+        it.print(4, 49, id(font_small), id(ota_display).c_str());
+        return;
+      }
       bool bal_on = false;
       if (id(bms_balancer_switch).has_state()) {
         bal_on = id(bms_balancer_switch).state;
@@ -226,6 +330,22 @@ logger:
     display: WARN
 
 globals:
+  - id: needs_radio_reset # booted from a software reset; do one radio_reset when safe
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: uploaded_since_boot
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: bms_adverts       # BMS advertisements heard since the last upload
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: bms_rssi          # RSSI of the last BMS advertisement heard, 0 = none yet
+    type: int
+    restore_value: no
+    initial_value: '0'
   - id: bms_fresh_frame   # a new BMS frame arrived since the last buffered reading
     type: bool
     restore_value: no
@@ -274,17 +394,75 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: upload_batch_last # batch size picked for the last upload (diagnostics)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  # OTA. The two hashes are kept in flash so the previous firmware knows about a rolled-back update.
+  - id: ota_attempt_hash  # fnv1 hash of the version being installed, 0 when none
+    type: uint32_t
+    restore_value: yes
+    initial_value: '0'
+  - id: ota_failed_hash   # version that rolled back; not retried until control/ota changes
+    type: uint32_t
+    restore_value: yes
+    initial_value: '0'
+  - id: restart_hash      # last control/restart value handled, so a request restarts only once
+    type: uint32_t
+    restore_value: yes
+    initial_value: '0'
+  - id: ota_pending_verify  # running a new image that is not confirmed yet
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: ota_target
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+  - id: ota_tries
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: ota_start
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: ota_status
+    type: std::string
+    restore_value: no
+    initial_value: '"idle"'
+  - id: ota_display       # short OTA text for the bottom display row
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+  - id: ota_show_until    # millis() until which ota_display replaces BAL/DSG
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: ota_progress_step
+    type: int
+    restore_value: no
+    initial_value: '-1'
+  - id: ble_rx_ms         # last BMS frame, for the BT activity dot
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: fb_tx_ms          # last successful upload, for the WiFi activity dot
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
 
 interval:
-  # Redraw twice a second only while a status icon is blinking
+  # Redraw twice a second only while a status icon is blinking, or until the OTA text times out
   - interval: 500ms
     then:
       - if:
           condition:
             lambda: |-
               auto *wifi = esphome::wifi::global_wifi_component;
+              const bool ota_text = id(ota_show_until) != 0 && (int32_t) (id(ota_show_until) - millis()) > -1000;
               return id(client0)->state() != esphome::esp32_ble_tracker::ClientState::ESTABLISHED ||
-                     wifi == nullptr || !wifi->is_connected();
+                     wifi == nullptr || !wifi->is_connected() || ota_text;
           then:
             - script.execute: redraw_display
 
@@ -339,6 +517,100 @@ interval:
           if (id(bms_balancing).state) r.flags |= telemetry::BALANCING;
           telemetry::push(r);
 
+  # Remote control from Firebase, read every ota_check_interval:
+  #   control/ota      version to install (e.g. "1.2.0"); empty/null clears a failed version for retry
+  #   control/restart  any value (e.g. a timestamp); the board restarts once per new value
+  - interval: ${ota_check_interval}
+    then:
+      - if:
+          condition:
+            wifi.connected:
+          then:
+            - http_request.get:
+                url: "${firebase_db_url}/control.json?auth=${firebase_auth}"
+                capture_response: true
+                max_response_buffer_size: 256
+                on_response:
+                  then:
+                    - lambda: |-
+                        if (response->status_code != 200) return;
+                        JsonDocument doc;
+                        if (deserializeJson(doc, body)) return;
+
+                        // Restart request (never while a new firmware still has to confirm itself)
+                        std::string restart_token;
+                        JsonVariant restart = doc["restart"];
+                        if (restart.is<const char *>()) {
+                          restart_token = restart.as<const char *>();
+                        } else if (!restart.isNull()) {
+                          serializeJson(restart, restart_token);
+                        }
+                        if (!restart_token.empty() && fnv1_hash(restart_token) != id(restart_hash) &&
+                            !id(ota_pending_verify)) {
+                          id(restart_hash) = fnv1_hash(restart_token);
+                          global_preferences->sync();
+                          ESP_LOGW("control", "Restart requested (%s)", restart_token.c_str());
+                          id(ota_display) = "Restarting";
+                          id(ota_show_until) = millis() + 5000;
+                          id(oled_display).update();
+                          id(radio_reset).execute();
+                          return;
+                        }
+
+                        if (id(ota_pending_verify)) return;
+                        std::string v;
+                        if (doc["ota"].is<const char *>()) {
+                          for (const char *c = doc["ota"].as<const char *>(); *c; c++) {
+                            if (isalnum((unsigned char) *c) || *c == '.' || *c == '-' || *c == '_') v += *c;
+                          }
+                        }
+                        if (v.empty()) {
+                          if (id(ota_failed_hash) != 0) {
+                            id(ota_failed_hash) = 0;
+                            global_preferences->sync();
+                          }
+                          return;
+                        }
+                        if (v == "${fw_version}" || fnv1_hash(v) == id(ota_failed_hash)) return;
+                        if (v != id(ota_target)) {
+                          id(ota_target) = v;
+                          id(ota_tries) = 0;
+                        }
+                        if (id(ota_tries) >= ${ota_max_tries}) return;
+                        id(ota_tries)++;
+                        id(ota_attempt_hash) = fnv1_hash(v);
+                        global_preferences->sync();
+                        id(ota_status) = "downloading " + v;
+                        id(ota_start) = true;
+                    - if:
+                        condition:
+                          lambda: 'return id(ota_start);'
+                        then:
+                          - lambda: 'id(ota_start) = false;'
+                          - script.execute: ota_install
+
+  # A new firmware that has not uploaded successfully within the timeout rolls back to the previous one
+  - interval: 30s
+    then:
+      - if:
+          condition:
+            lambda: 'return id(ota_pending_verify) && millis() > ${ota_verify_timeout_ms};'
+          then:
+            - lambda: 'ESP_LOGE("ota", "${fw_version} not confirmed within timeout, rolling back");'
+            - script.execute: ble_disconnect_clean
+            - script.wait: ble_disconnect_clean
+            - lambda: 'esp_ota_mark_app_invalid_rollback_and_reboot();'
+      # Radio reset after a software reset, once the firmware is confirmed and the status was uploaded
+      # (never while pending verify: rebooting then would roll the update back)
+      - if:
+          condition:
+            lambda: |-
+              return id(needs_radio_reset) && !id(ota_pending_verify) &&
+                     (id(uploaded_since_boot) || millis() > ${radio_reset_fallback_ms});
+          then:
+            - lambda: 'id(needs_radio_reset) = false;'
+            - script.execute: radio_reset
+
   # One multi-path PATCH writes buffered readings, device diagnostics, and (when due) the info
   # node and an hourly energy counter. Readings leave the buffer only after Firebase replies 2xx.
   - interval: ${upload_check_interval}
@@ -361,8 +633,12 @@ interval:
                 json: |-
                   const uint32_t now_ts = id(sntp_time).now().timestamp;
 
-                  const size_t n = std::min(telemetry::size(), (size_t) ${upload_batch_max});
+                  // Batch as many readings as free heap allows (at least 1, at most upload_batch_max)
+                  const int32_t room = (int32_t) esp_get_free_heap_size() - ${upload_tls_heap} - ${upload_heap_reserve};
+                  const size_t fit = room > 0 ? (size_t) room / ${upload_heap_per_reading} : 0;
+                  const size_t n = std::min({telemetry::size(), (size_t) ${upload_batch_max}, std::max(fit, (size_t) 1)});
                   id(upload_batch_n) = n;
+                  id(upload_batch_last) = n;
                   for (size_t i = 0; i < n; i++) {
                     const telemetry::Record &r = telemetry::peek(i);
                     JsonObject o = root[std::string("telemetry/") + std::to_string(r.ts)].to<JsonObject>();
@@ -391,10 +667,16 @@ interval:
                   d["wifi_disconnects"] = id(wifi_disconnects);
                   d["ble_connected"] = id(client0)->connected() ? 1 : 0;
                   d["ble_disconnects"] = id(ble_disconnects);
+                  d["bms_rssi"] = id(bms_rssi);
+                  d["bms_adverts"] = id(bms_adverts);
+                  id(bms_adverts) = 0;
                   d["free_heap"] = esp_get_free_heap_size();
                   d["min_free_heap"] = esp_get_minimum_free_heap_size();
                   d["buffered"] = telemetry::size();
                   d["dropped"] = telemetry::dropped;
+                  d["upload_batch"] = id(upload_batch_last);
+                  d["firmware_version"] = "${fw_version}";
+                  d["ota_status"] = id(ota_status);
 
                   id(info_in_flight) = id(info_dirty);
                   if (id(info_dirty)) {
@@ -435,7 +717,21 @@ interval:
                         id(firebase_error) = !ok;
                         id(last_upload_ms) = millis();
                         if (ok) {
+                          id(uploaded_since_boot) = true;
                           telemetry::discard(id(upload_batch_n));
+                          if (id(ota_pending_verify)) {
+                            // First good upload on a new firmware: keep it
+                            esp_ota_mark_app_valid_cancel_rollback();
+                            id(ota_pending_verify) = false;
+                            id(ota_attempt_hash) = 0;
+                            global_preferences->sync();
+                            id(ota_status) = "updated to ${fw_version}";
+                            id(ota_display) = "OTA updated ${fw_version}";
+                            id(ota_show_until) = millis() + ${ota_text_short_ms};
+                            ESP_LOGI("ota", "%s, confirmed", id(ota_status).c_str());
+                          }
+                          id(fb_tx_ms) = millis();
+                          id(activity_pulse).execute();
                           if (id(info_in_flight)) {
                             id(info_dirty) = false;
                             id(info_sent_ms) = millis();
@@ -457,6 +753,13 @@ interval:
 
 # Short scan window (~9% duty) leaves radio time for the BMS connection and WiFi
 esp32_ble_tracker:
+  # Signal of the BMS as this board hears it (reported in device/bms_rssi, bms_adverts)
+  on_ble_advertise:
+    - mac_address: ${bms_mac_address}
+      then:
+        - lambda: |-
+            id(bms_adverts)++;
+            id(bms_rssi) = x.get_rssi();
   scan_parameters:
     interval: 320ms
     window: 30ms
@@ -483,6 +786,78 @@ script:
       - delay: 0s
       - component.update: oled_display
 
+  # Show the activity dots now and redraw when each one should disappear
+  - id: activity_pulse
+    mode: restart
+    then:
+      - script.execute: redraw_display
+      - delay: ${ble_dot_ms}ms
+      - script.execute: redraw_display
+      - delay: !lambda 'return ${upload_dot_ms} - ${ble_dot_ms};'
+      - script.execute: redraw_display
+
+  # Close the BMS link cleanly (terminate sent, client idle) before anything that reboots or stops BLE.
+  # Auto-connect stays off so it cannot reconnect in between; a reboot or ble re-enable turns it back on.
+  - id: ble_disconnect_clean
+    mode: single
+    then:
+      - lambda: 'id(client0)->set_auto_connect(false);'
+      - if:
+          condition:
+            lambda: 'return id(client0)->state() != esphome::esp32_ble_tracker::ClientState::IDLE;'
+          then:
+            - ble_client.disconnect: client0
+            - wait_until:
+                condition:
+                  lambda: 'return id(client0)->state() == esphome::esp32_ble_tracker::ClientState::IDLE;'
+                timeout: 5s
+      - lambda: 'ESP_LOGI("ble", "BMS link closed");'
+
+  # Restart that powers the radio down: clean BLE disconnect, then a 1 s deep sleep. A plain software
+  # reset (esp_restart) leaves BLE unable to connect to the BMS until the next power-on.
+  - id: radio_reset
+    mode: single
+    then:
+      - lambda: |-
+          id(ota_display) = "Restarting";
+          id(ota_show_until) = millis() + 5000;
+          id(oled_display).update();
+      - script.execute: ble_disconnect_clean
+      - script.wait: ble_disconnect_clean
+      - lambda: |-
+          ESP_LOGW("radio", "Deep sleep 1 s to reset the radio");
+          global_preferences->sync();
+          esp_sleep_enable_timer_wakeup(1000000);
+          esp_deep_sleep_start();
+
+  # Download and install id(ota_target). The download's TLS session does not fit next to the BLE
+  # stack (free heap fell to <1 KB and the download stalled), so stop BLE first to free its memory
+  # and give WiFi the radio. On success the board reboots; on failure ota_http's on_error restarts BLE.
+  - id: ota_install
+    mode: single
+    then:
+      - script.execute: ble_disconnect_clean
+      - script.wait: ble_disconnect_clean
+      - ble.disable:
+      - wait_until:
+          condition:
+            not:
+              ble.enabled:
+          timeout: 10s
+      - delay: 1s
+      - lambda: |-
+          ESP_LOGI("ota", "BLE stopped for download, free heap %u", (unsigned) esp_get_free_heap_size());
+          id(ota_display) = "OTA " + id(ota_target) + " 0%";
+          id(ota_progress_step) = 0;
+          id(ota_show_until) = millis() + ${ota_text_long_ms};
+      - component.update: oled_display
+      - ota.http_request.flash:
+          id: ota_http
+          url: !lambda 'return std::string("${ota_base_url}/jk-bms-") + id(ota_target) + ".ota.bin";'
+          md5_url: !lambda 'return std::string("${ota_base_url}/jk-bms-") + id(ota_target) + ".ota.bin.md5";'
+          username: ${ota_username}
+          password: ${ota_password}
+
 jk_bms_ble:
   - ble_client_id: client0
     id: bms0
@@ -499,8 +874,10 @@ sensor:
       id: bms_total_voltage
       on_value:
         then:
-          - lambda: 'id(bms_fresh_frame) = true;'
-          - script.execute: redraw_display
+          - lambda: |-
+              id(bms_fresh_frame) = true;
+              id(ble_rx_ms) = millis();
+          - script.execute: activity_pulse
     current:
       name: "Current"
       id: bms_current

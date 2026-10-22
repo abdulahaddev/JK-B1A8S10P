@@ -1,0 +1,210 @@
+# opened COM8 at 04:34:26 without reset
+[  1.09] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  1.09] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  3.47] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  3.47] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  5.86] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  5.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[  8.20] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[  8.20] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 10.57] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 10.57] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 12.56] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 12.58] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 14.94] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 14.94] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 16.93] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 16.95] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 19.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 19.29] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 21.30] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 21.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 23.69] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 23.69] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 26.02] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 26.02] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 28.03] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 28.03] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 30.38] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 30.38] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 32.77] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 32.78] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 35.18] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 35.18] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 37.53] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 37.53] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 40.13] [W][control:534]: Restart requested (1792708459)
+[ 41.16] ets Jul 29 2019 12:21:46
+[ 41.16] 
+[ 41.16] rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[ 41.16] configsip: 0, SPIWP:0xee
+[ 41.16] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[ 41.18] mode:DIO, clock div:2
+[ 41.18] load:0x3fff0030,len:6248
+[ 41.18] load:0x40078000,len:15932
+[ 41.18] ho 0 tail 12 room 4
+[ 41.19] load:0x40080400,len:3896
+[ 41.19] entry 0x40080638
+[ 41.19] I (29) boot: ESP-IDF 5.5.4 2nd stage bootloader
+[ 41.19] I (29) boot: Multicore bootloader
+[ 41.19] I (29) boot: chip revision: v3.1
+[ 41.19] I (29) boot.esp32: SPI Speed      : 40MHz
+[ 41.19] I (33) boot.esp32: SPI Mode       : DIO
+[ 41.21] I (37) boot.esp32: SPI Flash Size : 4MB
+[ 41.21] I (40) boot: Enabling RNG early entropy source...
+[ 41.21] I (45) boot: Partition Table:
+[ 41.23] I (47) boot: ## Label            Usage          Type ST Offset   Length
+[ 41.23] I (54) boot:  0 otadata          OTA data         01 00 00009000 00002000
+[ 41.23] I (60) boot:  1 phy_init         RF data          01 01 0000b000 00001000
+[ 41.24] I (67) boot:  2 app0             OTA app          00 10 00010000 001c0000
+[ 41.24] I (73) boot:  3 app1             OTA app          00 11 001d0000 001c0000
+[ 41.26] I (80) boot:  4 nvs              WiFi data        01 02 00390000 00070000
+[ 41.26] I (86) boot: End of partition table
+[ 41.27] I (90) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=35c0ch (220172) map
+[ 41.34] I (172) esp_image: segment 1: paddr=00045c34 vaddr=3ffbdb60 size=057e8h ( 22504) load
+[ 41.35] I (181) esp_image: segment 2: paddr=0004b424 vaddr=40080000 size=04bf4h ( 19444) load
+[ 41.35] I (189) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=e644ch (943180) map
+[ 41.67] I (511) esp_image: segment 4: paddr=00136474 vaddr=40084bf4 size=15f1ch ( 89884) load
+[ 41.71] I (546) esp_image: segment 5: paddr=0014c398 vaddr=50001eac size=00080h (   128) 
+[ 41.72] I (560) boot: Loaded app from partition at offset 0x10000
+[ 41.73] I (560) boot: Disabling RNG early entropy source...
+[ 41.86] [I][logger:122]: Log initialized
+[ 41.88] [I][app:060]: Running through setup()
+[ 41.88] [I][telemetry:054]: Boot 2 (deep_sleep), 2 readings restored from RTC
+[ 41.89] [I][ota:077]: Firmware 1.2.5, idle
+[ 41.96] [I][wifi:695]: Starting fast_connect (saved) 'IoT'
+[ 41.97] [I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority 0, attempt 1/1 in phase INITIAL_CONNECT)...
+[ 41.97] [I][app:117]: setup() finished successfully!
+[ 42.15] [W][component:382]: wifi set Warning flag: associating to network
+[ 42.15] [W][component:513]: wifi took a long time for an operation (136 ms), max is 50 ms
+[ 42.60] [W][component:513]: esp32_ble took a long time for an operation (448 ms), max is 50 ms
+[ 42.61] [I][app:151]: ESPHome version 2026.6.5 compiled on 2026-10-23 04:22:56 +0600
+[ 42.61] [I][app:153]: Project abdulahaddev.jk-bms version 1.2.5
+[ 42.61] [I][app:158]: ESP32 Chip: ESP32 rev3.1, 2 core(s)
+[ 42.63] [W][app:171]: Chip rev >= 3.0 detected. Set minimum_chip_revision: "3.1" under esp32 > framework > advanced to reduce binary size
+[ 42.64] [W][app:198]: Bootloader supports SRAM1 as IRAM (+40KB). Set sram1_as_iram: true under esp32 > framework > advanced
+[ 42.64] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 42.66] [I][ble_power:090]: BLE TX power set to +9 dBm (level 7)
+[ 42.66] [W][wifi_esp32:852]: Disconnected ssid='IoT' bssid=1E:82:C4:DE:46:46 reason='Authentication Failed'
+[ 42.68] [W][wifi:1678]: Connecting to network failed (callback)
+[ 43.51] [W][safe_mode:085]: Last reset too quick; invoke in 8 restarts
+[ 46.46] [I][esp32_ble_client:126]: [0] [A4:C1:38:0B:82:42] 0x00 Connecting
+[ 47.04] [I][esp32_ble_client:344]: [0] [A4:C1:38:0B:82:42] Connection open
+[ 47.65] [W][jk_bms_ble:548]: [A4:C1:38:0B:82:42] Not connected
+[ 48.54] [I][esp32_ble_client:465]: [0] [A4:C1:38:0B:82:42] Service discovery complete
+[ 48.54] [I][jk_bms_ble:523]: Request device info
+[ 48.71] [I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[ 48.71] [I][jk_bms_ble:1686]:   Uptime: 3588600 s
+[ 48.72] [I][jk_bms_ble:1697]:   Device passcode: 1234
+[ 48.72] [I][jk_bms_ble:1712]:   Passcode: 6613
+[ 48.73] [I][jk_bms_ble:1715]:   User data: JK-BMS
+[ 48.73] [I][jk_bms_ble:1718]:   Setup passcode: 019127
+[ 48.74] [I][jk_bms_ble:1782]:   Hardware option: 
+[ 48.74] [I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[ 48.74] [I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[ 48.74] [I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[ 51.47] [I][wifi:1438]: - 'IoT' (1E:82:C4:DE:46:46) ▂▄▆█
+[ 51.47] [I][wifi:1097]: Connecting to 'IoT' (1E:82:C4:DE:46:46) (priority 0, attempt 1/2 in phase SCAN_CONNECTING)...
+[ 52.62] [I][wifi:1575]: Connected
+[ 52.65] [W][component:405]: wifi cleared Warning flag
+[ 54.18] [W][component:513]: interval took a long time for an operation (1488 ms), max is 50 ms
+[ 54.18] [I][jk_bms_ble:553]: Request status notification
+[ 54.31] [I][jk_bms_ble:1169]: Settings frame (300 bytes) received
+[ 54.33] [W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[ 54.33] [I][jk_bms_ble:1380]:   Con. wire resistance 1: 0.000000 Ohm
+[ 54.34] [I][jk_bms_ble:1380]:   Con. wire resistance 2: 0.000000 Ohm
+[ 54.34] [I][jk_bms_ble:1380]:   Con. wire resistance 3: 0.000000 Ohm
+[ 54.35] [I][jk_bms_ble:1380]:   Con. wire resistance 4: 0.000000 Ohm
+[ 54.36] [I][jk_bms_ble:1380]:   Con. wire resistance 5: 0.000000 Ohm
+[ 54.36] [I][jk_bms_ble:1380]:   Con. wire resistance 6: 0.000000 Ohm
+[ 54.37] [I][jk_bms_ble:1380]:   Con. wire resistance 7: 0.000000 Ohm
+[ 54.38] [I][jk_bms_ble:1380]:   Con. wire resistance 8: 0.000000 Ohm
+[ 54.38] [I][jk_bms_ble:1380]:   Con. wire resistance 9: 0.000000 Ohm
+[ 54.38] [I][jk_bms_ble:1380]:   Con. wire resistance 10: 0.000000 Ohm
+[ 54.39] [I][jk_bms_ble:1380]:   Con. wire resistance 11: 0.000000 Ohm
+[ 54.39] [I][jk_bms_ble:1380]:   Con. wire resistance 12: 0.000000 Ohm
+[ 54.41] [I][jk_bms_ble:1380]:   Con. wire resistance 13: 0.000000 Ohm
+[ 54.41] [I][jk_bms_ble:1380]:   Con. wire resistance 14: 0.000000 Ohm
+[ 54.41] [I][jk_bms_ble:1380]:   Con. wire resistance 15: 0.000000 Ohm
+[ 54.43] [I][jk_bms_ble:1380]:   Con. wire resistance 16: 0.000000 Ohm
+[ 54.43] [I][jk_bms_ble:1380]:   Con. wire resistance 17: 0.000000 Ohm
+[ 54.44] [I][jk_bms_ble:1380]:   Con. wire resistance 18: 0.000000 Ohm
+[ 54.44] [I][jk_bms_ble:1380]:   Con. wire resistance 19: 0.000000 Ohm
+[ 54.44] [I][jk_bms_ble:1380]:   Con. wire resistance 20: 0.000000 Ohm
+[ 54.46] [I][jk_bms_ble:1380]:   Con. wire resistance 21: 0.000000 Ohm
+[ 54.46] [I][jk_bms_ble:1380]:   Con. wire resistance 22: 0.000000 Ohm
+[ 54.47] [I][jk_bms_ble:1380]:   Con. wire resistance 23: 0.000000 Ohm
+[ 54.47] [I][jk_bms_ble:1380]:   Con. wire resistance 24: 0.000000 Ohm
+[ 54.47] [I][jk_bms_ble:1380]:   Con. wire resistance 25: 0.000000 Ohm
+[ 54.49] [I][jk_bms_ble:1380]:   Con. wire resistance 26: 0.000000 Ohm
+[ 54.49] [I][jk_bms_ble:1380]:   Con. wire resistance 27: 0.000000 Ohm
+[ 54.51] [I][jk_bms_ble:1380]:   Con. wire resistance 28: 0.000000 Ohm
+[ 54.51] [I][jk_bms_ble:1380]:   Con. wire resistance 29: 0.000000 Ohm
+[ 54.51] [I][jk_bms_ble:1380]:   Con. wire resistance 30: 0.000000 Ohm
+[ 54.53] [I][jk_bms_ble:1380]:   Con. wire resistance 31: 0.000000 Ohm
+[ 54.53] [I][jk_bms_ble:1380]:   Con. wire resistance 32: 0.000000 Ohm
+[ 54.53] [I][jk_bms_ble:1391]:   Precharge time: 0 s
+[ 54.54] [I][jk_bms_ble:1413]:   Heating switch: OFF
+[ 54.54] [I][jk_bms_ble:1416]:   GPS Heartbeat: OFF
+[ 54.54] [I][jk_bms_ble:1422]:   Special charger: OFF
+[ 54.55] [I][jk_bms_ble:1443]:   Data field enable control 0: 254
+[ 54.56] [I][jk_bms_ble:1596]: Device info frame (300 bytes) received
+[ 54.56] [I][jk_bms_ble:1686]:   Uptime: 3588600 s
+[ 54.57] [I][jk_bms_ble:1697]:   Device passcode: 1234
+[ 54.58] [I][jk_bms_ble:1712]:   Passcode: 6613
+[ 54.58] [I][jk_bms_ble:1715]:   User data: JK-BMS
+[ 54.58] [I][jk_bms_ble:1718]:   Setup passcode: 019127
+[ 54.58] [I][jk_bms_ble:1782]:   Hardware option: 
+[ 54.59] [I][jk_bms_ble:1832]:   RCV Time: 0.5 h
+[ 54.59] [I][jk_bms_ble:1836]:   RFV Time: 5.0 h
+[ 54.59] [I][jk_bms_ble:1851]:   Re-Bulk SOC: 1 %
+[ 54.84] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 54.86] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 57.25] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 57.25] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 59.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 59.61] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 61.98] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 61.98] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 63.98] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 63.98] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 66.43] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 66.43] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 68.70] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 68.70] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 71.14] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 71.16] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 73.50] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 73.50] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 75.83] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 75.85] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 78.26] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 78.26] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 80.60] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 80.60] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 84.20] [W][component:513]: interval took a long time for an operation (1509 ms), max is 1490 ms
+[ 84.20] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 84.21] [W][script:081]: Script 'redraw_display' is already running! (mode: single)
+[ 84.21] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 86.55] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 86.55] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 88.62] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 88.62] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 90.89] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 90.90] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 93.29] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 93.30] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 95.65] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 95.65] [I][jk_bms_ble:939]: Emergency switch: OFF
+[ 98.08] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[ 98.08] [I][jk_bms_ble:939]: Emergency switch: OFF
+[100.40] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[100.40] [I][jk_bms_ble:939]: Emergency switch: OFF
+[102.80] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[102.80] [I][jk_bms_ble:939]: Emergency switch: OFF
+[105.19] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[105.19] [I][jk_bms_ble:939]: Emergency switch: OFF
+[107.52] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[107.52] [I][jk_bms_ble:939]: Emergency switch: OFF
+[109.90] [I][jk_bms_ble:688]: Cell info frame (version 3, 300 bytes) received
+[109.91] [I][jk_bms_ble:939]: Emergency switch: OFF
