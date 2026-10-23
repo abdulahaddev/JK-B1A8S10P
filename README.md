@@ -41,6 +41,27 @@ One multi-path `PATCH` to the database root about once a minute (sooner while ca
 Readings wait in a buffer (`telemetry_buffer.h`) until Firebase confirms them: the newest 280 in RTC
 memory (survive software reboots), older ones in a 580-reading RAM ring. About 7 hours at 30 s.
 
+## Remote update (OTA)
+
+The board reads `control` in Firebase every 5 minutes:
+
+- `control/ota = "<version>"`: download `jk-bms-<version>.ota.bin` (+ `.md5`) from `ota_base_url` with
+  `ota_username`/`ota_password`, install, reboot. The new firmware confirms itself on its first
+  successful upload, otherwise it rolls back after 10 minutes.
+- `control/restart = <any new value>`: clean BLE disconnect, then a 1 s deep sleep restart.
+
+`device/firmware_version` and `device/ota_status` show the result.
+
+Unattended release and test (about 25 minutes, writes `logs/release-<version>.md`):
+
+```bash
+python tools/ota_release.py
+```
+
+It bumps `fw_version`, builds, uploads over FTPS (`ftp_host`/`ftp_user`/`ftp_password`), checks the
+files through the site login, sets `control/ota`, watches `device` until the board runs the new
+version with the BMS connected, then removes `control/ota`. `--dry-run` only builds and reads Firebase.
+
 ## Logs
 
 `logs/` holds serial logs from test runs. They include the BMS passcodes printed in the device
