@@ -5,9 +5,11 @@ Usage (from the repository root):
 
 Each line gets a PC timestamp. Runs until the time is up (default 60 min) or Ctrl+C.
 Lines from the crash handler and watchdogs are also echoed to the console.
+URL credentials (auth=...) are redacted: ESPHome prints full request URLs on HTTP errors.
 """
 
 import datetime
+import re
 import sys
 import time
 
@@ -42,6 +44,7 @@ with open(path, "a", encoding="utf-8", errors="replace") as out:
         *lines, buf = buf.split(b"\n")
         for raw in lines:
             line = raw.decode("utf-8", errors="replace").rstrip("\r")
+            line = re.sub(r"auth=[A-Za-z0-9_\-]+", "auth=REDACTED", line)
             stamped = f"{datetime.datetime.now():%H:%M:%S.%f}"[:-3] + " " + line
             out.write(stamped + "\n")
             if any(w in line for w in WATCH):

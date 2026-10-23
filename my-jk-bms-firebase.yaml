@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.16"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.20"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -37,6 +37,7 @@ substitutions:
   # Self-healing: radio reset (1 s deep sleep) when the BMS link or WiFi stays down this long.
   # Each reset in a row doubles the wait (x1, x2, x4, x8); it starts over once both work again.
   ble_watchdog_ms: "600000"   # no BMS frame for 10 min
+  ble_stale_ms: "120000"      # ...or 2 min while the link claims to be connected (a lost disconnect event)
   wifi_watchdog_ms: "900000"  # no WiFi for 15 min (replaces ESPHome's reboot_timeout, a soft reset)
   bad_request_limit: "3"      # drop a batch Firebase rejects with 400 this many times in a row
   maintenance_limit_ms: "180000"  # an OTA install or restart script still running after this is stuck
@@ -200,7 +201,7 @@ time:
 # the ESP32. Extend the watchdog during a request and keep each request short.
 http_request:
   verify_ssl: false
-  timeout: 8s   # per read; a phone hotspot can pause mid-download (4s stalled the OTA)
+  timeout: 8s   # per read. Every request blocks the main loop (display, BLE events); 15 s made failed connects freeze it 16 s. Download stalls are covered by the OTA retry backoff.
   watchdog_timeout: 30s  # DNS + TLS handshake on a weak link can exceed 15 s
 
 # I2C Bus for 0.96" OLED Display (SDA: D21, SCL: D22)
@@ -487,11 +488,19 @@ globals:
     type: int
     restore_value: no
     initial_value: '-1'
+  - id: ble_connect_ms    # last BMS connect (stale-link check)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
   - id: ble_rx_ms         # last BMS frame, for the BT activity dot
     type: uint32_t
     restore_value: no
     initial_value: '0'
   - id: wifi_ok_ms        # last time WiFi was seen connected (WiFi watchdog)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: control_next_ms   # no control read before this (backoff after a failure)
     type: uint32_t
     restore_value: no
     initial_value: '0'
@@ -604,7 +613,10 @@ interval:
     then:
       - if:
           condition:
-            wifi.connected:
+            and:
+              - wifi.connected:
+              # After a failed read wait 2 min: each failed connect blocks the loop for 8-11 s
+              - lambda: 'return (int32_t) (millis() - id(control_next_ms)) >= 0;'
           then:
             - lambda: 'crash::step(crash::STEP_CONTROL);'
             - http_request.get:
@@ -617,6 +629,7 @@ interval:
                         crash::step(crash::STEP_IDLE);
                         if (response->status_code != 200) {
                           id(control_errors)++;
+                          id(control_next_ms) = millis() + 120000;
                           ESP_LOGW("control", "control read failed with code %d", response->status_code);
                           return;
                         }
@@ -685,6 +698,7 @@ interval:
                     - lambda: |-
                         crash::step(crash::STEP_IDLE);
                         id(control_errors)++;
+                        id(control_next_ms) = millis() + 120000;
                         ESP_LOGW("control", "control read error (free heap %u, largest block %u)",
                                  (unsigned) esp_get_free_heap_size(),
                                  (unsigned) heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
@@ -731,7 +745,10 @@ interval:
               const bool wifi_up = wifi != nullptr && wifi->is_connected();
               const uint32_t now = millis();
               if (wifi_up) id(wifi_ok_ms) = now;
-              const bool ble_ok = id(ble_rx_ms) != 0 && now - id(ble_rx_ms) < ${ble_watchdog_ms};
+              // Silence on a connected link counts from the later of the last frame and the connect
+              const uint32_t heard_ms = std::max(id(ble_rx_ms), id(ble_connect_ms));
+              const bool stale = id(client0)->connected() && heard_ms != 0 && now - heard_ms >= ${ble_stale_ms};
+              const bool ble_ok = id(ble_rx_ms) != 0 && now - id(ble_rx_ms) < ${ble_watchdog_ms} && !stale;
               uint32_t &resets = telemetry::watchdog_resets();
               if (wifi_up && ble_ok) {
                 resets = 0;
@@ -741,7 +758,13 @@ interval:
               const uint32_t mult = 1u << std::min<uint32_t>(resets, 3);
               const uint32_t ble_down = now - id(ble_rx_ms);  // since boot when no frame yet
               const uint32_t wifi_down = now - id(wifi_ok_ms);
-              if (ble_down >= ${ble_watchdog_ms} * mult) {
+              // A long blocking request can overflow the BLE event queue and lose the disconnect event:
+              // the client then stays "connected" with a dead link and never reconnects
+              if (stale) {
+                ESP_LOGW("watchdog", "BMS link connected but silent for %u s, radio reset %u", (unsigned) ((now - heard_ms) / 1000),
+                         (unsigned) resets + 1);
+                telemetry::set_restart_cause(telemetry::CAUSE_BLE_WATCHDOG);
+              } else if (ble_down >= ${ble_watchdog_ms} * mult) {
                 ESP_LOGW("watchdog", "No BMS frame for %u s, radio reset %u", (unsigned) (ble_down / 1000), (unsigned) resets + 1);
                 telemetry::set_restart_cause(telemetry::CAUSE_BLE_WATCHDOG);
               } else if (wifi_down >= ${wifi_watchdog_ms} * mult) {
@@ -977,6 +1000,7 @@ ble_client:
     id: client0
     on_connect:
       then:
+        - lambda: 'id(ble_connect_ms) = millis();'
         - script.execute: redraw_display
     on_disconnect:
       then:
