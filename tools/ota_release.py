@@ -41,7 +41,7 @@ DIST = ROOT / "dist"
 LOGS = ROOT / "logs"
 
 POLL_S = 30
-TIMEOUT_S = 25 * 60   # signal check every 5 min + download + reboot + confirm + radio reset + reconnect
+TIMEOUT_S = 25 * 60   # signal check (5 min before 1.2.11, 30 s since) + download + reboot + confirm + radio reset + reconnect
 
 
 class Report:

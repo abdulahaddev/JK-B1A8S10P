@@ -44,7 +44,7 @@ memory (survive software reboots), older ones in a 580-reading RAM ring. About 7
 
 ## Remote update (OTA)
 
-The board reads `control` in Firebase every 5 minutes:
+The board reads `control` in Firebase every 30 seconds:
 
 - `control/ota = "<version>"`: download `jk-bms-<version>.ota.bin` (+ `.md5`) from `ota_base_url` with
   `ota_username`/`ota_password`, install, reboot. The new firmware confirms itself on its first
@@ -53,7 +53,7 @@ The board reads `control` in Firebase every 5 minutes:
 
 `device/firmware_version` and `device/ota_status` show the result.
 
-Unattended release and test (about 25 minutes, writes `logs/release-<version>.md`):
+Unattended release and test (usually under 10 minutes, writes `logs/release-<version>.md`):
 
 ```bash
 python tools/ota_release.py

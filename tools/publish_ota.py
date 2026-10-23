@@ -60,7 +60,7 @@ def main() -> int:
     print("  1. Test this build on the bench (esphome run) before publishing.")
     print("  2. Upload both files to the root of the OTA site.")
     print(f'  3. In Firebase set control/ota to "{version}".')
-    print("  4. Within 5 min device/ota_status shows the download; after the reboot it shows")
+    print("  4. Within 30 s (5 min before 1.2.11) device/ota_status shows the download; after the reboot it shows")
     print(f'     "verifying {version}", then "updated to {version}" after its first upload,')
     print('     or "rolled back" if the new firmware did not upload within 10 minutes.')
     return 0

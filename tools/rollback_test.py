@@ -2,6 +2,7 @@
 
 Usage (from the repository root, board on a confirmed firmware):
     python tools/rollback_test.py 1.2.9
+    python tools/rollback_test.py 1.2.9 --no-ble   # board out of BMS range: don't require the BMS link
 
 The test build is the current config with the OTA-site self-check pointed at a missing file, so the
 new firmware uploads to Firebase but can never confirm itself. Expected: the board installs it, keeps
@@ -25,10 +26,12 @@ TIMEOUT_S = 30 * 60
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    need_ble = "--no-ble" not in sys.argv
+    if len(args) != 1:
         print(__doc__)
         return 1
-    version = sys.argv[1]
+    version = args[0]
     secrets = rel.read_secrets()
     old = rel.current_version()
     report = rel.Report(rel.LOGS / f"rollback-test-{version}.md")
@@ -72,7 +75,7 @@ def main() -> int:
             if d.get("firmware_version") == version:
                 seen_new = True
             if (seen_new and d.get("firmware_version") == old and "rolled back" in str(d.get("ota_status"))
-                    and d.get("ble_connected") == 1):
+                    and (d.get("ble_connected") == 1 or not need_ble)):
                 ok = True
                 break
             time.sleep(rel.POLL_S)

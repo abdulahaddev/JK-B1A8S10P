@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.10"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.11"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -25,7 +25,7 @@ substitutions:
   ota_base_url: !secret ota_base_url
   ota_username: !secret ota_username
   ota_password: !secret ota_password
-  ota_check_interval: "5min"  # How often to read the control/ota signal from Firebase
+  ota_check_interval: "30s"   # How often to read control (OTA and restart requests) from Firebase
   ota_verify_timeout_ms: "600000"  # New firmware must upload to Firebase within 10 min or it rolls back
   ota_max_tries: "3"          # Download attempts per signalled version
   radio_reset_fallback_ms: "120000"  # Radio reset after a software reset even without a successful upload
@@ -133,6 +133,7 @@ esp32:
 # Required for OTA rollback. Normally confirms a boot after boot_is_good_after; we confirm earlier,
 # on the first successful Firebase upload, so this only acts as a late fallback.
 safe_mode:
+  id: safe_mode_component
   boot_is_good_after: 15min
 
 ota:
@@ -1026,6 +1027,9 @@ script:
       - delay: 300ms
       - lambda: |-
           ESP_LOGW("radio", "Deep sleep 1 s to reset the radio");
+          // safe_mode counts every restart within boot_is_good_after as a failed boot; ten deliberate
+          // radio resets in a row would end in safe mode (no Firebase). A boot that has uploaded is good.
+          if (id(uploaded_since_boot) && !id(ota_pending_verify)) id(safe_mode_component)->mark_successful();
           global_preferences->sync();
           esp_sleep_enable_timer_wakeup(1000000);
           esp_deep_sleep_start();
