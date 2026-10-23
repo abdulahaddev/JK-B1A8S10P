@@ -41,7 +41,8 @@ DIST = ROOT / "dist"
 LOGS = ROOT / "logs"
 
 POLL_S = 30
-TIMEOUT_S = 25 * 60   # signal check (5 min before 1.2.11, 30 s since) + download + reboot + confirm + radio reset + reconnect
+CRASH_RESETS = ("panic", "interrupt_watchdog", "task_watchdog", "other_watchdog")
+TIMEOUT_S = 25 * 60  # signal check (5 min before 1.2.11, 30 s since) + download + reboot + confirm + radio reset + reconnect
 
 
 class Report:
@@ -170,6 +171,18 @@ def watch(secrets: dict, version: str, report: Report) -> bool:
             last = state
         if d.get("firmware_version") == version and d.get("ble_connected") == 1:
             return True
+        # Fail fast instead of waiting out the timeout
+        status = str(d.get("ota_status", ""))
+        tries = re.search(r"\(try (\d+)/(\d+)\)", status)
+        if tries and tries.group(1) == tries.group(2) and version in status:
+            report.log(f"all download tries failed: {status}")
+            return False
+        if "rolled back" in status and d.get("firmware_version") != version:
+            report.log(f"update rolled back: {status}")
+            return False
+        if d.get("reset_reason") in CRASH_RESETS and d.get("uptime_s", 999) < 120:
+            report.log(f"board crashed ({d.get('reset_reason')}); see crashes/ in Firebase")
+            return False
         time.sleep(POLL_S)
     return False
 

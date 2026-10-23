@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.11"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.16"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -27,7 +27,8 @@ substitutions:
   ota_password: !secret ota_password
   ota_check_interval: "30s"   # How often to read control (OTA and restart requests) from Firebase
   ota_verify_timeout_ms: "600000"  # New firmware must upload to Firebase within 10 min or it rolls back
-  ota_max_tries: "3"          # Download attempts per signalled version
+  ota_max_tries: "5"          # Download attempts per signalled version...
+  ota_retry_base_ms: "60000"  # ...waiting 1, 2, 4, 8 min after each failure (a weak link drops for minutes)
   radio_reset_fallback_ms: "120000"  # Radio reset after a software reset even without a successful upload
   ota_text_long_ms: "600000"  # OTA text replaces BAL/DSG this long after a failure or rollback
   ota_text_short_ms: "120000" # ...and this long after a confirmed update
@@ -53,8 +54,10 @@ esphome:
     - <esp_sleep.h>
     - <esp_heap_caps.h>
     - <esp_timer.h>
+    - <esp_wifi.h>
     - telemetry_buffer.h
     - crash_capture.h
+    - radio_sleep.h
     - <esphome/components/esp32/crash_handler.h>
   on_boot:
     - priority: 800
@@ -156,6 +159,9 @@ ota:
             ESP_LOGE("ota", "%s", id(ota_status).c_str());
             id(ota_display) = "OTA failed (" + std::to_string(id(ota_tries)) + "/${ota_max_tries})";
             id(ota_show_until) = millis() + ${ota_text_long_ms};
+            id(ota_next_try_ms) = millis() + (${ota_retry_base_ms} << std::min<uint32_t>(id(ota_tries) - 1, 3));
+            // Modem sleep back on before BLE: WiFi + BT without it aborts in ESP-IDF
+            esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
             id(client0)->set_auto_connect(true);
         - ble.enable:
         - script.execute: redraw_display
@@ -453,6 +459,10 @@ globals:
     type: std::string
     restore_value: no
     initial_value: '""'
+  - id: ota_next_try_ms   # earliest retry after a failed download
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
   - id: ota_tries
     type: uint32_t
     restore_value: no
@@ -658,6 +668,7 @@ interval:
                           id(ota_tries) = 0;
                         }
                         if (id(ota_tries) >= ${ota_max_tries}) return;
+                        if (id(ota_tries) > 0 && (int32_t) (millis() - id(ota_next_try_ms)) < 0) return;  // backoff
                         id(ota_tries)++;
                         id(ota_attempt_hash) = fnv1_hash(v);
                         global_preferences->sync();
@@ -691,8 +702,7 @@ interval:
                    (unsigned) ((millis() - id(maintenance_ms)) / 1000));
           telemetry::set_restart_cause(telemetry::CAUSE_STUCK_SCRIPT);
           global_preferences->sync();
-          esp_sleep_enable_timer_wakeup(1000000);
-          esp_deep_sleep_start();
+          radio_sleep(1000000);  // stops BLE and WiFi first: sleeping with them on can deadlock the PHY
       - if:
           condition:
             lambda: 'return id(ota_pending_verify) && millis() > ${ota_verify_timeout_ms};'
@@ -763,7 +773,10 @@ interval:
                   then:
                     - lambda: |-
                         crash::step(crash::STEP_IDLE);
-                        id(ota_source_ok) = response->status_code == 200 && body.size() >= 32;
+                        // Must be the MD5 itself: a hosting challenge page also answers 200
+                        bool md5 = response->status_code == 200 && body.size() >= 32 && body.size() <= 40;
+                        for (size_t i = 0; md5 && i < 32; i++) md5 = isxdigit((unsigned char) body[i]);
+                        id(ota_source_ok) = md5;
                         ESP_LOGI("ota", "OTA site check: code %d, %s", response->status_code,
                                  id(ota_source_ok) ? "reachable" : "not usable");
                 on_error:
@@ -1031,8 +1044,7 @@ script:
           // radio resets in a row would end in safe mode (no Firebase). A boot that has uploaded is good.
           if (id(uploaded_since_boot) && !id(ota_pending_verify)) id(safe_mode_component)->mark_successful();
           global_preferences->sync();
-          esp_sleep_enable_timer_wakeup(1000000);
-          esp_deep_sleep_start();
+          radio_sleep(1000000);  // stops BLE and WiFi first: sleeping with them on can deadlock the PHY
 
   # Download and install id(ota_target). The download's TLS session does not fit next to the BLE
   # stack (free heap fell to <1 KB and the download stalled), so stop BLE first to free its memory
@@ -1052,6 +1064,9 @@ script:
       - delay: 1s
       - lambda: |-
           ESP_LOGI("ota", "BLE stopped for download, free heap %u", (unsigned) esp_get_free_heap_size());
+          // Full-power WiFi for the download: modem sleep costs throughput and beacons on a weak link.
+          // Only allowed with the BT controller off.
+          if (esp_bt_controller_get_status() != ESP_BT_CONTROLLER_STATUS_ENABLED) esp_wifi_set_ps(WIFI_PS_NONE);
           id(ota_display) = "OTA " + id(ota_target) + " 0%";
           id(ota_progress_step) = 0;
           id(ota_show_until) = millis() + ${ota_text_long_ms};
