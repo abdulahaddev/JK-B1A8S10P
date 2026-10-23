@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.7"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.10"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -33,6 +33,12 @@ substitutions:
   ota_text_short_ms: "120000" # ...and this long after a confirmed update
   ble_dot_ms: "300"           # Dot at the BT icon after each BMS frame (~every 2.4 s)
   upload_dot_ms: "1000"       # Dot at the WiFi icon after each successful upload (~once a minute)
+  # Self-healing: radio reset (1 s deep sleep) when the BMS link or WiFi stays down this long.
+  # Each reset in a row doubles the wait (x1, x2, x4, x8); it starts over once both work again.
+  ble_watchdog_ms: "600000"   # no BMS frame for 10 min
+  wifi_watchdog_ms: "900000"  # no WiFi for 15 min (replaces ESPHome's reboot_timeout, a soft reset)
+  bad_request_limit: "3"      # drop a batch Firebase rejects with 400 this many times in a row
+  maintenance_limit_ms: "180000"  # an OTA install or restart script still running after this is stuck
 
 esphome:
   name: ${name}
@@ -45,15 +51,26 @@ esphome:
     - <esp_bt.h>
     - <esp_ota_ops.h>
     - <esp_sleep.h>
+    - <esp_heap_caps.h>
+    - <esp_timer.h>
     - telemetry_buffer.h
+    - crash_capture.h
+    - <esphome/components/esp32/crash_handler.h>
   on_boot:
     - priority: 800
       then:
         # Restore buffered readings kept in RTC memory across a software reboot
         - lambda: |-
             telemetry::begin();
-            ESP_LOGI("telemetry", "Boot %u (%s), %u readings restored from RTC",
-                     (unsigned) telemetry::boot_count(), telemetry::reset_reason(), (unsigned) telemetry::size());
+            crash::begin();
+            // ESPHome printed its crash report before on_message was listening; print it again to collect it
+            if (esphome::esp32::crash_handler_has_data()) esphome::esp32::crash_handler_log();
+            if (crash::crashed()) ESP_LOGE("crash", "Previous run crashed in step %s", crash::last_step_name());
+            ESP_LOGI("telemetry", "Boot %u (%s, cause %s), %u readings restored from RTC",
+                     (unsigned) telemetry::boot_count(), telemetry::reset_reason(), telemetry::restart_cause(),
+                     (unsigned) telemetry::size());
+            const std::string cred = std::string("${ota_username}:") + "${ota_password}";
+            id(ota_auth_header) = "Basic " + base64_encode((const uint8_t *) cred.data(), cred.size());
     - priority: 600
       then:
         # OTA state after boot: a fresh image waits for its first good upload (see firebase_upload_interval);
@@ -105,6 +122,13 @@ esp32:
     type: esp-idf
     advanced:
       enable_ota_rollback: true  # Bootloader returns to the previous firmware if a new one is never confirmed
+    sdkconfig_options:
+      # Allocate TLS record buffers only while needed and free the parsed config after the
+      # handshake: lowers the heap peak of every HTTPS request next to the BLE stack
+      CONFIG_MBEDTLS_DYNAMIC_BUFFER: y
+      CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA: y
+      # Default 300 ms is tight with BLE + WiFi coexistence and flash writes (NVS, OTA state)
+      CONFIG_ESP_INT_WDT_TIMEOUT_MS: "800"
 
 # Required for OTA rollback. Normally confirms a boot after boot_is_good_after; we confirm earlier,
 # on the first successful Firebase upload, so this only acts as a late fallback.
@@ -124,6 +148,7 @@ ota:
     on_error:
       then:
         - lambda: |-
+            crash::step(crash::STEP_IDLE);
             id(ota_status) = "download failed " + id(ota_target) + " (try " + std::to_string(id(ota_tries)) + "/${ota_max_tries})";
             id(ota_attempt_hash) = 0;
             global_preferences->sync();
@@ -149,6 +174,9 @@ wifi:
   # Connect straight to the configured network instead of scanning first: with BLE busy every
   # 10ms, reconnect scans time out and WiFi stays down until the 15 min reboot_timeout.
   fast_connect: true
+  # ESPHome would esp_restart after 15 min without WiFi; a soft reset leaves BLE unable to reach
+  # the BMS, so the WiFi watchdog in the 30s interval does a radio reset instead.
+  reboot_timeout: 0s
   on_connect:
     then:
       - script.execute: redraw_display
@@ -166,7 +194,7 @@ time:
 http_request:
   verify_ssl: false
   timeout: 8s   # per read; a phone hotspot can pause mid-download (4s stalled the OTA)
-  watchdog_timeout: 15s
+  watchdog_timeout: 30s  # DNS + TLS handshake on a weak link can exceed 15 s
 
 # I2C Bus for 0.96" OLED Display (SDA: D21, SCL: D22)
 i2c:
@@ -316,6 +344,11 @@ external_components:
 
 logger:
   level: ${log_level}
+  # Collect ESPHome's crash report lines for the crashes/ upload (crash_capture.h)
+  on_message:
+    level: ERROR
+    then:
+      - lambda: 'crash::collect(tag, message);'
   baud_rate: ${log_baud_rate}
   logs:
     esp32_ble_tracker: INFO
@@ -447,6 +480,42 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: '0'
+  - id: wifi_ok_ms        # last time WiFi was seen connected (WiFi watchdog)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: control_errors    # failed control.json reads since boot
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_errors     # failed uploads since boot
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: bad_requests      # uploads rejected with 400 in a row
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: ota_source_ok     # a new firmware reached the OTA site, so it can be updated again
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: maintenance_ms    # when ota_install or radio_reset started (stuck-script guard)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: crash_sent        # the previous run's crash is in Firebase
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: crash_in_flight   # the upload in flight carries the saved crash
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: ota_auth_header
+    type: std::string
+    restore_value: no
+    initial_value: '""'
   - id: fb_tx_ms          # last successful upload, for the WiFi activity dot
     type: uint32_t
     restore_value: no
@@ -526,6 +595,7 @@ interval:
           condition:
             wifi.connected:
           then:
+            - lambda: 'crash::step(crash::STEP_CONTROL);'
             - http_request.get:
                 url: "${firebase_db_url}/control.json?auth=${firebase_auth}"
                 capture_response: true
@@ -533,9 +603,18 @@ interval:
                 on_response:
                   then:
                     - lambda: |-
-                        if (response->status_code != 200) return;
+                        crash::step(crash::STEP_IDLE);
+                        if (response->status_code != 200) {
+                          id(control_errors)++;
+                          ESP_LOGW("control", "control read failed with code %d", response->status_code);
+                          return;
+                        }
                         JsonDocument doc;
-                        if (deserializeJson(doc, body)) return;
+                        if (deserializeJson(doc, body)) {
+                          id(control_errors)++;
+                          ESP_LOGW("control", "control.json is not valid JSON");
+                          return;
+                        }
 
                         // Restart request (never while a new firmware still has to confirm itself)
                         std::string restart_token;
@@ -553,6 +632,7 @@ interval:
                           id(ota_display) = "Restarting";
                           id(ota_show_until) = millis() + 5000;
                           id(oled_display).update();
+                          telemetry::set_restart_cause(telemetry::CAUSE_REMOTE);
                           id(radio_reset).execute();
                           return;
                         }
@@ -588,10 +668,30 @@ interval:
                         then:
                           - lambda: 'id(ota_start) = false;'
                           - script.execute: ota_install
+                on_error:
+                  then:
+                    - lambda: |-
+                        crash::step(crash::STEP_IDLE);
+                        id(control_errors)++;
+                        ESP_LOGW("control", "control read error (free heap %u, largest block %u)",
+                                 (unsigned) esp_get_free_heap_size(),
+                                 (unsigned) heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
 
   # A new firmware that has not uploaded successfully within the timeout rolls back to the previous one
   - interval: 30s
     then:
+      # Stuck-script guard: an install or restart that never finishes would leave BLE off with no way
+      # to recover remotely (both block new OTA and restart requests), so restart the hard way
+      - lambda: |-
+          if (!id(ota_install).is_running() && !id(radio_reset).is_running()) return;
+          if (millis() - id(maintenance_ms) < ${maintenance_limit_ms}) return;
+          ESP_LOGE("watchdog", "%s stuck for %u s, deep sleep restart",
+                   id(ota_install).is_running() ? "ota_install" : "radio_reset",
+                   (unsigned) ((millis() - id(maintenance_ms)) / 1000));
+          telemetry::set_restart_cause(telemetry::CAUSE_STUCK_SCRIPT);
+          global_preferences->sync();
+          esp_sleep_enable_timer_wakeup(1000000);
+          esp_deep_sleep_start();
       - if:
           condition:
             lambda: 'return id(ota_pending_verify) && millis() > ${ota_verify_timeout_ms};'
@@ -608,8 +708,68 @@ interval:
               return id(needs_radio_reset) && !id(ota_pending_verify) &&
                      (id(uploaded_since_boot) || millis() > ${radio_reset_fallback_ms});
           then:
-            - lambda: 'id(needs_radio_reset) = false;'
+            - lambda: |-
+                id(needs_radio_reset) = false;
+                telemetry::set_restart_cause(telemetry::CAUSE_SOFT_RESET);
             - script.execute: radio_reset
+      # Watchdogs: radio reset when the BMS link or WiFi stays down, with backoff (see ble_watchdog_ms)
+      - if:
+          condition:
+            lambda: |-
+              auto *wifi = esphome::wifi::global_wifi_component;
+              const bool wifi_up = wifi != nullptr && wifi->is_connected();
+              const uint32_t now = millis();
+              if (wifi_up) id(wifi_ok_ms) = now;
+              const bool ble_ok = id(ble_rx_ms) != 0 && now - id(ble_rx_ms) < ${ble_watchdog_ms};
+              uint32_t &resets = telemetry::watchdog_resets();
+              if (wifi_up && ble_ok) {
+                resets = 0;
+                return false;
+              }
+              if (id(ota_pending_verify) || id(ota_install).is_running() || id(radio_reset).is_running()) return false;
+              const uint32_t mult = 1u << std::min<uint32_t>(resets, 3);
+              const uint32_t ble_down = now - id(ble_rx_ms);  // since boot when no frame yet
+              const uint32_t wifi_down = now - id(wifi_ok_ms);
+              if (ble_down >= ${ble_watchdog_ms} * mult) {
+                ESP_LOGW("watchdog", "No BMS frame for %u s, radio reset %u", (unsigned) (ble_down / 1000), (unsigned) resets + 1);
+                telemetry::set_restart_cause(telemetry::CAUSE_BLE_WATCHDOG);
+              } else if (wifi_down >= ${wifi_watchdog_ms} * mult) {
+                ESP_LOGW("watchdog", "No WiFi for %u s, radio reset %u", (unsigned) (wifi_down / 1000), (unsigned) resets + 1);
+                telemetry::set_restart_cause(telemetry::CAUSE_WIFI_WATCHDOG);
+              } else {
+                return false;
+              }
+              resets++;
+              return true;
+          then:
+            - script.execute: radio_reset
+      # A new firmware also has to reach the OTA site before it confirms itself; otherwise a build
+      # that cannot download could never be replaced remotely
+      - if:
+          condition:
+            and:
+              - lambda: 'return id(ota_pending_verify) && !id(ota_source_ok);'
+              - wifi.connected:
+          then:
+            - lambda: 'crash::step(crash::STEP_OTA_CHECK);'
+            - http_request.get:
+                url: "${ota_base_url}/jk-bms-${fw_version}.ota.bin.md5"
+                request_headers:
+                  Authorization: !lambda 'return id(ota_auth_header).c_str();'
+                capture_response: true
+                max_response_buffer_size: 64
+                on_response:
+                  then:
+                    - lambda: |-
+                        crash::step(crash::STEP_IDLE);
+                        id(ota_source_ok) = response->status_code == 200 && body.size() >= 32;
+                        ESP_LOGI("ota", "OTA site check: code %d, %s", response->status_code,
+                                 id(ota_source_ok) ? "reachable" : "not usable");
+                on_error:
+                  then:
+                    - lambda: |-
+                        crash::step(crash::STEP_IDLE);
+                        ESP_LOGW("ota", "OTA site check failed");
 
   # One multi-path PATCH writes buffered readings, device diagnostics, and (when due) the info
   # node and an hourly energy counter. Readings leave the buffer only after Firebase replies 2xx.
@@ -625,6 +785,7 @@ interval:
                   return telemetry::size() >= ${upload_min_batch} || id(info_dirty) ||
                          millis() - id(last_upload_ms) >= ${upload_max_age_ms};
           then:
+            - lambda: 'crash::step(crash::STEP_UPLOAD);'
             - http_request.send:
                 method: PATCH
                 url: "${firebase_db_url}/.json?auth=${firebase_auth}"
@@ -660,7 +821,7 @@ interval:
                   auto *wifi = esphome::wifi::global_wifi_component;
                   JsonObject d = root["device"].to<JsonObject>();
                   d["last_seen"] = now_ts;
-                  d["uptime_s"] = millis() / 1000;
+                  d["uptime_s"] = (uint32_t) (esp_timer_get_time() / 1000000);
                   d["boot_count"] = telemetry::boot_count();
                   d["reset_reason"] = telemetry::reset_reason();
                   d["wifi_rssi"] = wifi != nullptr ? wifi->wifi_rssi() : 0;
@@ -672,6 +833,11 @@ interval:
                   id(bms_adverts) = 0;
                   d["free_heap"] = esp_get_free_heap_size();
                   d["min_free_heap"] = esp_get_minimum_free_heap_size();
+                  d["max_block"] = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+                  d["restart_cause"] = telemetry::restart_cause();
+                  d["watchdog_resets"] = telemetry::watchdog_resets();
+                  d["control_errors"] = id(control_errors);
+                  d["upload_errors"] = id(upload_errors);
                   d["buffered"] = telemetry::size();
                   d["dropped"] = telemetry::dropped;
                   d["upload_batch"] = id(upload_batch_last);
@@ -704,6 +870,17 @@ interval:
                     inf["manufacturing_date"] = id(bms_manufacturing_date).state;
                   }
 
+                  // A crash saved by crash_capture.h goes up once, with the firmware that crashed
+                  // (crashes before 1.2.9 have no step; report is empty if ESPHome had no data)
+                  id(crash_in_flight) = !id(crash_sent) && (crash::crashed() || !crash::report.empty());
+                  if (id(crash_in_flight)) {
+                    JsonObject c = root[std::string("crashes/") + std::to_string(now_ts)].to<JsonObject>();
+                    c["reported_by"] = "${fw_version}";  // the crash itself may be from the firmware before an update
+                    c["reset_reason"] = telemetry::reset_reason();
+                    c["step"] = crash::last_step_name();
+                    c["report"] = crash::report;
+                  }
+
                   const float energy = id(bms_total_charging_cycle_capacity).state;
                   id(energy_in_flight) = !std::isnan(energy) &&
                       (id(last_energy_ms) == 0 || millis() - id(last_energy_ms) >= ${energy_interval_ms});
@@ -713,14 +890,16 @@ interval:
                 on_response:
                   then:
                     - lambda: |-
+                        crash::step(crash::STEP_IDLE);
                         const bool ok = response->status_code >= 200 && response->status_code < 300;
                         id(firebase_error) = !ok;
                         id(last_upload_ms) = millis();
                         if (ok) {
                           id(uploaded_since_boot) = true;
+                          id(bad_requests) = 0;
                           telemetry::discard(id(upload_batch_n));
-                          if (id(ota_pending_verify)) {
-                            // First good upload on a new firmware: keep it
+                          if (id(ota_pending_verify) && id(ota_source_ok)) {
+                            // First good upload on a new firmware that also reached the OTA site: keep it
                             esp_ota_mark_app_valid_cancel_rollback();
                             id(ota_pending_verify) = false;
                             id(ota_attempt_hash) = 0;
@@ -737,15 +916,29 @@ interval:
                             id(info_sent_ms) = millis();
                           }
                           if (id(energy_in_flight)) id(last_energy_ms) = millis();
+                          if (id(crash_in_flight)) {
+                            id(crash_sent) = true;
+                            esphome::esp32::crash_handler_clear();
+                          }
                         } else {
+                          id(upload_errors)++;
                           ESP_LOGW("firebase", "Upload failed with code %d", response->status_code);
+                          // A batch Firebase keeps rejecting as malformed would block the buffer forever
+                          if (response->status_code == 400 && ++id(bad_requests) >= ${bad_request_limit}) {
+                            ESP_LOGE("firebase", "Dropping %u readings rejected %u times", (unsigned) id(upload_batch_n),
+                                     (unsigned) id(bad_requests));
+                            telemetry::discard(id(upload_batch_n));
+                            id(bad_requests) = 0;
+                          }
                         }
                         id(info_in_flight) = false;
                         id(energy_in_flight) = false;
                 on_error:
                   then:
                     - lambda: |-
+                        crash::step(crash::STEP_IDLE);
                         id(firebase_error) = true;
+                        id(upload_errors)++;
                         id(last_upload_ms) = millis();
                         id(info_in_flight) = false;
                         id(energy_in_flight) = false;
@@ -806,7 +999,9 @@ script:
           condition:
             lambda: 'return id(client0)->state() != esphome::esp32_ble_tracker::ClientState::IDLE;'
           then:
-            - ble_client.disconnect: client0
+            # Not the ble_client.disconnect action: it waits for a GATT close event, which never comes
+            # when the client is searching or connecting, and then the script hangs forever
+            - lambda: 'id(client0)->disconnect();'
             - wait_until:
                 condition:
                   lambda: 'return id(client0)->state() == esphome::esp32_ble_tracker::ClientState::IDLE;'
@@ -819,11 +1014,16 @@ script:
     mode: single
     then:
       - lambda: |-
+          crash::step(crash::STEP_RADIO_RESET);
+          id(maintenance_ms) = millis();
           id(ota_display) = "Restarting";
           id(ota_show_until) = millis() + 5000;
           id(oled_display).update();
       - script.execute: ble_disconnect_clean
       - script.wait: ble_disconnect_clean
+      # restore_value globals (restart_hash) are saved by the globals loop; give it a few passes,
+      # else a restart request whose hash was not saved restarts the board again after the wake
+      - delay: 300ms
       - lambda: |-
           ESP_LOGW("radio", "Deep sleep 1 s to reset the radio");
           global_preferences->sync();
@@ -836,6 +1036,7 @@ script:
   - id: ota_install
     mode: single
     then:
+      - lambda: 'id(maintenance_ms) = millis();'
       - script.execute: ble_disconnect_clean
       - script.wait: ble_disconnect_clean
       - ble.disable:
@@ -850,6 +1051,7 @@ script:
           id(ota_display) = "OTA " + id(ota_target) + " 0%";
           id(ota_progress_step) = 0;
           id(ota_show_until) = millis() + ${ota_text_long_ms};
+          crash::step(crash::STEP_OTA_FLASH);
       - component.update: oled_display
       - ota.http_request.flash:
           id: ota_http

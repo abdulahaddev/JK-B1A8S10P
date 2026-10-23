@@ -31,7 +31,7 @@ struct __attribute__((packed)) Record {  // 28 bytes
   uint8_t flags;             // Flags
 };
 
-static const size_t RTC_CAPACITY = 280;  // 7.9 KB of the 8 KB RTC slow memory (8168 B usable)
+static const size_t RTC_CAPACITY = 280;  // 7.9 KB of the 8 KB RTC slow memory (8168 B usable, 7860 B used)
 static const size_t RAM_CAPACITY = 580;  // 16.2 KB
 static const uint32_t RTC_MAGIC = 0x4A4B4231;  // "JKB1"
 
@@ -56,10 +56,16 @@ template<size_t N> struct Ring {
   bool valid() const { return head < N && count <= N; }
 };
 
+// Why the board restarted itself last (kept across deep sleep, reported in device/restart_cause)
+enum RestartCause : uint32_t { CAUSE_NONE = 0, CAUSE_REMOTE, CAUSE_SOFT_RESET, CAUSE_BLE_WATCHDOG, CAUSE_WIFI_WATCHDOG,
+                            CAUSE_STUCK_SCRIPT };
+
 struct RtcState {
   uint32_t magic;
   uint32_t boot_count;
   Ring<RTC_CAPACITY> ring;
+  uint32_t watchdog_resets;  // radio resets in a row by the BLE/WiFi watchdog (backoff); appended
+  uint32_t restart_cause;    // RestartCause of the last self-initiated restart; appended
 };
 
 RTC_NOINIT_ATTR static RtcState rtc_state;
@@ -75,7 +81,12 @@ inline void begin() {
     rtc_state.boot_count = 0;
     rtc_state.ring.head = 0;
     rtc_state.ring.count = 0;
+    rtc_state.watchdog_resets = 0;
+    rtc_state.restart_cause = CAUSE_NONE;
   }
+  // Fields appended in 1.2.8 are garbage on the first boot after updating from an older firmware
+  if (rtc_state.watchdog_resets > 16) rtc_state.watchdog_resets = 0;
+  if (rtc_state.restart_cause > CAUSE_STUCK_SCRIPT) rtc_state.restart_cause = CAUSE_NONE;
   rtc_state.boot_count++;
   ram_ring.head = 0;
   ram_ring.count = 0;
@@ -102,6 +113,24 @@ inline void discard(size_t n) {
   for (; n > 0 && size() > 0; n--) {
     if (ram_ring.count > 0) ram_ring.pop();
     else rtc_state.ring.pop();
+  }
+}
+
+inline uint32_t &watchdog_resets() { return rtc_state.watchdog_resets; }
+
+// Record why we restart; read back after the next boot
+inline void set_restart_cause(RestartCause c) { rtc_state.restart_cause = c; }
+
+inline const char *restart_cause() {
+  // Only meaningful after a deep sleep wake; any other reset was not one of ours
+  if (esp_reset_reason() != ESP_RST_DEEPSLEEP) return "none";
+  switch (rtc_state.restart_cause) {
+    case CAUSE_REMOTE: return "remote";
+    case CAUSE_SOFT_RESET: return "after_soft_reset";
+    case CAUSE_BLE_WATCHDOG: return "ble_watchdog";
+    case CAUSE_WIFI_WATCHDOG: return "wifi_watchdog";
+    case CAUSE_STUCK_SCRIPT: return "stuck_script";
+    default: return "none";
   }
 }
 

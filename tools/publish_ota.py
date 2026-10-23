@@ -6,6 +6,7 @@ Usage (from the repository root):
 Reads fw_version from the config, compiles it, and writes to dist/:
     jk-bms-<version>.ota.bin       the firmware image
     jk-bms-<version>.ota.bin.md5   its MD5, checked by the board before installing
+    jk-bms-<version>.elf           symbols, to decode crash addresses the board reports (not uploaded)
 
 Upload both files to the root of the OTA site, then set control/ota to "<version>" in Firebase.
 """
@@ -20,6 +21,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "my-jk-bms-firebase.yaml"
 BUILD_BIN = ROOT / ".esphome/build/jk-bms/.pioenvs/jk-bms/firmware.ota.bin"
+BUILD_ELF = ROOT / ".esphome/build/jk-bms/.pioenvs/jk-bms/firmware.elf"
 DIST = ROOT / "dist"
 
 
@@ -45,6 +47,7 @@ def main() -> int:
 
     DIST.mkdir(exist_ok=True)
     shutil.copyfile(BUILD_BIN, target)
+    shutil.copyfile(BUILD_ELF, DIST / f"jk-bms-{version}.elf")
     md5 = hashlib.md5(target.read_bytes()).hexdigest()
     target.with_name(target.name + ".md5").write_text(md5, encoding="ascii")
 

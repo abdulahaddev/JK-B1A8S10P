@@ -34,9 +34,10 @@ One multi-path `PATCH` to the database root about once a minute (sooner while ca
 | Path | When | Contents |
 |---|---|---|
 | `telemetry/<unix_ts>` | every 30 s reading | `total_voltage`, `current`, `cell_voltage_1..4`, `capacity_remaining`, `state_of_charge`, `balancing_current`, `mosfet_temperature`, `temperature_sensor_1/2`, `charging`, `discharging`, `balancing` |
-| `device` | every upload | `last_seen`, `uptime_s`, `boot_count`, `reset_reason`, `wifi_rssi`, `wifi_disconnects`, `ble_connected`, `ble_disconnects`, `free_heap`, `min_free_heap`, `buffered`, `dropped` |
+| `device` | every upload | `last_seen`, `uptime_s`, `boot_count`, `reset_reason`, `restart_cause`, `watchdog_resets`, `wifi_rssi`, `wifi_disconnects`, `ble_connected`, `ble_disconnects`, `bms_rssi`, `bms_adverts`, `free_heap`, `min_free_heap`, `max_block`, `buffered`, `dropped`, `upload_batch`, `upload_errors`, `control_errors`, `firmware_version`, `ota_status` |
 | `info` | on change, at least daily | `errors`, switches, `heating`, `charging_cycles`, `cell_resistance_1..4`, `state_of_health`, `full_charge_capacity`, device model/versions/serial/date |
 | `energy/<unix_ts>` | hourly | `total_charging_cycle_capacity` (Ah) |
+| `crashes/<unix_ts>` | once after a crash | `reported_by`, `reset_reason`, `step`, `report` |
 
 Readings wait in a buffer (`telemetry_buffer.h`) until Firebase confirms them: the newest 280 in RTC
 memory (survive software reboots), older ones in a 580-reading RAM ring. About 7 hours at 30 s.
@@ -61,6 +62,33 @@ python tools/ota_release.py
 It bumps `fw_version`, builds, uploads over FTPS (`ftp_host`/`ftp_user`/`ftp_password`), checks the
 files through the site login, sets `control/ota`, watches `device` until the board runs the new
 version with the BMS connected, then removes `control/ota`. `--dry-run` only builds and reads Firebase.
+
+## Self-healing and diagnostics
+
+The board is meant to run unattended, so it recovers on its own and reports what happened:
+
+| Situation | What the board does | Where it shows |
+|---|---|---|
+| Software reset (OTA, crash, watchdog) | One 1 s deep sleep after the first upload, so BLE can reach the BMS again | `device/restart_cause = after_soft_reset` |
+| No BMS frame for 10 min | Radio reset (1 s deep sleep); the wait doubles each time in a row (10/20/40/80 min) | `ble_watchdog`, `watchdog_resets` |
+| No WiFi for 15 min | Same, instead of ESPHome's soft-reset `reboot_timeout` | `wifi_watchdog` |
+| OTA install or restart script stuck > 3 min | Deep sleep restart | `stuck_script` |
+| Crash | ESPHome's crash report (PC, backtraces of both cores) and the step the loop was in are uploaded once | `crashes/<ts>` |
+| Firebase rejects a batch with 400 three times | The batch is dropped so the buffer cannot block | `upload_errors` |
+
+A new firmware confirms itself only after a successful upload **and** a successful read of its own
+`.md5` from the OTA site, so a build that could not download the next one rolls back.
+
+Decode crash addresses with the ELF that `tools/publish_ota.py` keeps in `dist/`:
+
+```bash
+~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp-elf-addr2line -pfiaC -e dist/jk-bms-<version>.elf <addresses>
+```
+
+`device` also reports `max_block` (largest free heap block), `control_errors` and `upload_errors`.
+`tools/control.py` shows them in `status`. `tools/ota_release.py --wait-healthy <min>` signals an update
+only once the board reports the BMS connected and no install in progress. `tools/rollback_test.py`
+checks the rollback path with a deliberately unconfirmable build.
 
 ## Logs
 

@@ -137,7 +137,11 @@ def cmd_status(_args):
         + dim(f"  rssi {d.get('bms_rssi', '-')} dBm, {d.get('ble_disconnects', 0)} drops"))
     row("WiFi", f"rssi {d.get('wifi_rssi', '-')} dBm" + dim(f", {d.get('wifi_disconnects', 0)} disconnects"))
     row("buffer", f"{d.get('buffered', '-')} waiting, {d.get('dropped', '-')} dropped")
-    row("free heap", f"{d.get('free_heap', '-')} (min {d.get('min_free_heap', '-')})")
+    row("free heap", f"{d.get('free_heap', '-')} (min {d.get('min_free_heap', '-')}, largest block {d.get('max_block', '-')})")
+    row("self restarts", f"last cause {d.get('restart_cause', '-')}, {d.get('watchdog_resets', '-')} watchdog resets in a row")
+    errors = (d.get("upload_errors", 0) or 0) + (d.get("control_errors", 0) or 0)
+    row("errors", (warn if errors else ok)(f"{d.get('upload_errors', '-')} upload, {d.get('control_errors', '-')} control")
+        + dim("  since boot"))
 
 
 def cmd_ota(args):

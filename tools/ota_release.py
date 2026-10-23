@@ -4,13 +4,15 @@ Usage (from the repository root):
     python tools/ota_release.py              # next patch version, e.g. 1.2.6 -> 1.2.7
     python tools/ota_release.py 1.3.0        # explicit version
     python tools/ota_release.py --dry-run    # build and check everything, but no upload and no signal
+    python tools/ota_release.py --wait-healthy 120   # wait up to 120 min for a healthy board before signalling
 
 Steps:
   1. Set fw_version in the config and build dist/jk-bms-<version>.ota.bin + .md5 (tools/publish_ota.py)
   2. Upload both files over explicit FTPS (ftp_host / ftp_user / ftp_password in secrets.yaml)
   3. Download them back through the OTA site login (ota_base_url / ota_username / ota_password)
      and check size and MD5
-  4. Set control/ota in Firebase to the new version
+  4. Wait until the board is healthy (BMS connected, no install in progress), then set control/ota.
+     A busy or stuck board would count the version as attempted and later refuse it as rolled back.
   5. Watch the Firebase device node every 30 s until the board runs the new version with the BMS
      connected, or the timeout passes
   6. Remove control/ota, so a leftover value cannot trigger another update later
@@ -122,6 +124,33 @@ def site_get(secrets: dict, name: str) -> bytes:
         return resp.read()
 
 
+def healthy(d: dict) -> bool:
+    fresh = time.time() - d.get("last_seen", 0) < 180
+    busy = str(d.get("ota_status", "")).startswith(("downloading", "verifying"))
+    return fresh and d.get("ble_connected") == 1 and not busy
+
+
+def wait_healthy(secrets: dict, minutes: int, report: Report) -> bool:
+    start = time.time()
+    last = None
+    while True:
+        try:
+            d = firebase(secrets, "GET", "device") or {}
+        except Exception as e:
+            report.log(f"device read failed: {e}")
+            d = {}
+        if healthy(d):
+            report.log(f"board healthy: fw={d.get('firmware_version')} ble=1 ota={d.get('ota_status')!r}")
+            return True
+        state = (d.get("ble_connected"), d.get("ota_status"), d.get("boot_count"))
+        if state != last:
+            report.log(f"waiting for a healthy board: ble={state[0]} ota={state[1]!r} boot={state[2]}")
+            last = state
+        if time.time() - start > minutes * 60:
+            return False
+        time.sleep(POLL_S)
+
+
 def watch(secrets: dict, version: str, report: Report) -> bool:
     start = time.time()
     last = None
@@ -148,6 +177,11 @@ def watch(secrets: dict, version: str, report: Report) -> bool:
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     dry_run = "--dry-run" in sys.argv
+    wait_min = 0
+    if "--wait-healthy" in sys.argv:
+        i = sys.argv.index("--wait-healthy")
+        wait_min = int(sys.argv[i + 1])
+        args = [a for a in args if a != sys.argv[i + 1]]
     secrets = read_secrets()
     needed = ["firebase_db_url", "firebase_auth", "ota_base_url", "ota_username", "ota_password"]
     if not dry_run:
@@ -193,7 +227,9 @@ def main() -> int:
             raise RuntimeError("site copy does not match the build")
         report.log(f"site serves {files[0].name} ({len(body)} bytes), md5 matches")
 
-        # 4. signal, 5. watch
+        # 4. signal once the board is healthy, 5. watch
+        if not wait_healthy(secrets, wait_min, report):
+            raise RuntimeError(f"board not healthy after {wait_min} min; not signalled")
         firebase(secrets, "PUT", "control/ota", version)
         report.log(f'control/ota = "{version}"; watching device every {POLL_S}s for up to {TIMEOUT_S // 60} min')
         ok = watch(secrets, version, report)
