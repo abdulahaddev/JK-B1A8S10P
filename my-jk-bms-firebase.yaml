@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.21"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.22"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -25,7 +25,7 @@ substitutions:
   ota_base_url: !secret ota_base_url
   ota_username: !secret ota_username
   ota_password: !secret ota_password
-  ota_check_interval: "30s"   # How often to read control (OTA and restart requests) from Firebase
+  ota_check_interval: "5min"  # How often to read control (OTA and restart requests) from Firebase; 30s for testing
   ota_verify_timeout_ms: "600000"  # New firmware must upload to Firebase within 10 min or it rolls back
   ota_max_tries: "5"          # Download attempts per signalled version...
   ota_retry_base_ms: "60000"  # ...waiting 1, 2, 4, 8 min after each failure (a weak link drops for minutes)

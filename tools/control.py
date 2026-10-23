@@ -14,7 +14,7 @@ Commands:
     help                this list
     exit                close
 
-The board reads control every 30 seconds, so a change takes effect at its next check.
+The board reads control every 5 minutes, so a change takes effect at its next check.
 """
 
 import base64
@@ -171,7 +171,7 @@ def cmd_ota(args):
         print(bad("not set: upload the missing files first"))
         return
     firebase("PUT", "control/ota", version)
-    print(ok(f'control/ota = "{version}"') + dim(f"  (board {running} installs it at its next check, within 30 s)"))
+    print(ok(f'control/ota = "{version}"') + dim(f"  (board {running} installs it at its next check, within 5 min)"))
 
 
 def cmd_restart(args):
@@ -181,7 +181,7 @@ def cmd_restart(args):
         return
     token = str(int(time.time()))
     firebase("PUT", "control/restart", token)
-    print(ok(f'control/restart = "{token}"') + dim("  (board restarts once at its next check, within 30 s)"))
+    print(ok(f'control/restart = "{token}"') + dim("  (board restarts once at its next check, within 5 min)"))
     print(dim("  run 'restart clear' afterwards"))
 
 
