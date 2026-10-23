@@ -71,7 +71,7 @@ The board is meant to run unattended, so it recovers on its own and reports what
 |---|---|---|
 | Software reset (OTA, crash, watchdog) | One 1 s deep sleep after the first upload, so BLE can reach the BMS again | `device/restart_cause = after_soft_reset` |
 | No BMS frame for 10 min | Radio reset (1 s deep sleep); the wait doubles each time in a row (10/20/40/80 min) | `ble_watchdog`, `watchdog_resets` |
-| No WiFi for 15 min | Same, instead of ESPHome's soft-reset `reboot_timeout` | `wifi_watchdog` |
+| Router visible but not joinable for 30 min | Radio reset (a stuck WiFi stack). Router off or out of range: nothing, readings buffer (~7 h) and upload when it is back | `wifi_watchdog` |
 | OTA install or restart script stuck > 3 min | Deep sleep restart | `stuck_script` |
 | Crash | ESPHome's crash report (PC, backtraces of both cores) and the step the loop was in are uploaded once | `crashes/<ts>` |
 | Firebase rejects a batch with 400 three times | The batch is dropped so the buffer cannot block | `upload_errors` |

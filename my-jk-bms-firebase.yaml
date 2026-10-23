@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.20"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.21"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -38,7 +38,8 @@ substitutions:
   # Each reset in a row doubles the wait (x1, x2, x4, x8); it starts over once both work again.
   ble_watchdog_ms: "600000"   # no BMS frame for 10 min
   ble_stale_ms: "120000"      # ...or 2 min while the link claims to be connected (a lost disconnect event)
-  wifi_watchdog_ms: "900000"  # no WiFi for 15 min (replaces ESPHome's reboot_timeout, a soft reset)
+  wifi_watchdog_ms: "1800000" # router visible in scans but no connection for 30 min (a stuck WiFi stack).
+                              # Router off/out of range: never, the buffer keeps ~7 h and reconnects later.
   bad_request_limit: "3"      # drop a batch Firebase rejects with 400 this many times in a row
   maintenance_limit_ms: "180000"  # an OTA install or restart script still running after this is stuck
 
@@ -496,6 +497,10 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: '0'
+  - id: wifi_stuck_ms     # since when the router is visible but not joined, 0 = not stuck (WiFi watchdog)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
   - id: wifi_ok_ms        # last time WiFi was seen connected (WiFi watchdog)
     type: uint32_t
     restore_value: no
@@ -745,6 +750,13 @@ interval:
               const bool wifi_up = wifi != nullptr && wifi->is_connected();
               const uint32_t now = millis();
               if (wifi_up) id(wifi_ok_ms) = now;
+              // Only a router we can see but not join is a reason to reset the radio
+              bool router_seen = false;
+              if (!wifi_up && wifi != nullptr) {
+                for (const auto &r : wifi->get_scan_result()) router_seen |= r.get_matches();
+              }
+              if (wifi_up || !router_seen) id(wifi_stuck_ms) = 0;
+              else if (id(wifi_stuck_ms) == 0) id(wifi_stuck_ms) = now;
               // Silence on a connected link counts from the later of the last frame and the connect
               const uint32_t heard_ms = std::max(id(ble_rx_ms), id(ble_connect_ms));
               const bool stale = id(client0)->connected() && heard_ms != 0 && now - heard_ms >= ${ble_stale_ms};
@@ -757,7 +769,7 @@ interval:
               if (id(ota_pending_verify) || id(ota_install).is_running() || id(radio_reset).is_running()) return false;
               const uint32_t mult = 1u << std::min<uint32_t>(resets, 3);
               const uint32_t ble_down = now - id(ble_rx_ms);  // since boot when no frame yet
-              const uint32_t wifi_down = now - id(wifi_ok_ms);
+              const uint32_t wifi_down = id(wifi_stuck_ms) == 0 ? 0 : now - id(wifi_stuck_ms);
               // A long blocking request can overflow the BLE event queue and lose the disconnect event:
               // the client then stays "connected" with a dead link and never reconnects
               if (stale) {
@@ -768,7 +780,7 @@ interval:
                 ESP_LOGW("watchdog", "No BMS frame for %u s, radio reset %u", (unsigned) (ble_down / 1000), (unsigned) resets + 1);
                 telemetry::set_restart_cause(telemetry::CAUSE_BLE_WATCHDOG);
               } else if (wifi_down >= ${wifi_watchdog_ms} * mult) {
-                ESP_LOGW("watchdog", "No WiFi for %u s, radio reset %u", (unsigned) (wifi_down / 1000), (unsigned) resets + 1);
+                ESP_LOGW("watchdog", "Router visible but not joined for %u s, radio reset %u", (unsigned) (wifi_down / 1000), (unsigned) resets + 1);
                 telemetry::set_restart_cause(telemetry::CAUSE_WIFI_WATCHDOG);
               } else {
                 return false;
@@ -1066,7 +1078,8 @@ script:
           ESP_LOGW("radio", "Deep sleep 1 s to reset the radio");
           // safe_mode counts every restart within boot_is_good_after as a failed boot; ten deliberate
           // radio resets in a row would end in safe mode (no Firebase). A boot that has uploaded is good.
-          if (id(uploaded_since_boot) && !id(ota_pending_verify)) id(safe_mode_component)->mark_successful();
+          // A boot that uploaded or read the BMS works; restarts without WiFi then never pile up into safe mode
+          if ((id(uploaded_since_boot) || id(ble_rx_ms) != 0) && !id(ota_pending_verify)) id(safe_mode_component)->mark_successful();
           global_preferences->sync();
           radio_sleep(1000000);  // stops BLE and WiFi first: sleeping with them on can deadlock the PHY
 
