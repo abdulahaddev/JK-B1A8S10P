@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.22"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.23"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -61,6 +61,9 @@ esphome:
     - crash_capture.h
     - radio_sleep.h
     - <esphome/components/esp32/crash_handler.h>
+  # Remember that the run ended through ESPHome (OTA reboot, safe_reboot) for the boots/ history
+  on_shutdown:
+    - lambda: 'telemetry::note_shutdown();'
   on_boot:
     - priority: 800
       then:
@@ -529,6 +532,14 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: '0'
+  - id: boot_sent         # this boot's boots/ entry is in Firebase
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: boot_in_flight
+    type: bool
+    restore_value: no
+    initial_value: 'false'
   - id: crash_sent        # the previous run's crash is in Firebase
     type: bool
     restore_value: no
@@ -711,6 +722,7 @@ interval:
   # A new firmware that has not uploaded successfully within the timeout rolls back to the previous one
   - interval: 30s
     then:
+      - lambda: 'telemetry::note_uptime((uint32_t) (esp_timer_get_time() / 1000000));'
       # Stuck-script guard: an install or restart that never finishes would leave BLE off with no way
       # to recover remotely (both block new OTA and restart requests), so restart the hard way
       - lambda: |-
@@ -921,6 +933,19 @@ interval:
 
                   // A crash saved by crash_capture.h goes up once, with the firmware that crashed
                   // (crashes before 1.2.9 have no step; report is empty if ESPHome had no data)
+                  // One boots/<ts> entry per boot: why it started and how the previous run ended
+                  id(boot_in_flight) = !id(boot_sent);
+                  if (id(boot_in_flight)) {
+                    JsonObject b = root[std::string("boots/") + std::to_string(now_ts)].to<JsonObject>();
+                    b["firmware_version"] = "${fw_version}";
+                    b["boot_count"] = telemetry::boot_count();
+                    b["reset_reason"] = telemetry::reset_reason();
+                    b["restart_cause"] = telemetry::restart_cause();
+                    b["prev_uptime_s"] = telemetry::prev_uptime_s;
+                    b["prev_step"] = crash::prev_step_name();
+                    b["prev_shutdown"] = telemetry::prev_shutdown ? 1 : 0;
+                    b["booted_ago_s"] = (uint32_t) (esp_timer_get_time() / 1000000);
+                  }
                   id(crash_in_flight) = !id(crash_sent) && (crash::crashed() || !crash::report.empty());
                   if (id(crash_in_flight)) {
                     JsonObject c = root[std::string("crashes/") + std::to_string(now_ts)].to<JsonObject>();
@@ -965,6 +990,7 @@ interval:
                             id(info_sent_ms) = millis();
                           }
                           if (id(energy_in_flight)) id(last_energy_ms) = millis();
+                          if (id(boot_in_flight)) id(boot_sent) = true;
                           if (id(crash_in_flight)) {
                             id(crash_sent) = true;
                             esphome::esp32::crash_handler_clear();

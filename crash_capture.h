@@ -28,6 +28,7 @@ enum Step : uint32_t {
 
 RTC_NOINIT_ATTR static uint32_t current_step;  // breadcrumb of the running firmware
 static uint32_t last_step = STEP_IDLE;         // breadcrumb of the previous run, if it crashed
+static uint32_t prev_step = STEP_IDLE;         // breadcrumb of the previous run, whatever ended it
 static std::string report;                     // ESPHome's crash report lines, "; "-separated
 
 inline void step(Step s) { current_step = s; }
@@ -43,12 +44,13 @@ inline bool crashed() {
 
 // Call once at boot, before anything sets a step
 inline void begin() {
+  prev_step = current_step <= STEP_RADIO_RESET ? current_step : STEP_IDLE;
   last_step = crashed() && current_step <= STEP_RADIO_RESET ? current_step : STEP_IDLE;
   current_step = STEP_IDLE;
 }
 
-inline const char *last_step_name() {
-  switch (last_step) {
+inline const char *step_name(uint32_t s) {
+  switch (s) {
     case STEP_UPLOAD: return "upload";
     case STEP_CONTROL: return "control";
     case STEP_OTA_CHECK: return "ota_check";
@@ -72,5 +74,8 @@ inline void collect(const char *tag, const char *message) {
   if (!report.empty()) report += "; ";
   report += line.substr(start);
 }
+
+inline const char *last_step_name() { return step_name(last_step); }
+inline const char *prev_step_name() { return step_name(prev_step); }
 
 }  // namespace crash

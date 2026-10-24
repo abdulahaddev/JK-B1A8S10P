@@ -66,9 +66,13 @@ struct RtcState {
   Ring<RTC_CAPACITY> ring;
   uint32_t watchdog_resets;  // radio resets in a row by the BLE/WiFi watchdog (backoff); appended
   uint32_t restart_cause;    // RestartCause of the last self-initiated restart; appended
+  uint32_t run_uptime_s;     // uptime of the running firmware, updated every 30 s; appended in 1.2.23
+  uint32_t shutdown_seen;    // 1 = ESPHome ran its shutdown hooks (OTA reboot, safe_reboot); appended in 1.2.23
 };
 
 RTC_NOINIT_ATTR static RtcState rtc_state;
+static uint32_t prev_uptime_s = 0;  // how long the previous run lasted (0 after power-on: unknown)
+static bool prev_shutdown = false;  // the previous run ended through ESPHome's shutdown hooks
 static Ring<RAM_CAPACITY> ram_ring;
 static uint32_t dropped = 0;  // readings overwritten because both rings were full
 
@@ -83,10 +87,18 @@ inline void begin() {
     rtc_state.ring.count = 0;
     rtc_state.watchdog_resets = 0;
     rtc_state.restart_cause = CAUSE_NONE;
+    rtc_state.run_uptime_s = 0;
+    rtc_state.shutdown_seen = 0;
   }
   // Fields appended in 1.2.8 are garbage on the first boot after updating from an older firmware
   if (rtc_state.watchdog_resets > 16) rtc_state.watchdog_resets = 0;
   if (rtc_state.restart_cause > CAUSE_STUCK_SCRIPT) rtc_state.restart_cause = CAUSE_NONE;
+  if (rtc_state.run_uptime_s > 60u * 86400u) rtc_state.run_uptime_s = 0;
+  if (rtc_state.shutdown_seen > 1) rtc_state.shutdown_seen = 0;
+  prev_uptime_s = keep ? rtc_state.run_uptime_s : 0;
+  prev_shutdown = keep && rtc_state.shutdown_seen == 1;
+  rtc_state.run_uptime_s = 0;
+  rtc_state.shutdown_seen = 0;
   rtc_state.boot_count++;
   ram_ring.head = 0;
   ram_ring.count = 0;
@@ -117,6 +129,8 @@ inline void discard(size_t n) {
 }
 
 inline uint32_t &watchdog_resets() { return rtc_state.watchdog_resets; }
+inline void note_uptime(uint32_t s) { rtc_state.run_uptime_s = s; }
+inline void note_shutdown() { rtc_state.shutdown_seen = 1; }
 
 // Record why we restart; read back after the next boot
 inline void set_restart_cause(RestartCause c) { rtc_state.restart_cause = c; }
