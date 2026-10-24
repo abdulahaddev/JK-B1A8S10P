@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.23"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.24"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -158,7 +158,9 @@ ota:
       then:
         - lambda: |-
             crash::step(crash::STEP_IDLE);
-            id(ota_status) = "download failed " + id(ota_target) + " (try " + std::to_string(id(ota_tries)) + "/${ota_max_tries})";
+            char err[8];
+            snprintf(err, sizeof(err), "0x%02X", (unsigned) x);  // ota::OTAResponseTypes, e.g. 0x8B = MD5 mismatch, 0xFF = read error
+            id(ota_status) = "download failed " + id(ota_target) + " (try " + std::to_string(id(ota_tries)) + "/${ota_max_tries}, error " + err + ")";
             id(ota_attempt_hash) = 0;
             global_preferences->sync();
             ESP_LOGE("ota", "%s", id(ota_status).c_str());
@@ -167,6 +169,8 @@ ota:
             id(ota_next_try_ms) = millis() + (${ota_retry_base_ms} << std::min<uint32_t>(id(ota_tries) - 1, 3));
             // Modem sleep back on before BLE: WiFi + BT without it aborts in ESP-IDF
             esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
+            id(http_client)->set_timeout(8000);
+            id(http_client)->set_watchdog_timeout(30000);
             id(client0)->set_auto_connect(true);
         - ble.enable:
         - script.execute: redraw_display
@@ -204,6 +208,7 @@ time:
 # Uploads run in the main loop: DNS + TLS handshake can exceed the 5s task watchdog and reboot
 # the ESP32. Extend the watchdog during a request and keep each request short.
 http_request:
+  id: http_client
   verify_ssl: false
   timeout: 8s   # per read. Every request blocks the main loop (display, BLE events); 15 s made failed connects freeze it 16 s. Download stalls are covered by the OTA retry backoff.
   watchdog_timeout: 30s  # DNS + TLS handshake on a weak link can exceed 15 s
@@ -1130,6 +1135,10 @@ script:
           // Full-power WiFi for the download: modem sleep costs throughput and beacons on a weak link.
           // Only allowed with the BT controller off.
           if (esp_bt_controller_get_status() != ESP_BT_CONTROLLER_STATUS_ENABLED) esp_wifi_set_ps(WIFI_PS_NONE);
+          // Long read timeout only for the download: a link that pauses > 8 s made every try fail
+          // (1.2.22 -> 1.2.23 next to the BMS). Normal requests keep 8 s so they block the loop less.
+          id(http_client)->set_timeout(30000);
+          id(http_client)->set_watchdog_timeout(60000);
           id(ota_display) = "OTA " + id(ota_target) + " 0%";
           id(ota_progress_step) = 0;
           id(ota_show_until) = millis() + ${ota_text_long_ms};

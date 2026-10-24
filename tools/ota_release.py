@@ -173,7 +173,7 @@ def watch(secrets: dict, version: str, report: Report) -> bool:
             return True
         # Fail fast instead of waiting out the timeout
         status = str(d.get("ota_status", ""))
-        tries = re.search(r"\(try (\d+)/(\d+)\)", status)
+        tries = re.search(r"\(try (\d+)/(\d+)", status)
         if tries and tries.group(1) == tries.group(2) and version in status:
             report.log(f"all download tries failed: {status}")
             return False

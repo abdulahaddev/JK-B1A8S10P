@@ -1,0 +1,183 @@
+# OTA bridge: a minimal firmware that only installs the next full firmware.
+#
+# Used when the full firmware cannot download a release (e.g. its 8 s read timeout on a link that
+# pauses longer). This build is small (no BLE stack, display or fonts), so it downloads faster, and it
+# downloads the next release with a long read timeout and the radio to itself.
+#
+# Flow: running firmware --control/ota="bridge"--> this bridge --control/ota="<version>"--> release
+#   - The bridge confirms itself on its first successful Firebase write (ESP-IDF does not allow an
+#     OTA from an unconfirmed image), otherwise it rolls back after 10 min.
+#   - It reads control every 30 s and retries a failed download every minute.
+#   - It reports device/firmware_version = "bridge" and device/ota_status. No BMS data while it runs.
+#
+# Build and publish: python tools/ota_release.py bridge   (uses this file, see tools/ota_release.py)
+
+substitutions:
+  name: jk-bms
+  fw_version: "bridge"
+  firebase_db_url: !secret firebase_db_url
+  firebase_auth: !secret firebase_auth
+  ota_base_url: !secret ota_base_url
+  ota_username: !secret ota_username
+  ota_password: !secret ota_password
+
+esphome:
+  name: ${name}
+  project:
+    name: abdulahaddev.jk-bms
+    version: ${fw_version}
+  includes:
+    - <esp_ota_ops.h>
+  on_boot:
+    - priority: 600
+      then:
+        - lambda: |-
+            esp_ota_img_states_t state;
+            id(pending) = esp_ota_get_state_partition(esp_ota_get_running_partition(), &state) == ESP_OK &&
+                          state == ESP_OTA_IMG_PENDING_VERIFY;
+            id(status) = id(pending) ? "bridge verifying" : "bridge ready";
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+    advanced:
+      enable_ota_rollback: true
+    sdkconfig_options:
+      CONFIG_MBEDTLS_DYNAMIC_BUFFER: y
+      CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA: y
+      CONFIG_BT_ENABLED: n
+
+safe_mode:
+  boot_is_good_after: 15min
+
+logger:
+  level: WARN
+  baud_rate: 0
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  reboot_timeout: 0s
+  power_save_mode: none   # no BLE here, full-power WiFi for the download
+
+time:
+  - platform: sntp
+    id: sntp_time
+
+http_request:
+  verify_ssl: false
+  timeout: 30s            # long read timeout: the reason this bridge exists
+  watchdog_timeout: 60s
+
+ota:
+  - platform: http_request
+    id: ota_http
+    on_error:
+      then:
+        - lambda: |-
+            char err[8];
+            snprintf(err, sizeof(err), "0x%02X", (unsigned) x);
+            id(status) = "bridge: download failed " + id(target) + " (try " + std::to_string(id(tries)) + ", error " + err + ")";
+
+globals:
+  - id: pending
+    type: bool
+    initial_value: 'false'
+  - id: status
+    type: std::string
+    initial_value: '"bridge"'
+  - id: target
+    type: std::string
+    initial_value: '""'
+  - id: tries
+    type: uint32_t
+    initial_value: '0'
+  - id: next_try_ms
+    type: uint32_t
+    initial_value: '0'
+  - id: start
+    type: bool
+    initial_value: 'false'
+
+interval:
+  # Report to Firebase every 30 s; the first good write confirms the bridge
+  - interval: 30s
+    then:
+      - if:
+          condition:
+            and:
+              - wifi.connected:
+              - lambda: 'return id(sntp_time).now().is_valid();'
+          then:
+            - http_request.send:
+                method: PATCH
+                url: "${firebase_db_url}/device.json?auth=${firebase_auth}"
+                request_headers:
+                  Content-Type: application/json
+                json: |-
+                  root["last_seen"] = id(sntp_time).now().timestamp;
+                  root["uptime_s"] = millis() / 1000;
+                  root["firmware_version"] = "${fw_version}";
+                  root["ota_status"] = id(status);
+                  root["ble_connected"] = 0;
+                  root["free_heap"] = esp_get_free_heap_size();
+                on_response:
+                  then:
+                    - lambda: |-
+                        if (response->status_code < 200 || response->status_code >= 300) return;
+                        if (id(pending)) {
+                          esp_ota_mark_app_valid_cancel_rollback();
+                          id(pending) = false;
+                          id(status) = "bridge ready";
+                        }
+      # Never confirmed within 10 min: back to the previous firmware
+      - if:
+          condition:
+            lambda: 'return id(pending) && millis() > 600000;'
+          then:
+            - lambda: 'esp_ota_mark_app_invalid_rollback_and_reboot();'
+
+  # Read control/ota every 30 s and install the named release (retry every minute)
+  - interval: 30s
+    then:
+      - if:
+          condition:
+            and:
+              - wifi.connected:
+              - lambda: 'return !id(pending) && (int32_t) (millis() - id(next_try_ms)) >= 0;'
+          then:
+            - http_request.get:
+                url: "${firebase_db_url}/control.json?auth=${firebase_auth}"
+                capture_response: true
+                max_response_buffer_size: 256
+                on_response:
+                  then:
+                    - lambda: |-
+                        if (response->status_code != 200) return;
+                        JsonDocument doc;
+                        if (deserializeJson(doc, body)) return;
+                        std::string v;
+                        if (doc["ota"].is<const char *>()) {
+                          for (const char *c = doc["ota"].as<const char *>(); *c; c++) {
+                            if (isalnum((unsigned char) *c) || *c == '.' || *c == '-' || *c == '_') v += *c;
+                          }
+                        }
+                        if (v.empty() || v == "${fw_version}") return;
+                        if (v != id(target)) { id(target) = v; id(tries) = 0; }
+                        id(tries)++;
+                        id(next_try_ms) = millis() + 60000;
+                        id(status) = "bridge: downloading " + v + " (try " + std::to_string(id(tries)) + ")";
+                        id(start) = true;
+                    - if:
+                        condition:
+                          lambda: 'return id(start);'
+                        then:
+                          - lambda: 'id(start) = false;'
+                          - ota.http_request.flash:
+                              id: ota_http
+                              url: !lambda 'return std::string("${ota_base_url}/jk-bms-") + id(target) + ".ota.bin";'
+                              md5_url: !lambda 'return std::string("${ota_base_url}/jk-bms-") + id(target) + ".ota.bin.md5";'
+                              username: ${ota_username}
+                              password: ${ota_password}
