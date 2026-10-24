@@ -76,8 +76,8 @@ The board is meant to run unattended, so it recovers on its own and reports what
 | Crash | ESPHome's crash report (PC, backtraces of both cores) and the step the loop was in are uploaded once | `crashes/<ts>` |
 | Firebase rejects a batch with 400 three times | The batch is dropped so the buffer cannot block | `upload_errors` |
 
-A new firmware confirms itself only after a successful upload **and** a successful read of its own
-`.md5` from the OTA site, so a build that could not download the next one rolls back.
+A new firmware confirms itself on its first successful upload. It also checks once that the OTA site
+serves real files and reports it as `device/ota_source` (a hosting bot challenge shows as `blocked_or_unchecked`).
 
 Decode crash addresses with the ELF that `tools/publish_ota.py` keeps in `dist/`:
 

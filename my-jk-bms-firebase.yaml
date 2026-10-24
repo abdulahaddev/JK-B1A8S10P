@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.24"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.25"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -806,12 +806,13 @@ interval:
               return true;
           then:
             - script.execute: radio_reset
-      # A new firmware also has to reach the OTA site before it confirms itself; otherwise a build
-      # that cannot download could never be replaced remotely
+      # Check once per boot (first 15 min) that the OTA site serves real files; reported as
+      # device/ota_source. Information only: requiring it for confirmation rolled back a working
+      # 1.2.24 while the hosting served the board a bot-challenge page.
       - if:
           condition:
             and:
-              - lambda: 'return id(ota_pending_verify) && !id(ota_source_ok);'
+              - lambda: 'return !id(ota_source_ok) && millis() < 900000;'
               - wifi.connected:
           then:
             - lambda: 'crash::step(crash::STEP_OTA_CHECK);'
@@ -900,6 +901,7 @@ interval:
                   d["free_heap"] = esp_get_free_heap_size();
                   d["min_free_heap"] = esp_get_minimum_free_heap_size();
                   d["max_block"] = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+                  d["ota_source"] = id(ota_source_ok) ? "ok" : "blocked_or_unchecked";
                   d["restart_cause"] = telemetry::restart_cause();
                   d["watchdog_resets"] = telemetry::watchdog_resets();
                   d["control_errors"] = id(control_errors);
@@ -977,8 +979,8 @@ interval:
                           id(uploaded_since_boot) = true;
                           id(bad_requests) = 0;
                           telemetry::discard(id(upload_batch_n));
-                          if (id(ota_pending_verify) && id(ota_source_ok)) {
-                            // First good upload on a new firmware that also reached the OTA site: keep it
+                          if (id(ota_pending_verify)) {
+                            // First good upload on a new firmware: keep it
                             esp_ota_mark_app_valid_cancel_rollback();
                             id(ota_pending_verify) = false;
                             id(ota_attempt_hash) = 0;
