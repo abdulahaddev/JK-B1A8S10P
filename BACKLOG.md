@@ -21,3 +21,14 @@ The batch formula still assumes ~34 KB for a TLS session (measured before the 1.
 buffers) plus a 24 KB reserve, so at ~54 KB free heap it sends 1-2 readings per request and a Q32 queue
 takes ~15 min to clear. Recalibrate (TLS ~20 KB, reserve ~16 KB -> ~10 per batch), flash, and check
 min_free_heap stays above ~20 KB during the next catch-up.
+
+## Remote-only safety rules (from the 1.2.23-1.2.25 night)
+
+Every remote step must have a remote way back before it is taken:
+
+- Never change control/ota while an update is in flight; wait for the board to report the result.
+- The bridge must accept control/restart and must fall back to the previous full firmware by itself
+  if it installs nothing within ~30 min (keep the previous app slot; do not confirm the bridge
+  until the target is downloaded, or write the full image back from a second partition).
+- A failed confirmation check must never roll back a firmware that runs and uploads.
+- Two download sources (hosting + a second host), so one site's bot protection cannot strand the board.
