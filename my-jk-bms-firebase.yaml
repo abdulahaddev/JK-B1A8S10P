@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.25"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.26"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -210,6 +210,8 @@ time:
 http_request:
   id: http_client
   verify_ssl: false
+  # Identifies the board in web server logs (grep jk-bms-esp); whitelistable by rule
+  useragent: "Mozilla/5.0 (compatible; jk-bms-esp/${fw_version}; ESPHome)"
   timeout: 8s   # per read. Every request blocks the main loop (display, BLE events); 15 s made failed connects freeze it 16 s. Download stalls are covered by the OTA retry backoff.
   watchdog_timeout: 30s  # DNS + TLS handshake on a weak link can exceed 15 s
 

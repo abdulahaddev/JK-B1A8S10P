@@ -43,6 +43,13 @@ esphome:
             id(pending) = esp_ota_get_state_partition(esp_ota_get_running_partition(), &state) == ESP_OK &&
                           state == ESP_OTA_IMG_PENDING_VERIFY;
             id(status) = id(pending) ? "bridge verifying" : "bridge ready";
+    # The OLED keeps its last image across reboots (own power, own RAM): switch it off so a dark
+    # screen means "bridge running, not monitoring" instead of frozen BMS values
+    - priority: -100
+      then:
+        - lambda: |-
+            const uint8_t display_off[] = {0x00, 0xAE};  // SSD1306: command stream, DISPLAY OFF
+            id(oled_bus).write(0x3C, display_off, sizeof(display_off));
 
 esp32:
   board: esp32dev
@@ -54,6 +61,11 @@ esp32:
       CONFIG_MBEDTLS_DYNAMIC_BUFFER: y
       CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA: y
       CONFIG_BT_ENABLED: n
+
+i2c:
+  id: oled_bus
+  sda: GPIO21
+  scl: GPIO22
 
 safe_mode:
   boot_is_good_after: 15min
@@ -75,6 +87,8 @@ time:
 
 http_request:
   verify_ssl: false
+  # Identifies the board in web server logs (grep jk-bms-esp); whitelistable by rule
+  useragent: "Mozilla/5.0 (compatible; jk-bms-esp/${fw_version}; ESPHome)"
   timeout: 30s            # long read timeout: the reason this bridge exists
   watchdog_timeout: 60s
 
