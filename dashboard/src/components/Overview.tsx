@@ -71,8 +71,8 @@ function Link({ icon: Icon, label, value, detail, kind }: { icon: LucideIcon; la
         <b>
           <span className={`dot dot-${kind}`} aria-hidden />
           {value}
+          {detail && <small>{detail}</small>}
         </b>
-        <span className="link-detail">{detail}</span>
       </div>
     </div>
   );
@@ -84,11 +84,7 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
   const live = h === "online" || h === "delayed";
   const queued = d?.buffered ?? 0;
   const ble = d?.ble_connected === 1;
-  const boardDetail = d?.last_seen
-    ? [`${ago(nowS - d.last_seen)} ago`, d.firmware_version && `fw ${d.firmware_version}`, live && d.uptime_s !== undefined && `up ${ago(d.uptime_s)}`, queued > 2 && `${queued} queued`]
-        .filter(Boolean)
-        .join(" · ")
-    : "Waiting for the first report";
+  const boardDetail = d?.last_seen ? `${ago(nowS - d.last_seen)} ago${queued > 2 ? ` · ${queued} queued` : ""}` : "";
   const wifiOk = live && d?.wifi_rssi !== undefined && d.wifi_rssi !== 0;
   return (
     <div className="links">
@@ -97,14 +93,14 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
         icon={wifiOk ? Wifi : WifiOff}
         label="WiFi"
         value={!live ? "Unknown" : wifiOk ? (rssiLabel(d?.wifi_rssi).split(" · ")[1] ?? "Connected") : "No signal"}
-        detail={`${d?.wifi_rssi ? `${live ? "" : "Last "}${d.wifi_rssi} dBm` : "–"} · ${d?.wifi_disconnects ?? 0} drops`}
+        detail={d?.wifi_rssi ? `${d.wifi_rssi} dBm` : ""}
         kind={!live ? "muted" : wifiOk ? rssiKind(d?.wifi_rssi) : "critical"}
       />
       <Link
         icon={ble ? Bluetooth : BluetoothOff}
-        label="BMS Bluetooth"
-        value={!live ? `Last: ${ble ? "connected" : "disconnected"}` : ble ? "Connected" : "Disconnected"}
-        detail={`${d?.bms_rssi ? `${d.bms_rssi} dBm` : "–"} · ${d?.ble_disconnects ?? 0} drops`}
+        label="Bluetooth"
+        value={!live ? "Unknown" : ble ? "Connected" : "Disconnected"}
+        detail={live && ble && d?.bms_rssi ? `${d.bms_rssi} dBm` : ""}
         kind={!live ? "muted" : ble ? rssiKind(d?.bms_rssi) : "critical"}
       />
     </div>
@@ -157,8 +153,8 @@ function Hero({ r, info, d, nowS, tokens: t }: { r: Reading; info?: Info | null;
             </div>
           </div>
         </div>
+        <Links d={d} nowS={nowS} />
       </div>
-      <Links d={d} nowS={nowS} />
     </section>
   );
 }
