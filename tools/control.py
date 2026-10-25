@@ -9,6 +9,7 @@ Commands:
     ota clear           remove control/ota
     restart             set control/restart to a new value (the board restarts once)
     restart clear       remove control/restart
+    fallback            bridge only: boot the previous full firmware (control/ota = "previous")
     device              full device node
     readings [n]        last n telemetry readings (default 5)
     help                this list
@@ -185,6 +186,15 @@ def cmd_restart(args):
     print(dim("  run 'restart clear' afterwards"))
 
 
+def cmd_fallback(_args):
+    d = firebase("GET", "device") or {}
+    if d.get("firmware_version") != "bridge":
+        print(warn(f"the board runs {d.get('firmware_version')}, not the bridge; fallback only applies to the bridge"))
+        return
+    firebase("PUT", "control/ota", "previous")
+    print(ok('control/ota = "previous"') + dim("  (bridge boots the previous full firmware within 30 s; run 'ota clear' after)"))
+
+
 def cmd_device(_args):
     d = firebase("GET", "device") or {}
     for k in sorted(d):
@@ -216,6 +226,7 @@ COMMANDS = {
     "status": cmd_status, "s": cmd_status,
     "ota": cmd_ota,
     "restart": cmd_restart,
+    "fallback": cmd_fallback,
     "device": cmd_device, "d": cmd_device,
     "readings": cmd_readings, "r": cmd_readings,
     "help": cmd_help, "?": cmd_help,

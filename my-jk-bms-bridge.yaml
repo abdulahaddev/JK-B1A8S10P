@@ -9,6 +9,11 @@
 #     OTA from an unconfirmed image), otherwise it rolls back after 10 min.
 #   - It reads control every 30 s and retries a failed download every minute.
 #   - It reports device/firmware_version = "bridge" and device/ota_status. No BMS data while it runs.
+#   - control/restart (new value): radio reset, once per value (same NVS key as the full firmware).
+#   - No WiFi for 15 min: restart.
+#   - Fallback to the previous full firmware after 60 min without an install, or at once on
+#     control/ota = "previous". ESP-IDF verifies the whole image first; a slot damaged by a failed
+#     download is refused and reported in ota_status.
 #
 # Build and publish: python tools/ota_release.py bridge   (uses this file, see tools/ota_release.py)
 
@@ -28,6 +33,8 @@ esphome:
     version: ${fw_version}
   includes:
     - <esp_ota_ops.h>
+    - <esp_sleep.h>
+    - <esp_wifi.h>
   on_boot:
     - priority: 600
       then:
@@ -100,6 +107,51 @@ globals:
   - id: start
     type: bool
     initial_value: 'false'
+  - id: restart_hash      # same id as the full firmware: shares the stored value, a token restarts once
+    type: uint32_t
+    restore_value: yes
+    initial_value: '0'
+  - id: do_restart
+    type: bool
+    initial_value: 'false'
+  - id: wifi_ok_ms
+    type: uint32_t
+    initial_value: '0'
+  - id: fallback_tried
+    type: bool
+    initial_value: 'false'
+
+script:
+  # Restart with the radio powered down (no BLE in this build, so only WiFi to stop)
+  - id: bridge_restart
+    mode: single
+    then:
+      - delay: 300ms        # let the globals loop save restart_hash first
+      - lambda: |-
+          global_preferences->sync();
+          esp_wifi_disconnect();
+          esp_wifi_stop();
+          esp_sleep_enable_timer_wakeup(1000000);
+          esp_deep_sleep_start();
+  # Boot the previous full firmware if its slot holds a complete, valid image
+  - id: fallback
+    mode: single
+    then:
+      - lambda: |-
+          id(fallback_tried) = true;
+          const esp_partition_t *prev = esp_ota_get_next_update_partition(nullptr);
+          const esp_err_t err = prev != nullptr ? esp_ota_set_boot_partition(prev) : ESP_ERR_NOT_FOUND;
+          if (err != ESP_OK) {
+            id(status) = std::string("bridge: no usable previous firmware (") + esp_err_to_name(err) + ")";
+            return;
+          }
+          id(status) = "bridge: falling back to previous firmware";
+          id(do_restart) = true;
+      - if:
+          condition:
+            lambda: 'return id(do_restart);'
+          then:
+            - script.execute: bridge_restart
 
 interval:
   # Report to Firebase every 30 s; the first good write confirms the bridge
@@ -138,6 +190,21 @@ interval:
             lambda: 'return id(pending) && millis() > 600000;'
           then:
             - lambda: 'esp_ota_mark_app_invalid_rollback_and_reboot();'
+      # No WiFi for 15 min: restart (the stack can stay stuck; nobody is on site)
+      - if:
+          condition:
+            lambda: |-
+              auto *wifi = esphome::wifi::global_wifi_component;
+              if (wifi != nullptr && wifi->is_connected()) id(wifi_ok_ms) = millis();
+              return millis() - id(wifi_ok_ms) > 900000;
+          then:
+            - script.execute: bridge_restart
+      # The bridge is a stopover: after 60 min without an install, go back to the full firmware
+      - if:
+          condition:
+            lambda: 'return !id(pending) && !id(fallback_tried) && millis() > 3600000;'
+          then:
+            - script.execute: fallback
 
   # Read control/ota every 30 s and install the named release (retry every minute)
   - interval: 30s
@@ -158,6 +225,16 @@ interval:
                         if (response->status_code != 200) return;
                         JsonDocument doc;
                         if (deserializeJson(doc, body)) return;
+                        // Restart request, once per value
+                        std::string token;
+                        if (doc["restart"].is<const char *>()) token = doc["restart"].as<const char *>();
+                        else if (!doc["restart"].isNull()) serializeJson(doc["restart"], token);
+                        if (!token.empty() && fnv1_hash(token) != id(restart_hash)) {
+                          id(restart_hash) = fnv1_hash(token);
+                          id(status) = "bridge: restarting";
+                          id(do_restart) = true;
+                          return;
+                        }
                         std::string v;
                         if (doc["ota"].is<const char *>()) {
                           for (const char *c = doc["ota"].as<const char *>(); *c; c++) {
@@ -165,11 +242,22 @@ interval:
                           }
                         }
                         if (v.empty() || v == "${fw_version}") return;
+                        if (v == "previous") { id(fallback_tried) = false; id(start) = false; id(target) = v; return; }
                         if (v != id(target)) { id(target) = v; id(tries) = 0; }
                         id(tries)++;
                         id(next_try_ms) = millis() + 60000;
                         id(status) = "bridge: downloading " + v + " (try " + std::to_string(id(tries)) + ")";
                         id(start) = true;
+                    - if:
+                        condition:
+                          lambda: 'return id(do_restart);'
+                        then:
+                          - script.execute: bridge_restart
+                    - if:
+                        condition:
+                          lambda: 'return id(target) == "previous" && !id(fallback_tried);'
+                        then:
+                          - script.execute: fallback
                     - if:
                         condition:
                           lambda: 'return id(start);'
