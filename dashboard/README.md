@@ -15,20 +15,22 @@ npm run dev                  # http://localhost:5173
 
 ## What it shows
 
-- **Live:** board and BMS link status, SOC, pack voltage, current, power with time to full/empty,
-  cell spread, temperatures, the four cells on one scale with the highest/lowest marked.
-- **History with comparison:** pick 1 h / 6 h / 24 h / 7 days and compare against the previous
-  period, the same time yesterday or last week. The comparison is drawn as a muted line on the same
-  axis, and the *Period comparison* table lists the change per metric (average and lowest SOC,
-  voltage, energy in/out, worst cell spread, peak temperature).
-- **Daily:** energy charged vs used per day (integrated from current), daily SOC range, and
-  hour-of-day profiles of SOC and load for today vs yesterday vs the 7-day average.
-- **Device:** firmware, update status, signals, memory, errors, restart history (`boots/`) and crash
-  reports (`crashes/`).
-- **Remote control:** install an update or restart the board (writes `control/ota` / `control/restart`,
-  read by the board every 5 minutes).
+Four pages, in a sidebar on desktop and a bottom bar on phones (`#overview`, `#analytics`, `#energy`, `#device`):
 
-Every chart has a *Table* view. Light and dark themes follow the OS until toggled.
+- **Overview:** SOC ring with charging state, power and time to full/empty; KPI cards (voltage,
+  current, cell spread, temperature) with 6-hour sparklines; a 24-hour trend with a metric switch;
+  the four cells with their offset from the average; today's energy in/out, SOC range and peak load.
+- **Analytics:** pick 1H / 6H / 24H / 7D. Each chart has its own *Compare* picker (previous period,
+  yesterday or last week, remembered per chart). The comparison is drawn as a dashed line, and the
+  chart shows min / avg / max plus the change in average. The *Period comparison* table has its own
+  picker and lists the change per metric.
+- **Energy:** 7-day totals, energy charged vs used per day, each day's SOC range, and hour-of-day
+  SOC and load for today and yesterday against the 7-day average.
+- **Device:** board, connectivity, memory and BMS details, restart history (`boots/`), crash
+  reports (`crashes/`) and remote control (writes `control/ota` / `control/restart`, read by the
+  board every 5 minutes).
+
+Every chart has a table view. Light and dark themes follow the OS until toggled.
 
 ## Security note
 

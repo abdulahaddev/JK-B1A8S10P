@@ -54,10 +54,20 @@ export function useLatest<T>(path: string, n: number): (T & { ts: number })[] {
 export const useBoots = () => useLatest<Boot>("boots", 50);
 export const useCrashes = () => useLatest<Crash>("crashes", 20);
 
-/** Telemetry between two unix times (inclusive), fetched once per key change. */
-export async function fetchReadings(from: number, to: number): Promise<Reading[]> {
+// Several charts can ask for the same comparison window at once: share one request per window.
+const cache = new Map<string, { at: number; rows: Promise<Reading[]> }>();
+
+/** Telemetry between two unix times (inclusive); identical windows within 30 s reuse one request. */
+export function fetchReadings(from: number, to: number): Promise<Reading[]> {
+  const k = `${from}-${to}`;
+  const hit = cache.get(k);
+  if (hit && Date.now() - hit.at < 30_000) return hit.rows;
   const q = query(ref(db, "telemetry"), orderByKey(), startAt(String(from)), endAt(String(to)));
-  return keyed<Reading>((await get(q)).val());
+  const rows = get(q).then((s) => keyed<Reading>(s.val()));
+  rows.catch(() => cache.delete(k));
+  cache.set(k, { at: Date.now(), rows });
+  for (const [key, v] of cache) if (Date.now() - v.at > 300_000) cache.delete(key);
+  return rows;
 }
 
 /** Hourly cumulative charge counter (energy/<ts> = Ah). */
@@ -89,6 +99,27 @@ export function useReadings(from: number, to: number, refreshS = 60) {
       .finally(() => key.current === k && setLoading(false));
   }, [from, to, tick]);
   return { rows, loading };
+}
+
+/** The same window moved back by `shiftS` (0 = off: nothing is fetched). */
+export function useShifted(from: number, to: number, shiftS: number) {
+  const [rows, setRows] = useState<Reading[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const key = useRef("");
+  useEffect(() => {
+    const k = `${from}-${to}-${shiftS}`;
+    key.current = k;
+    if (!shiftS) {
+      setRows(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    fetchReadings(from - shiftS, to - shiftS)
+      .then((r) => key.current === k && setRows(r))
+      .finally(() => key.current === k && setLoading(false));
+  }, [from, to, shiftS]);
+  return { rows: shiftS ? rows : null, loading };
 }
 
 // Remote control (same nodes as tools/control.py)

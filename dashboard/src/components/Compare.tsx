@@ -1,5 +1,9 @@
-import { integrate, pctChange, spreadMv, stats } from "../analytics";
+import { Scale } from "lucide-react";
+import { useState } from "react";
+import { integrate, spreadMv, stats } from "../analytics";
+import { useShifted } from "../data";
 import type { Reading } from "../types";
+import { Card, COMPARES, Delta, Segmented, type CompareId } from "./ui";
 
 interface Row {
   label: string;
@@ -11,63 +15,60 @@ interface Row {
   better?: "up" | "down";
 }
 
-/** This period vs the comparison period, metric by metric. */
-export function PeriodComparison({ cur, prev, curLabel, prevLabel }: { cur: Reading[]; prev: Reading[] | null; curLabel: string; prevLabel: string }) {
-  const sc = stats(cur, (r) => r.state_of_charge), sp = prev ? stats(prev, (r) => r.state_of_charge) : null;
-  const vc = stats(cur, (r) => r.total_voltage), vp = prev ? stats(prev, (r) => r.total_voltage) : null;
-  const dc = stats(cur, spreadMv), dp = prev ? stats(prev, spreadMv) : null;
-  const tc = stats(cur, (r) => r.mosfet_temperature), tp = prev ? stats(prev, (r) => r.mosfet_temperature) : null;
-  const fc = integrate(cur), fp = prev ? integrate(prev) : null;
+const OPTIONS = COMPARES.filter((c) => c.id !== "none").map((c) => ({ id: c.id, label: c.label }));
+
+/** This period vs a period the viewer picks here, metric by metric. */
+export function PeriodComparison({ cur, from, to, rangeLabel }: { cur: Reading[] | null; from: number; to: number; rangeLabel: string }) {
+  const [compareId, setCompareId] = useState<CompareId>("prev");
+  const compare = COMPARES.find((c) => c.id === compareId)!;
+  const prev = useShifted(from, to, compare.shift(to - from));
+  const c = cur ?? [], p = prev.rows;
+  const sc = stats(c, (r) => r.state_of_charge), sp = p ? stats(p, (r) => r.state_of_charge) : null;
+  const vc = stats(c, (r) => r.total_voltage), vp = p ? stats(p, (r) => r.total_voltage) : null;
+  const dc = stats(c, spreadMv), dp = p ? stats(p, spreadMv) : null;
+  const tc = stats(c, (r) => r.mosfet_temperature), tp = p ? stats(p, (r) => r.mosfet_temperature) : null;
+  const fc = integrate(c), fp = p ? integrate(p) : null;
   const rows: Row[] = [
     { label: "Average SOC", unit: "%", dec: 1, now: sc?.avg ?? null, prev: sp?.avg ?? null },
     { label: "Lowest SOC", unit: "%", dec: 0, now: sc?.min ?? null, prev: sp?.min ?? null, better: "up" },
     { label: "Average voltage", unit: "V", dec: 2, now: vc?.avg ?? null, prev: vp?.avg ?? null },
-    { label: "Energy in (charge)", unit: "Wh", dec: 0, now: fc.chargeWh, prev: fp?.chargeWh ?? null },
-    { label: "Energy out (load)", unit: "Wh", dec: 0, now: fc.dischargeWh, prev: fp?.dischargeWh ?? null },
-    { label: "Max cell spread", unit: "mV", dec: 0, now: dc?.max ?? null, prev: dp?.max ?? null, better: "down" },
-    { label: "Max MOSFET temp", unit: "°C", dec: 1, now: tc?.max ?? null, prev: tp?.max ?? null, better: "down" },
+    { label: "Energy charged", unit: "Wh", dec: 0, now: fc.chargeWh, prev: fp?.chargeWh ?? null },
+    { label: "Energy used", unit: "Wh", dec: 0, now: fc.dischargeWh, prev: fp?.dischargeWh ?? null },
+    { label: "Worst cell spread", unit: "mV", dec: 0, now: dc?.max ?? null, prev: dp?.max ?? null, better: "down" },
+    { label: "Peak MOSFET temp", unit: "°C", dec: 1, now: tc?.max ?? null, prev: tp?.max ?? null, better: "down" },
   ];
   return (
-    <section className="card">
-      <header className="card-head">
-        <div>
-          <h3>Period comparison</h3>
-          <p className="sub">
-            {curLabel} vs {prevLabel}
-          </p>
-        </div>
-      </header>
-      {!prev ? (
-        <p className="sub">Pick a comparison above to see the change per metric.</p>
-      ) : (
+    <Card
+      title="Period comparison"
+      icon={Scale}
+      subtitle={`${rangeLabel} against ${compare.label.toLowerCase()}`}
+      className="span-2"
+      actions={<Segmented options={OPTIONS} value={compareId} onChange={setCompareId} label="Compare with" size="small" />}
+    >
+      <div className={`table-wrap ${prev.loading ? "stale" : ""}`}>
         <table className="compare">
           <thead>
             <tr>
-              <th></th>
-              <th>{curLabel}</th>
-              <th>{prevLabel}</th>
-              <th>Change</th>
+              <th>Metric</th>
+              <th className="num">{rangeLabel}</th>
+              <th className="num">{compare.label}</th>
+              <th className="num">Change</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => {
-              const ch = r.now !== null && r.prev !== null ? pctChange(r.prev, r.now) : null;
-              const dir = ch === null || Math.abs(ch) < 0.5 ? 0 : ch > 0 ? 1 : -1;
-              const cue = !r.better || dir === 0 ? "neutral" : (dir > 0) === (r.better === "up") ? "good" : "bad";
-              return (
-                <tr key={r.label}>
-                  <td>{r.label}</td>
-                  <td className="num">{r.now === null ? "–" : `${r.now.toFixed(r.dec)} ${r.unit}`}</td>
-                  <td className="num muted">{r.prev === null ? "–" : `${r.prev.toFixed(r.dec)} ${r.unit}`}</td>
-                  <td className={`num delta delta-${cue}`}>
-                    {ch === null ? "–" : `${dir > 0 ? "▲" : dir < 0 ? "▼" : "■"} ${Math.abs(ch).toFixed(1)}%`}
-                  </td>
-                </tr>
-              );
-            })}
+            {rows.map((r) => (
+              <tr key={r.label}>
+                <td>{r.label}</td>
+                <td className="num strong">{r.now === null ? "–" : `${r.now.toFixed(r.dec)} ${r.unit}`}</td>
+                <td className="num muted">{r.prev === null ? (prev.loading ? "…" : "no data") : `${r.prev.toFixed(r.dec)} ${r.unit}`}</td>
+                <td className="num">
+                  <Delta now={r.now} prev={r.prev} dec={r.dec} unit={r.unit} better={r.better} />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-      )}
-    </section>
+      </div>
+    </Card>
   );
 }

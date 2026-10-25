@@ -1,201 +1,186 @@
-import { useEffect, useMemo, useState } from "react";
-import { byDay, cells, hourProfile, powerW, series, spreadMv, todayStart } from "./analytics";
-import { CategoryChart, TimeChart, type LineSeries } from "./components/Chart";
-import { PeriodComparison } from "./components/Compare";
-import { ControlPanel, DeviceHealth } from "./components/Device";
-import { CellsCard, Kpis, StatusStrip } from "./components/Live";
+import type { LucideIcon } from "lucide-react";
+import { BarChart3, BatteryCharging, Cpu, LayoutDashboard, Moon, Sun, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { todayStart } from "./analytics";
+import { Analytics } from "./components/Analytics";
+import { DevicePage } from "./components/Device";
+import { Energy } from "./components/Energy";
+import { Overview } from "./components/Overview";
+import { ago, linkHealth, Segmented, StatusPill } from "./components/ui";
 import { useDevice, useInfo, useLatest, useReadings } from "./data";
-import { useTheme } from "./theme";
+import { useTheme, type Tokens } from "./theme";
 import type { Reading } from "./types";
 
+const PAGES = [
+  { id: "overview", label: "Overview", icon: LayoutDashboard, sub: "Live state of the pack" },
+  { id: "analytics", label: "Analytics", icon: BarChart3, sub: "History, trends and comparisons" },
+  { id: "energy", label: "Energy", icon: BatteryCharging, sub: "Daily energy and usage patterns" },
+  { id: "device", label: "Device", icon: Cpu, sub: "Board health and remote control" },
+] as const satisfies readonly { id: string; label: string; icon: LucideIcon; sub: string }[];
+type PageId = (typeof PAGES)[number]["id"];
+
 const RANGES = [
-  { id: "1h", label: "1 h", s: 3600, refresh: 60 },
-  { id: "6h", label: "6 h", s: 6 * 3600, refresh: 60 },
-  { id: "24h", label: "24 h", s: 86400, refresh: 120 },
-  { id: "7d", label: "7 days", s: 7 * 86400, refresh: 600 },
+  { id: "1h", label: "1H", name: "Last hour", s: 3600, refresh: 60 },
+  { id: "6h", label: "6H", name: "Last 6 hours", s: 6 * 3600, refresh: 60 },
+  { id: "24h", label: "24H", name: "Last 24 hours", s: 86400, refresh: 120 },
+  { id: "7d", label: "7D", name: "Last 7 days", s: 7 * 86400, refresh: 600 },
 ] as const;
-
-const COMPARES = [
-  { id: "none", label: "No comparison", shift: () => 0 },
-  { id: "prev", label: "Previous period", shift: (span: number) => span },
-  { id: "day", label: "Same time yesterday", shift: () => 86400 },
-  { id: "week", label: "Same time last week", shift: () => 7 * 86400 },
-] as const;
-
 type RangeId = (typeof RANGES)[number]["id"];
-type CompareId = (typeof COMPARES)[number]["id"];
 
 /** Wall clock in whole seconds, refreshed every `everyS` (keeps history queries stable in between). */
 function useNow(everyS: number) {
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000));
   useEffect(() => {
+    setNow(Math.floor(Date.now() / 1000));
     const t = setInterval(() => setNow(Math.floor(Date.now() / 1000)), everyS * 1000);
     return () => clearInterval(t);
   }, [everyS]);
   return now;
 }
 
-function rememberedRange(): RangeId {
+function remembered<T extends string>(key: string, ok: readonly { id: T }[], fallback: T): T {
   try {
-    const v = localStorage.getItem("range");
-    return RANGES.some((r) => r.id === v) ? (v as RangeId) : "24h";
+    const v = localStorage.getItem(key);
+    return ok.some((o) => o.id === v) ? (v as T) : fallback;
   } catch {
-    return "24h";
+    return fallback;
   }
+}
+
+function remember(key: string, v: string) {
+  try {
+    localStorage.setItem(key, v);
+  } catch {
+    /* not essential */
+  }
+}
+
+const pageFromHash = (): PageId => {
+  const h = window.location.hash.replace("#", "");
+  return PAGES.some((p) => p.id === h) ? (h as PageId) : "overview";
+};
+
+function usePage() {
+  const [page, setPage] = useState<PageId>(pageFromHash);
+  useEffect(() => {
+    const on = () => setPage(pageFromHash());
+    window.addEventListener("hashchange", on);
+    return () => window.removeEventListener("hashchange", on);
+  }, []);
+  return page;
+}
+
+// Each page fetches only its own history window.
+function OverviewPage(p: { latest?: Reading; info: ReturnType<typeof useInfo>; tokens: Tokens }) {
+  const now = useNow(120);
+  const day = useReadings(now - 86400, now, 3600);
+  return <Overview latest={p.latest} info={p.info} rows={day.rows} loading={day.loading} now={now} tokens={p.tokens} />;
+}
+
+function AnalyticsPage({ rangeId, tokens }: { rangeId: RangeId; tokens: Tokens }) {
+  const range = RANGES.find((r) => r.id === rangeId)!;
+  const now = useNow(range.refresh);
+  const cur = useReadings(now - range.s, now, 3600);
+  return <Analytics rows={cur.rows} loading={cur.loading} from={now - range.s} to={now} rangeLabel={range.name} tokens={tokens} />;
+}
+
+function EnergyPage({ tokens }: { tokens: Tokens }) {
+  const now = useNow(600);
+  const week = useReadings(todayStart() - 7 * 86400, now, 3600);
+  return <Energy rows={week.rows} loading={week.loading} tokens={tokens} />;
 }
 
 export default function App() {
   const { mode, tokens: t, toggle } = useTheme();
-  const [rangeId, setRangeId] = useState<RangeId>(rememberedRange);
-  const [compareId, setCompareId] = useState<CompareId>("prev");
-  const range = RANGES.find((r) => r.id === rangeId)!;
-  const compare = COMPARES.find((c) => c.id === compareId)!;
-  const shift = compare.shift(range.s);
+  const page = usePage();
+  const [rangeId, setRangeId] = useState<RangeId>(() => remembered("range", RANGES, "24h"));
+  useEffect(() => remember("range", rangeId), [rangeId]);
 
   const device = useDevice();
   const info = useInfo();
   const latest = useLatest<Reading>("telemetry", 1)[0];
   const clock = useNow(5); // for "x s ago"
-  const now = useNow(range.refresh);
 
-  const cur = useReadings(now - range.s, now, 3600);
-  const prev = useReadings(shift ? now - range.s - shift : 0, shift ? now - shift : 0, 3600);
-  const prevRows = shift ? prev.rows : null;
-
-  // Daily comparisons always cover the last 7 full days + today
-  const weekNow = useNow(600);
-  const week = useReadings(todayStart() - 7 * 86400, weekNow, 3600);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("range", rangeId);
-    } catch {
-      /* not essential */
-    }
-  }, [rangeId]);
-
-  const curLabel = range.id === "24h" ? "Last 24 h" : range.id === "7d" ? "Last 7 days" : `Last ${range.label}`;
-  const prevLabel = compare.id === "prev" ? `Previous ${range.label}` : compare.id === "day" ? "Yesterday" : compare.id === "week" ? "Last week" : "";
-
-  const charts = useMemo(() => {
-    const rows = cur.rows ?? [];
-    const pr = prevRows ?? [];
-    const pair = (pick: (r: Reading) => number | undefined, color: string): LineSeries[] => [
-      { name: curLabel, color, data: series(rows, pick) },
-      ...(prevRows ? [{ name: prevLabel, color: t.muted, data: series(pr, pick, 600, shift), baseline: true }] : []),
-    ];
-    return {
-      soc: pair((r) => r.state_of_charge, t.series[0]),
-      voltage: pair((r) => r.total_voltage, t.series[0]),
-      current: pair((r) => r.current, t.series[0]),
-      power: pair((r) => powerW(r), t.series[0]),
-      spread: pair(spreadMv, t.series[0]),
-      cells: [1, 2, 3, 4].map((c, i) => ({ name: `Cell ${c}`, color: t.series[i], data: series(rows, (r) => cells(r)[i]) })),
-      temps: [
-        { name: "MOSFET", color: t.series[0], data: series(rows, (r) => r.mosfet_temperature) },
-        { name: "Sensor 1", color: t.series[1], data: series(rows, (r) => r.temperature_sensor_1) },
-        { name: "Sensor 2", color: t.series[2], data: series(rows, (r) => r.temperature_sensor_2) },
-      ],
-    };
-  }, [cur.rows, prevRows, shift, t, curLabel, prevLabel]);
-
-  const daily = useMemo(() => {
-    const rows = week.rows ?? [];
-    const days = byDay(rows);
-    const cats = days.map((d) => new Date(d.day * 1000).toLocaleDateString(undefined, { weekday: "short", day: "numeric" }));
-    const t0 = todayStart();
-    const today = rows.filter((r) => r.ts >= t0);
-    const yesterday = rows.filter((r) => r.ts >= t0 - 86400 && r.ts < t0);
-    const weekAvg = rows.filter((r) => r.ts < t0);
-    const hours = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`);
-    const soc = (r: Reading) => r.state_of_charge;
-    return {
-      cats,
-      energy: [
-        { name: "Charged", color: t.series[0], data: days.map((d) => d.chargeWh) },
-        { name: "Used", color: t.series[1], data: days.map((d) => d.dischargeWh) },
-      ],
-      socRange: [
-        { name: "Highest SOC", color: t.series[0], data: days.map((d) => d.socMax) },
-        { name: "Lowest SOC", color: t.series[1], data: days.map((d) => d.socMin) },
-      ],
-      hours,
-      profile: [
-        { name: "Today", color: t.series[0], data: hourProfile(today, soc) },
-        { name: "Yesterday", color: t.series[1], data: hourProfile(yesterday, soc) },
-        { name: "7-day average", color: t.series[2], data: hourProfile(weekAvg, soc) },
-      ],
-      loadProfile: [
-        { name: "Today", color: t.series[0], data: hourProfile(today, (r) => -Math.min(0, powerW(r))) },
-        { name: "Yesterday", color: t.series[1], data: hourProfile(yesterday, (r) => -Math.min(0, powerW(r))) },
-        { name: "7-day average", color: t.series[2], data: hourProfile(weekAvg, (r) => -Math.min(0, powerW(r))) },
-      ],
-    };
-  }, [week.rows, t]);
-
-  const loading = cur.loading || (!!shift && prev.loading);
+  const health = linkHealth(device, clock);
+  const healthKind = health === "online" ? "good" : health === "delayed" ? "warning" : health === "offline" ? "critical" : "muted";
+  const healthText = { online: "Online", delayed: "Delayed", offline: "Offline", unknown: "No data" }[health];
+  const ble = device?.ble_connected === 1;
+  const current = PAGES.find((p) => p.id === page)!;
 
   return (
-    <div className="app">
-      <header className="top">
+    <div className="shell">
+      <aside className="sidebar">
         <div className="brand">
           <span className="logo" aria-hidden>
-            ⚡
+            <Zap size={18} strokeWidth={2.5} />
           </span>
           <div>
-            <h1>JK-BMS Monitor</h1>
-            <p className="sub">
-              {info?.device_model ?? "JK-B1A8S10P"} · 4S LiFePO4
-              {info?.state_of_health !== undefined ? ` · SOH ${info.state_of_health}%` : ""}
-              {info?.charging_cycles !== undefined ? ` · ${info.charging_cycles} cycles` : ""}
-            </p>
+            <b>JK-BMS</b>
+            <span>{info?.device_model ?? "JK-B1A8S10P"}</span>
           </div>
         </div>
-        <button className="ghost" onClick={toggle} aria-label="Toggle theme">
-          {mode === "dark" ? "☀ Light" : "☾ Dark"}
-        </button>
-      </header>
-
-      <StatusStrip device={device} nowS={clock} latest={latest} />
-      {info?.errors ? <div className="banner">BMS reports: {info.errors}</div> : null}
-
-      <Kpis r={latest} info={info} tokens={t} />
-
-      <div className="filters" role="toolbar" aria-label="Time range and comparison">
-        <div className="seg">
-          {RANGES.map((r) => (
-            <button key={r.id} className={r.id === rangeId ? "on" : ""} onClick={() => setRangeId(r.id)}>
-              {r.label}
-            </button>
+        <nav aria-label="Pages">
+          {PAGES.map(({ id, label, icon: Icon }) => (
+            <a key={id} href={`#${id}`} className={id === page ? "on" : ""} aria-current={id === page ? "page" : undefined}>
+              <Icon size={18} aria-hidden />
+              <span>{label}</span>
+            </a>
           ))}
+        </nav>
+        <div className="side-foot">
+          <div className="side-status">
+            <span className={`dot dot-${healthKind}`} aria-hidden />
+            <div>
+              <b>Board {healthText.toLowerCase()}</b>
+              <span>{device?.last_seen ? `${ago(clock - device.last_seen)} ago · fw ${device.firmware_version ?? "–"}` : "Waiting for data"}</span>
+            </div>
+          </div>
+          <button className="theme-btn" onClick={toggle} aria-label={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
+            {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            <span>{mode === "dark" ? "Light mode" : "Dark mode"}</span>
+          </button>
         </div>
-        <select value={compareId} onChange={(e) => setCompareId(e.target.value as CompareId)} aria-label="Compare with">
-          {COMPARES.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.id === "none" ? c.label : `Compare: ${c.label}`}
-            </option>
-          ))}
-        </select>
-        <span className="sub">{loading ? "Updating…" : `${cur.rows?.length ?? 0} readings`}</span>
-      </div>
+      </aside>
 
-      <div className="grid">
-        <CellsCard r={latest} info={info} tokens={t} />
-        <PeriodComparison cur={cur.rows ?? []} prev={prevRows} curLabel={curLabel} prevLabel={prevLabel} />
-        <TimeChart title="State of charge" unit="%" decimals={0} series={charts.soc} tokens={t} yMin={0} yMax={100} loading={loading} />
-        <TimeChart title="Pack voltage" unit="V" series={charts.voltage} tokens={t} loading={loading} />
-        <TimeChart title="Current" subtitle="+ charging · − discharging" unit="A" series={charts.current} tokens={t} zeroLine loading={loading} />
-        <TimeChart title="Power" subtitle="+ charging · − load" unit="W" decimals={0} series={charts.power} tokens={t} zeroLine loading={loading} />
-        <TimeChart title="Cell voltages" subtitle="All four cells on one scale" unit="V" decimals={3} series={charts.cells} tokens={t} loading={loading} />
-        <TimeChart title="Cell spread" subtitle="Highest minus lowest cell" unit="mV" decimals={0} series={charts.spread} tokens={t} yMin={0} loading={loading} />
-        <TimeChart title="Temperatures" unit="°C" decimals={1} series={charts.temps} tokens={t} loading={loading} />
-        <CategoryChart title="Energy per day" subtitle="Integrated from current, last 7 days + today" categories={daily.cats} series={daily.energy} unit="Wh" decimals={0} tokens={t} />
-        <CategoryChart title="Daily SOC range" categories={daily.cats} series={daily.socRange} unit="%" decimals={0} tokens={t} kind="line" />
-        <CategoryChart title="SOC by hour of day" subtitle="Today vs yesterday vs the 7-day average" categories={daily.hours} series={daily.profile} unit="%" decimals={0} tokens={t} kind="line" />
-        <CategoryChart title="Load by hour of day" subtitle="Average discharge power" categories={daily.hours} series={daily.loadProfile} unit="W" decimals={0} tokens={t} kind="line" />
-        <ControlPanel d={device} />
-        <DeviceHealth d={device} nowS={clock} />
-      </div>
+      <main className="main">
+        <header className="topbar">
+          <div>
+            <h1>{current.label}</h1>
+            <p className="sub">
+              {current.sub}
+              {latest ? ` · last reading ${ago(clock - latest.ts)} ago` : ""}
+            </p>
+          </div>
+          <div className="topbar-right">
+            <StatusPill kind={healthKind}>Board {healthText}</StatusPill>
+            <StatusPill kind={ble ? "good" : "critical"}>BMS {ble ? "connected" : "disconnected"}</StatusPill>
+            {(device?.buffered ?? 0) > 2 && <StatusPill kind="warning">{device!.buffered} queued</StatusPill>}
+            {page === "analytics" && <Segmented options={RANGES} value={rangeId} onChange={setRangeId} label="Time range" />}
+            <button className="icon-btn mobile-only" onClick={toggle} aria-label="Toggle theme">
+              {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </div>
+        </header>
+        {info?.errors ? (
+          <div className="banner" role="alert">
+            <StatusPill kind="critical">BMS alarm</StatusPill> {info.errors}
+          </div>
+        ) : null}
+
+        {page === "overview" && <OverviewPage latest={latest} info={info} tokens={t} />}
+        {page === "analytics" && <AnalyticsPage rangeId={rangeId} tokens={t} />}
+        {page === "energy" && <EnergyPage tokens={t} />}
+        {page === "device" && <DevicePage d={device} info={info} nowS={clock} />}
+      </main>
+
+      <nav className="bottom-nav" aria-label="Pages">
+        {PAGES.map(({ id, label, icon: Icon }) => (
+          <a key={id} href={`#${id}`} className={id === page ? "on" : ""} aria-current={id === page ? "page" : undefined}>
+            <Icon size={20} aria-hidden />
+            <span>{label}</span>
+          </a>
+        ))}
+      </nav>
     </div>
   );
 }

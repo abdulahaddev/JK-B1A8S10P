@@ -1,177 +1,307 @@
 import ReactECharts from "echarts-for-react";
-import { useMemo, useState } from "react";
-import type { Point } from "../analytics";
+import type { LucideIcon } from "lucide-react";
+import { LineChart, Table2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { series, stats, type Pick, type Point } from "../analytics";
+import { useShifted } from "../data";
 import type { Tokens } from "../theme";
+import type { Reading } from "../types";
+import { Card, COMPARES, CompareSelect, Delta, type CompareId } from "./ui";
 
-export interface LineSeries {
+const FONT = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
+
+const fmtTime = (ms: number, spanMs: number) => {
+  const d = new Date(ms);
+  const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+  return spanMs > 1.5 * 86400e3 ? `${d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })} ${time}` : time;
+};
+
+const fade = (hex: string, a: number) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
+};
+
+function tooltipBase(t: Tokens) {
+  return {
+    trigger: "axis",
+    backgroundColor: t.surface,
+    borderColor: t.axis,
+    borderWidth: 1,
+    padding: [8, 12],
+    textStyle: { color: t.ink, fontSize: 12, fontFamily: FONT },
+    extraCssText: `border-radius:10px;box-shadow:0 10px 30px ${t.shadow};`,
+    confine: true,
+  };
+}
+
+const axisCommon = (t: Tokens) => ({
+  axisLine: { show: false },
+  axisTick: { show: false },
+  axisLabel: { color: t.muted, fontSize: 11, fontFamily: FONT, hideOverlap: true },
+  splitLine: { lineStyle: { color: t.grid, type: [4, 4] } },
+});
+
+const row = (color: string, value: string, name: string, t: Tokens, dashed = false) =>
+  `<div style="display:flex;gap:8px;align-items:center;margin-top:3px">` +
+  `<span style="display:inline-block;width:12px;height:0;border-top:2px ${dashed ? "dashed" : "solid"} ${color}"></span>` +
+  `<span style="color:${t.ink2};flex:1">${name}</span><b style="color:${t.ink};margin-left:12px">${value}</b></div>`;
+
+function ViewToggle({ table, onToggle }: { table: boolean; onToggle: () => void }) {
+  return (
+    <button className="icon-btn" onClick={onToggle} title={table ? "Show chart" : "Show table"} aria-label={table ? "Show chart" : "Show table"}>
+      {table ? <LineChart size={15} /> : <Table2 size={15} />}
+    </button>
+  );
+}
+
+function rememberedCompare(key: string): CompareId {
+  try {
+    const v = localStorage.getItem(key);
+    return COMPARES.some((c) => c.id === v) ? (v as CompareId) : "none";
+  } catch {
+    return "none";
+  }
+}
+
+export interface Metric {
   name: string;
   color: string;
-  data: Point[];
-  /** Comparison baseline (previous period): drawn thinner and recessive, never dashed grid-like. */
-  baseline?: boolean;
+  pick: Pick;
 }
 
 interface TimeProps {
   title: string;
+  icon?: LucideIcon;
   subtitle?: string;
   unit: string;
   decimals?: number;
-  series: LineSeries[];
+  rows: Reading[] | null;
+  loading?: boolean;
+  from: number; // unix s
+  to: number;
+  metrics: Metric[];
   tokens: Tokens;
+  /** Offer the per-chart comparison picker (single-metric charts only). */
+  comparable?: boolean;
+  /** Which direction of the average is good, for the comparison cue. */
+  better?: "up" | "down";
   height?: number;
   yMin?: number;
   yMax?: number;
   zeroLine?: boolean;
-  loading?: boolean;
-  extra?: React.ReactNode; // stat chips under the title
+  className?: string;
+  /** Extra header controls, left of the comparison picker. */
+  extra?: React.ReactNode;
 }
 
-const fmtTime = (ms: number, spanMs: number) => {
-  const d = new Date(ms);
-  return spanMs > 2 * 86400e3
-    ? d.toLocaleDateString(undefined, { weekday: "short", day: "numeric" }) +
-        " " +
-        d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
-    : d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
-};
-
-function baseOption(t: Tokens) {
-  return {
-    backgroundColor: "transparent",
-    textStyle: { fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif', color: t.ink2 },
-    grid: { left: 8, right: 16, top: 36, bottom: 8, containLabel: true },
-    legend: {
-      top: 0,
-      left: 0,
-      icon: "roundRect",
-      itemWidth: 14,
-      itemHeight: 4,
-      textStyle: { color: t.ink2, fontSize: 12 },
-    },
-    tooltip: {
-      trigger: "axis",
-      backgroundColor: t.surface,
-      borderColor: t.axis,
-      borderWidth: 1,
-      textStyle: { color: t.ink, fontSize: 12 },
-      axisPointer: { type: "line", lineStyle: { color: t.muted, width: 1 } },
-      confine: true,
-    },
-  };
+interface Line {
+  name: string;
+  color: string;
+  data: Point[];
+  compare?: boolean;
 }
 
-/** Time-series line chart: one y-axis, crosshair tooltip with every series, inside zoom, table view. */
+/** Time-series chart: gradient area for one metric, lines for several; own comparison, crosshair, zoom, table view. */
 export function TimeChart(p: TimeProps) {
-  const [table, setTable] = useState(false);
   const t = p.tokens;
-  const all = p.series.flatMap((s) => s.data.filter((d) => d[1] !== null));
-  const spanMs = all.length ? Math.max(...all.map((d) => d[0])) - Math.min(...all.map((d) => d[0])) : 0;
+  const [table, setTable] = useState(false);
+  const storeKey = `cmp:${p.title}`;
+  const [compareId, setCompareId] = useState<CompareId>(() => (p.comparable ? rememberedCompare(storeKey) : "none"));
+  useEffect(() => {
+    try {
+      localStorage.setItem(storeKey, compareId);
+    } catch {
+      /* not essential */
+    }
+  }, [storeKey, compareId]);
+
+  const compare = COMPARES.find((c) => c.id === compareId)!;
+  const shift = p.comparable ? compare.shift(p.to - p.from) : 0;
+  const prev = useShifted(p.from, p.to, shift);
   const dec = p.decimals ?? 2;
+  const single = p.metrics.length === 1;
+
+  const lines = useMemo<Line[]>(() => {
+    const rows = p.rows ?? [];
+    const out: Line[] = p.metrics.map((m) => ({ name: single ? "Current" : m.name, color: m.color, data: series(rows, m.pick) }));
+    if (single && prev.rows) out.push({ name: compare.short, color: t.muted, data: series(prev.rows, p.metrics[0].pick, 600, shift), compare: true });
+    return out;
+  }, [p.rows, p.metrics, prev.rows, shift, single, compare.short, t.muted]);
+
+  const s = single && p.rows ? stats(p.rows, p.metrics[0].pick) : null;
+  const ps = single && prev.rows ? stats(prev.rows, p.metrics[0].pick) : null;
+  const hasData = lines.some((l) => l.data.some((d) => d[1] !== null));
+  const spanMs = (p.to - p.from) * 1000;
 
   const option = useMemo(
     () => ({
-      ...baseOption(t),
-      legend: { ...baseOption(t).legend, show: p.series.length > 1 },
+      backgroundColor: "transparent",
+      textStyle: { fontFamily: FONT },
+      grid: { left: 4, right: 12, top: single ? 12 : 36, bottom: 4, containLabel: true },
+      legend: single
+        ? { show: false }
+        : { top: 0, left: 0, icon: "roundRect", itemWidth: 12, itemHeight: 4, itemGap: 16, textStyle: { color: t.ink2, fontSize: 12, fontFamily: FONT } },
       tooltip: {
-        ...baseOption(t).tooltip,
-        formatter: (items: { seriesName: string; value: Point; color: string }[]) => {
+        ...tooltipBase(t),
+        axisPointer: { type: "line", lineStyle: { color: t.axis, width: 1 } },
+        formatter: (items: { seriesIndex: number; value: Point; color: string }[]) => {
           if (!items.length) return "";
-          const head = `<div style="color:${t.ink2};margin-bottom:4px">${fmtTime(items[0].value[0], spanMs)}</div>`;
-          const rows = items
-            .filter((i) => i.value[1] !== null)
-            .map(
-              (i) =>
-                `<div style="display:flex;gap:8px;align-items:center"><span style="display:inline-block;width:10px;height:3px;border-radius:2px;background:${i.color}"></span><b style="color:${t.ink}">${(i.value[1] as number).toFixed(dec)} ${p.unit}</b><span style="color:${t.ink2}">${i.seriesName}</span></div>`,
-            )
-            .join("");
-          return head + rows;
+          const head = `<div style="color:${t.muted};font-size:11px">${fmtTime(items[0].value[0], spanMs)}</div>`;
+          return (
+            head +
+            items
+              .filter((i) => i.value[1] !== null)
+              .map((i) => {
+                const l = lines[i.seriesIndex];
+                const v = `${(i.value[1] as number).toFixed(dec)} ${p.unit}`;
+                const name = l.compare ? `${l.name} · ${fmtTime(i.value[0] - shift * 1000, spanMs)}` : l.name;
+                return row(l.color, v, name, t, l.compare);
+              })
+              .join("")
+          );
         },
       },
-      xAxis: {
-        type: "time",
-        axisLine: { lineStyle: { color: t.axis } },
-        axisTick: { show: false },
-        axisLabel: { color: t.muted, hideOverlap: true },
-        splitLine: { show: false },
-      },
+      xAxis: { type: "time", min: p.from * 1000, max: p.to * 1000, ...axisCommon(t), splitLine: { show: false } },
       yAxis: {
         type: "value",
         min: p.yMin,
         max: p.yMax,
         scale: true,
-        axisLabel: { color: t.muted, formatter: (v: number) => `${+v.toFixed(dec)}` },
-        splitLine: { lineStyle: { color: t.grid, width: 1 } },
+        splitNumber: 4,
+        ...axisCommon(t),
+        axisLabel: { ...axisCommon(t).axisLabel, formatter: (v: number) => `${+v.toFixed(dec)}` },
       },
       dataZoom: [{ type: "inside", throttle: 50 }],
-      series: p.series.map((s) => ({
-        name: s.name,
+      series: lines.map((l, i) => ({
+        name: l.name,
         type: "line",
-        data: s.data,
+        data: l.data,
         showSymbol: false,
+        symbol: "circle",
+        symbolSize: 7,
+        smooth: 0.2,
+        sampling: "lttb",
         connectNulls: false,
-        smooth: false,
-        lineStyle: { width: s.baseline ? 1.5 : 2, color: s.color, opacity: s.baseline ? 0.55 : 1 },
-        itemStyle: { color: s.color },
-        emphasis: { focus: "series" },
-        z: s.baseline ? 1 : 2,
+        lineStyle: { width: l.compare ? 1.5 : 2, color: l.color, type: l.compare ? [5, 4] : "solid" },
+        itemStyle: { color: l.color, borderColor: t.surface, borderWidth: 2 },
+        areaStyle:
+          single && !l.compare
+            ? {
+                color: {
+                  type: "linear",
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    { offset: 0, color: fade(l.color, 0.28) },
+                    { offset: 1, color: fade(l.color, 0) },
+                  ],
+                },
+                origin: p.zeroLine ? 0 : "auto",
+              }
+            : undefined,
+        emphasis: { disabled: true },
+        z: l.compare ? 1 : 2,
         markLine:
-          p.zeroLine && !s.baseline
+          p.zeroLine && i === 0
             ? { silent: true, symbol: "none", label: { show: false }, lineStyle: { color: t.axis, type: "solid", width: 1 }, data: [{ yAxis: 0 }] }
             : undefined,
       })),
-      animation: false,
+      animationDuration: 300,
     }),
-    [p.series, t, p.unit, dec, spanMs, p.yMin, p.yMax, p.zeroLine],
+    [lines, t, p.unit, dec, spanMs, shift, p.from, p.to, p.yMin, p.yMax, p.zeroLine, single],
   );
 
+  const height = p.height ?? 240;
+  const busy = p.loading || prev.loading;
+
   return (
-    <section className="card chart-card">
-      <header className="card-head">
-        <div>
-          <h3>
-            {p.title} <span className="unit">{p.unit}</span>
-          </h3>
-          {p.subtitle && <p className="sub">{p.subtitle}</p>}
+    <Card
+      title={
+        <>
+          {p.title} <span className="unit">{p.unit}</span>
+        </>
+      }
+      icon={p.icon}
+      subtitle={p.subtitle}
+      className={`chart-card ${p.className ?? ""}`}
+      actions={
+        <>
+          {p.extra}
+          {p.comparable && <CompareSelect value={compareId} onChange={setCompareId} />}
+          <ViewToggle table={table} onToggle={() => setTable((x) => !x)} />
+        </>
+      }
+    >
+      {s && (
+        <div className="chart-stats">
+          <Stat label="Min" value={s.min} dec={dec} unit={p.unit} />
+          <Stat label="Avg" value={s.avg} dec={dec} unit={p.unit} />
+          <Stat label="Max" value={s.max} dec={dec} unit={p.unit} />
+          {ps && (
+            <div className="chart-stat compare">
+              <span>Avg vs {compare.short.toLowerCase()}</span>
+              <Delta now={s.avg} prev={ps.avg} dec={dec} unit={p.unit} better={p.better} />
+            </div>
+          )}
         </div>
-        <button className="ghost small" onClick={() => setTable((x) => !x)}>
-          {table ? "Chart" : "Table"}
-        </button>
-      </header>
-      {p.extra}
-      <div className={p.loading ? "stale" : ""}>
+      )}
+      {single && prev.rows && (
+        <div className="chart-legend">
+          <span>
+            <i style={{ borderColor: lines[0].color }} /> Current
+          </span>
+          <span>
+            <i className="dashed" style={{ borderColor: t.muted }} /> {compare.short}
+          </span>
+        </div>
+      )}
+      <div className={busy ? "stale" : ""}>
         {table ? (
-          <SeriesTable series={p.series} unit={p.unit} dec={dec} spanMs={spanMs} />
-        ) : all.length ? (
-          <ReactECharts option={option} notMerge style={{ height: p.height ?? 260 }} />
+          <SeriesTable lines={lines} unit={p.unit} dec={dec} spanMs={spanMs} shift={shift} height={height} />
+        ) : hasData ? (
+          <ReactECharts option={option} notMerge style={{ height }} />
         ) : (
-          <div className="empty" style={{ height: p.height ?? 260 }}>
-            {p.loading ? "Loading…" : "No readings in this period"}
+          <div className="empty" style={{ height }}>
+            {busy ? "Loading…" : "No readings in this period"}
           </div>
         )}
       </div>
-    </section>
+    </Card>
   );
 }
 
-function SeriesTable({ series, unit, dec, spanMs }: { series: LineSeries[]; unit: string; dec: number; spanMs: number }) {
-  // Rows from the first series' timestamps, thinned to ~60 rows; other series matched by nearest time
-  const base = series[0]?.data.filter((d) => d[1] !== null) ?? [];
+function Stat({ label, value, dec, unit }: { label: string; value: number; dec: number; unit: string }) {
+  return (
+    <div className="chart-stat">
+      <span>{label}</span>
+      <b>
+        {value.toFixed(dec)} <small>{unit}</small>
+      </b>
+    </div>
+  );
+}
+
+function SeriesTable({ lines, unit, dec, spanMs, shift, height }: { lines: Line[]; unit: string; dec: number; spanMs: number; shift: number; height: number }) {
+  // Rows from the first line's timestamps, thinned to ~60 rows; other lines matched by nearest time
+  const base = lines[0]?.data.filter((d) => d[1] !== null) ?? [];
   const step = Math.max(1, Math.ceil(base.length / 60));
-  const rows = base.filter((_, i) => i % step === 0);
-  const near = (s: LineSeries, ms: number) => {
+  const rows = base.filter((_, i) => i % step === 0).reverse();
+  const near = (l: Line, ms: number) => {
     let best: Point | null = null;
-    for (const d of s.data) if (d[1] !== null && (!best || Math.abs(d[0] - ms) < Math.abs(best[0] - ms))) best = d;
+    for (const d of l.data) if (d[1] !== null && (!best || Math.abs(d[0] - ms) < Math.abs(best[0] - ms))) best = d;
     return best && Math.abs(best[0] - ms) < 15 * 60e3 ? (best[1] as number).toFixed(dec) : "–";
   };
   return (
-    <div className="table-wrap">
+    <div className="table-wrap" style={{ maxHeight: height }}>
       <table>
         <thead>
           <tr>
             <th>Time</th>
-            {series.map((s) => (
-              <th key={s.name}>
-                {s.name} ({unit})
+            {lines.map((l) => (
+              <th key={l.name} className="num">
+                {l.name} ({unit})
               </th>
             ))}
           </tr>
@@ -180,8 +310,131 @@ function SeriesTable({ series, unit, dec, spanMs }: { series: LineSeries[]; unit
           {rows.map((r) => (
             <tr key={r[0]}>
               <td>{fmtTime(r[0], spanMs)}</td>
-              {series.map((s, i) => (
-                <td key={s.name}>{i === 0 ? (r[1] as number).toFixed(dec) : near(s, r[0])}</td>
+              {lines.map((l, i) => (
+                <td key={l.name} className="num">
+                  {i === 0 ? (r[1] as number).toFixed(dec) : near(l, r[0])}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {shift > 0 && <p className="sub">Comparison values are matched to the same time of day.</p>}
+    </div>
+  );
+}
+
+export interface CatSeries {
+  name: string;
+  color: string;
+  data: (number | null)[];
+  dashed?: boolean;
+}
+
+interface CatProps {
+  title: string;
+  icon?: LucideIcon;
+  subtitle?: string;
+  categories: string[];
+  series: CatSeries[];
+  unit: string;
+  decimals?: number;
+  tokens: Tokens;
+  height?: number;
+  kind?: "bar" | "line";
+  className?: string;
+}
+
+/** Category chart (days, hours): grouped rounded bars or category lines, tooltip, table view. */
+export function CategoryChart(p: CatProps) {
+  const [table, setTable] = useState(false);
+  const t = p.tokens;
+  const dec = p.decimals ?? 1;
+  const kind = p.kind ?? "bar";
+  const option = useMemo(
+    () => ({
+      backgroundColor: "transparent",
+      textStyle: { fontFamily: FONT },
+      grid: { left: 4, right: 12, top: 36, bottom: 4, containLabel: true },
+      legend: { top: 0, left: 0, icon: "roundRect", itemWidth: 12, itemHeight: kind === "bar" ? 12 : 4, itemGap: 16, textStyle: { color: t.ink2, fontSize: 12, fontFamily: FONT } },
+      tooltip: {
+        ...tooltipBase(t),
+        axisPointer: kind === "bar" ? { type: "shadow", shadowStyle: { color: fade(t.muted, 0.08) } } : { type: "line", lineStyle: { color: t.axis } },
+        formatter: (items: { seriesIndex: number; name: string; value: number | null }[]) =>
+          items.length
+            ? `<div style="color:${t.muted};font-size:11px">${items[0].name}</div>` +
+              items
+                .map((i) => {
+                  const s = p.series[i.seriesIndex];
+                  return row(s.color, i.value === null || i.value === undefined ? "–" : `${i.value.toFixed(dec)} ${p.unit}`, s.name, t, s.dashed);
+                })
+                .join("")
+            : "",
+      },
+      xAxis: { type: "category", data: p.categories, ...axisCommon(t), axisLine: { show: true, lineStyle: { color: t.axis } }, splitLine: { show: false } },
+      yAxis: { type: "value", scale: kind === "line", splitNumber: 4, ...axisCommon(t) },
+      series: p.series.map((s) => ({
+        name: s.name,
+        type: kind,
+        data: s.data,
+        barMaxWidth: 22,
+        barGap: "15%",
+        showSymbol: false,
+        symbolSize: 7,
+        smooth: 0.2,
+        connectNulls: false,
+        itemStyle: { color: s.color, borderRadius: [4, 4, 0, 0], borderColor: t.surface, borderWidth: kind === "bar" ? 1 : 2 },
+        lineStyle: { width: s.dashed ? 1.5 : 2, color: s.color, type: s.dashed ? [5, 4] : "solid" },
+        emphasis: { disabled: true },
+      })),
+      animationDuration: 300,
+    }),
+    [p.series, p.categories, t, p.unit, dec, kind],
+  );
+
+  return (
+    <Card
+      title={
+        <>
+          {p.title} <span className="unit">{p.unit}</span>
+        </>
+      }
+      icon={p.icon}
+      subtitle={p.subtitle}
+      className={`chart-card ${p.className ?? ""}`}
+      actions={<ViewToggle table={table} onToggle={() => setTable((x) => !x)} />}
+    >
+      {table ? (
+        <CatTable categories={p.categories} cols={p.series.map((s) => ({ name: s.name, data: s.data }))} unit={p.unit} dec={dec} height={p.height ?? 260} />
+      ) : (
+        <ReactECharts option={option} notMerge style={{ height: p.height ?? 260 }} />
+      )}
+    </Card>
+  );
+}
+
+function CatTable({ categories, cols, unit, dec, height }: { categories: string[]; cols: { name: string; data: (number | null)[] }[]; unit: string; dec: number; height: number }) {
+  return (
+    <div className="table-wrap" style={{ maxHeight: height }}>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            {cols.map((c) => (
+              <th key={c.name} className="num">
+                {c.name} ({unit})
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map((c, i) => (
+            <tr key={c}>
+              <td>{c}</td>
+              {cols.map((s) => (
+                <td key={s.name} className="num">
+                  {s.data[i] === null || s.data[i] === undefined ? "–" : (s.data[i] as number).toFixed(dec)}
+                </td>
               ))}
             </tr>
           ))}
@@ -191,104 +444,85 @@ function SeriesTable({ series, unit, dec, spanMs }: { series: LineSeries[]; unit
   );
 }
 
-interface BarProps {
+/** Floating bars from low to high per category (e.g. each day's SOC range). */
+export function RangeChart(p: {
   title: string;
+  icon?: LucideIcon;
   subtitle?: string;
   categories: string[];
-  series: { name: string; color: string; data: (number | null)[] }[];
+  low: (number | null)[];
+  high: (number | null)[];
   unit: string;
   decimals?: number;
+  color: string;
   tokens: Tokens;
   height?: number;
-  kind?: "bar" | "line";
-}
-
-/** Category chart (days, hours): grouped bars or category lines, per-mark tooltip, table view. */
-export function CategoryChart(p: BarProps) {
+  yMin?: number;
+  yMax?: number;
+}) {
   const [table, setTable] = useState(false);
   const t = p.tokens;
-  const dec = p.decimals ?? 1;
-  const kind = p.kind ?? "bar";
+  const dec = p.decimals ?? 0;
   const option = useMemo(
     () => ({
-      ...baseOption(t),
-      legend: { ...baseOption(t).legend, show: p.series.length > 1 },
+      backgroundColor: "transparent",
+      textStyle: { fontFamily: FONT },
+      grid: { left: 4, right: 12, top: 16, bottom: 4, containLabel: true },
       tooltip: {
-        ...baseOption(t).tooltip,
-        axisPointer: kind === "bar" ? { type: "shadow", shadowStyle: { color: t.grid, opacity: 0.4 } } : baseOption(t).tooltip.axisPointer,
-        valueFormatter: (v: number | null) => (v === null || v === undefined ? "–" : `${v.toFixed(dec)} ${p.unit}`),
+        ...tooltipBase(t),
+        axisPointer: { type: "shadow", shadowStyle: { color: fade(t.muted, 0.08) } },
+        formatter: (items: { dataIndex: number; name: string }[]) => {
+          const i = items[0]?.dataIndex;
+          if (i === undefined || p.low[i] === null || p.high[i] === null) return "";
+          return (
+            `<div style="color:${t.muted};font-size:11px">${items[0].name}</div>` +
+            row(p.color, `${p.high[i]!.toFixed(dec)} ${p.unit}`, "Highest", t) +
+            row(p.color, `${p.low[i]!.toFixed(dec)} ${p.unit}`, "Lowest", t)
+          );
+        },
       },
-      xAxis: {
-        type: "category",
-        data: p.categories,
-        axisLine: { lineStyle: { color: t.axis } },
-        axisTick: { show: false },
-        axisLabel: { color: t.muted, hideOverlap: true },
-      },
-      yAxis: {
-        type: "value",
-        scale: kind === "line",
-        axisLabel: { color: t.muted },
-        splitLine: { lineStyle: { color: t.grid } },
-      },
-      series: p.series.map((s) => ({
-        name: s.name,
-        type: kind,
-        data: s.data,
-        barMaxWidth: 18,
-        barGap: "20%",
-        showSymbol: kind === "line" ? false : undefined,
-        connectNulls: false,
-        itemStyle: { color: s.color, borderRadius: [4, 4, 0, 0], borderColor: t.surface, borderWidth: kind === "bar" ? 1 : 0 },
-        lineStyle: { width: 2, color: s.color },
-        emphasis: { focus: "series" },
-      })),
-      animation: false,
+      xAxis: { type: "category", data: p.categories, ...axisCommon(t), axisLine: { show: true, lineStyle: { color: t.axis } }, splitLine: { show: false } },
+      yAxis: { type: "value", min: p.yMin, max: p.yMax, splitNumber: 4, ...axisCommon(t) },
+      series: [
+        { type: "bar", stack: "r", data: p.low, itemStyle: { color: "transparent" }, silent: true, barMaxWidth: 22 },
+        {
+          type: "bar",
+          stack: "r",
+          name: "Range",
+          data: p.high.map((h, i) => (h === null || p.low[i] === null ? null : h - p.low[i]!)),
+          barMaxWidth: 22,
+          itemStyle: { color: p.color, borderRadius: 4 },
+          label: {
+            show: true,
+            position: "top",
+            color: t.ink2,
+            fontSize: 11,
+            formatter: (x: { dataIndex: number }) => (p.high[x.dataIndex] === null ? "" : p.high[x.dataIndex]!.toFixed(dec)),
+          },
+          emphasis: { disabled: true },
+        },
+      ],
+      animationDuration: 300,
     }),
-    [p.series, p.categories, t, p.unit, dec, kind],
+    [p.categories, p.low, p.high, t, p.unit, dec, p.color, p.yMin, p.yMax],
   );
-
   return (
-    <section className="card chart-card">
-      <header className="card-head">
-        <div>
-          <h3>
-            {p.title} <span className="unit">{p.unit}</span>
-          </h3>
-          {p.subtitle && <p className="sub">{p.subtitle}</p>}
-        </div>
-        <button className="ghost small" onClick={() => setTable((x) => !x)}>
-          {table ? "Chart" : "Table"}
-        </button>
-      </header>
+    <Card
+      title={
+        <>
+          {p.title} <span className="unit">{p.unit}</span>
+        </>
+      }
+      icon={p.icon}
+      subtitle={p.subtitle}
+      className="chart-card"
+      actions={<ViewToggle table={table} onToggle={() => setTable((x) => !x)} />}
+    >
       {table ? (
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th></th>
-                {p.series.map((s) => (
-                  <th key={s.name}>
-                    {s.name} ({p.unit})
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {p.categories.map((c, i) => (
-                <tr key={c}>
-                  <td>{c}</td>
-                  {p.series.map((s) => (
-                    <td key={s.name}>{s.data[i] === null ? "–" : (s.data[i] as number).toFixed(dec)}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <CatTable categories={p.categories} cols={[{ name: "Lowest", data: p.low }, { name: "Highest", data: p.high }]} unit={p.unit} dec={dec} height={p.height ?? 260} />
       ) : (
         <ReactECharts option={option} notMerge style={{ height: p.height ?? 260 }} />
       )}
-    </section>
+    </Card>
   );
 }
