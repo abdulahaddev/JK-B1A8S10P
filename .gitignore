@@ -1,6 +1,36 @@
-# Gitignore settings for ESPHome
-# This is an example and may include too much for your use-case.
-# You can modify this file to suit your needs.
-/.esphome/
+# --- Secrets (never commit) ---
 /secrets.yaml
+.env
+.env.*
+!.env.example
+
+# --- ESPHome / PlatformIO build output ---
+/.esphome/
+.pio/
+# OTA images and ELFs from tools/publish_ota.py
 /dist/
+
+# --- Dashboard (React + Vite) ---
+node_modules/
+dashboard/dist/
+*.tsbuildinfo
+*.local
+
+# --- Python (tools/) ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# --- Editors, AI tools, OS ---
+.claude/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs from tools (serial captures in logs/ are kept on purpose) ---
+npm-debug.log*
+*.log.tmp
