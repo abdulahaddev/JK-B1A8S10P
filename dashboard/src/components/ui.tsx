@@ -1,10 +1,26 @@
 // Shared building blocks: cards, pills, segmented controls, the per-chart comparison picker, sparklines.
 import type { LucideIcon } from "lucide-react";
 import { AlertTriangle, CheckCircle2, Circle, GitCompareArrows, OctagonAlert } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { Device } from "../types";
 
 export const ago = (s: number) =>
   s < 90 ? `${Math.round(s)} s` : s < 5400 ? `${Math.round(s / 60)} min` : s < 172800 ? `${(s / 3600).toFixed(1)} h` : `${Math.round(s / 86400)} d`;
+
+/** "26 s ago" that counts up every second by itself and restarts when `ts` (unix s) changes. */
+export function Ago({ ts, suffix = " ago" }: { ts: number; suffix?: string }) {
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => tick((x) => x + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <span className="ago">
+      {ago(Math.max(0, Date.now() / 1000 - ts))}
+      {suffix}
+    </span>
+  );
+}
 
 export type Health = "online" | "delayed" | "offline" | "unknown";
 

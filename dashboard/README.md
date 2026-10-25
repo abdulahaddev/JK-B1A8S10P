@@ -26,9 +26,17 @@ Four pages, in a sidebar on desktop and a bottom bar on phones (`#overview`, `#a
   picker and lists the change per metric.
 - **Energy:** 7-day totals, energy charged vs used per day, each day's SOC range, and hour-of-day
   SOC and load for today and yesterday against the 7-day average.
-- **Device:** board, connectivity, memory and BMS details, restart history (`boots/`), crash
-  reports (`crashes/`) and remote control (writes `control/ota` / `control/restart`, read by the
-  board every 5 minutes).
+- **Device:** board, connectivity, memory and BMS details, restart history (`boots/`) and crash
+  reports (`crashes/`).
+- **Remote control** (button at the top right of every page) opens a dialog after the control password (sample
+  `987654321`, remembered 10 min per tab): pick a firmware from the OTA site, restart the board,
+  and follow sent commands and board reports in the console. Writes `control/ota` /
+  `control/restart`, read by the board every 5 minutes.
+
+The firmware list comes from the OTA site's file index and is kept in the browser (localStorage).
+The hosting has bot protection, so the site is read only on the first unlock when nothing is stored,
+and after that only when you press **Sync** (at most once a minute). The site sends no CORS headers, so the dev and preview servers proxy `/ota-site` and add
+the login from `../secrets.yaml`. A static build hosted elsewhere needs an equivalent proxy.
 
 Every chart has a table view. Light and dark themes follow the OS until toggled.
 

@@ -1,13 +1,15 @@
 import type { LucideIcon } from "lucide-react";
-import { BarChart3, BatteryCharging, Cpu, LayoutDashboard, Moon, Sun, Zap } from "lucide-react";
+import { SlidersHorizontal, BarChart3, BatteryCharging, Cpu, LayoutDashboard, Moon, Sun, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { todayStart } from "./analytics";
 import { Analytics } from "./components/Analytics";
 import { DevicePage } from "./components/Device";
 import { Energy } from "./components/Energy";
 import { Overview } from "./components/Overview";
-import { ago, Segmented, StatusPill } from "./components/ui";
-import { useDevice, useInfo, useLatest, useReadings } from "./data";
+import { RemoteControl } from "./components/RemoteControl";
+import { Ago, Segmented, StatusPill } from "./components/ui";
+import { useControlWatcher } from "./controlLog";
+import { useControl, useDevice, useInfo, useLatest, useReadings } from "./data";
 import { useTheme, type Tokens } from "./theme";
 import type { Reading } from "./types";
 
@@ -96,7 +98,11 @@ export default function App() {
   const [rangeId, setRangeId] = useState<RangeId>(() => remembered("range", RANGES, "24h"));
   useEffect(() => remember("range", rangeId), [rangeId]);
 
+  const [controlOpen, setControlOpen] = useState(false);
+
   const device = useDevice();
+  const control = useControl();
+  useControlWatcher(device, control);
   const info = useInfo();
   const latest = useLatest<Reading>("telemetry", 1)[0];
   const clock = useNow(5); // for "x s ago"
@@ -131,11 +137,21 @@ export default function App() {
             <h1>{current.label}</h1>
             <p className="sub">
               {current.sub}
-              {latest ? ` · last reading ${ago(clock - latest.ts)} ago` : ""}
+              {latest && (
+                <>
+                  {" · last reading "}
+                  <Ago ts={latest.ts} />
+                </>
+              )}
             </p>
           </div>
           <div className="topbar-right">
             {page === "analytics" && <Segmented options={RANGES} value={rangeId} onChange={setRangeId} label="Time range" />}
+            <button className="secondary rc-open" onClick={() => setControlOpen(true)} title="Firmware update and restart (password)">
+              <SlidersHorizontal size={15} aria-hidden />
+              <span>Remote control</span>
+              {(control?.ota || control?.restart) && <i className="rc-dot" aria-label="Request pending" />}
+            </button>
             <button className="icon-btn theme-icon" onClick={toggle} aria-label={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={mode === "dark" ? "Light mode" : "Dark mode"}>
               {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
@@ -150,8 +166,10 @@ export default function App() {
         {page === "overview" && <OverviewPage latest={latest} info={info} device={device} clock={clock} tokens={t} />}
         {page === "analytics" && <AnalyticsPage rangeId={rangeId} tokens={t} />}
         {page === "energy" && <EnergyPage tokens={t} />}
-        {page === "device" && <DevicePage d={device} info={info} nowS={clock} />}
+        {page === "device" && <DevicePage d={device} info={info} />}
       </main>
+
+      <RemoteControl open={controlOpen} onClose={() => setControlOpen(false)} device={device} />
 
       <nav className="bottom-nav" aria-label="Pages">
         {PAGES.map(({ id, label, icon: Icon }) => (

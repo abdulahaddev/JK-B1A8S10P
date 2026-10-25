@@ -23,7 +23,7 @@ import type { Tokens } from "../theme";
 import type { Device, Info, Reading } from "../types";
 import { CELLS, cellKey } from "../types";
 import { TimeChart, type Metric } from "./Chart";
-import { ago, Card, HEALTH_LABEL, healthKind, linkHealth, rssiKind, rssiLabel, Segmented, Sparkline, StatusPill, type Kind } from "./ui";
+import { Ago, ago, Card, HEALTH_LABEL, healthKind, linkHealth, rssiKind, rssiLabel, Segmented, Sparkline, StatusPill, type Kind } from "./ui";
 
 const fmtHours = (h: number) => (h < 1 ? `${Math.round(h * 60)} min` : h < 48 ? `${h.toFixed(1)} h` : `${(h / 24).toFixed(1)} days`);
 
@@ -60,7 +60,7 @@ function SocRing({ soc, color, track }: { soc: number; color: string; track: str
   );
 }
 
-function Link({ icon: Icon, label, value, detail, kind }: { icon: LucideIcon; label: string; value: string; detail: string; kind: Kind }) {
+function Link({ icon: Icon, label, value, detail, kind }: { icon: LucideIcon; label: string; value: string; detail: React.ReactNode; kind: Kind }) {
   return (
     <div className={`link link-${kind}`}>
       <span className="link-icon" aria-hidden>
@@ -84,7 +84,12 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
   const live = h === "online" || h === "delayed";
   const queued = d?.buffered ?? 0;
   const ble = d?.ble_connected === 1;
-  const boardDetail = d?.last_seen ? `${ago(nowS - d.last_seen)} ago${queued > 2 ? ` · ${queued} queued` : ""}` : "";
+  const boardDetail = d?.last_seen ? (
+    <>
+      <Ago ts={d.last_seen} />
+      {queued > 2 ? ` · ${queued} queued` : ""}
+    </>
+  ) : null;
   const wifiOk = live && d?.wifi_rssi !== undefined && d.wifi_rssi !== 0;
   return (
     <div className="links">
@@ -199,7 +204,7 @@ function Kpi({
 /** Cells against the LiFePO4 working range, with each cell's offset from the pack average. */
 function CellsCard({ r, info, tokens: t }: { r: Reading; info?: Info | null; tokens: Tokens }) {
   const v = cells(r);
-  const lo = 3.0, hi = 3.65;
+  const lo = 3.0, hi = 3.65; // LiFePO4 working range; a full bar is the 3.65 V charge limit
   const maxV = Math.max(...v), minV = Math.min(...v);
   const avg = v.reduce((a, b) => a + b, 0) / v.length;
   const spread = (maxV - minV) * 1000;
@@ -207,7 +212,7 @@ function CellsCard({ r, info, tokens: t }: { r: Reading; info?: Info | null; tok
     <Card
       title="Cells"
       icon={Grid2x2}
-      subtitle={`Average ${avg.toFixed(3)} V · range ${lo.toFixed(2)}–${hi.toFixed(2)} V`}
+      subtitle={`Average ${avg.toFixed(3)} V`}
       actions={
         <StatusPill kind={spread < 30 ? "good" : spread < 80 ? "warning" : "serious"}>
           {spread.toFixed(0)} mV · {spread < 30 ? "Balanced" : spread < 80 ? "Drifting" : "Unbalanced"}
@@ -237,13 +242,18 @@ function CellsCard({ r, info, tokens: t }: { r: Reading; info?: Info | null; tok
                 {off >= 0 ? "+" : "−"}
                 {Math.abs(off).toFixed(0)} mV
               </div>
-              <div className="cell-meta">
-                {tag && <span className={`cell-tag tag-${tag.toLowerCase()}`}>{tag}</span>}
-                {res !== undefined && <span>{(res * 1000).toFixed(1)} mΩ</span>}
-              </div>
+              <div className="cell-tagcol">{tag && <span className="cell-tag">{tag}</span>}</div>
+              <div className="cell-res">{res !== undefined ? `${(res * 1000).toFixed(1)} mΩ` : ""}</div>
             </div>
           );
         })}
+        <div className="cell cell-scale" aria-hidden>
+          <span />
+          <div>
+            <span>{lo.toFixed(2)} V</span>
+            <span>{hi.toFixed(2)} V max</span>
+          </div>
+        </div>
       </div>
       <p className="sub cells-foot">Balancing {r.balancing ? `on${r.balancing_current ? ` · ${(r.balancing_current * 1000).toFixed(0)} mA` : ""}` : "off"}</p>
     </Card>

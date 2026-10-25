@@ -1,8 +1,7 @@
-import { Bug, Cpu, HardDrive, History, RefreshCw, RotateCcw, Send, Wifi, X } from "lucide-react";
-import { useState } from "react";
-import { clearOta, clearRestart, requestRestart, setOta, useBoots, useControl, useCrashes } from "../data";
+import { Bug, Cpu, HardDrive, History, Wifi } from "lucide-react";
+import { useBoots, useCrashes } from "../data";
 import type { Device as DeviceT, Info } from "../types";
-import { ago, Card, rssiKind, rssiLabel, StatusPill } from "./ui";
+import { Ago, ago, Card, rssiKind, rssiLabel, StatusPill } from "./ui";
 
 const when = (ts: number) =>
   new Date(ts * 1000).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
@@ -20,7 +19,7 @@ function KV({ items }: { items: [string, React.ReactNode][] }) {
   );
 }
 
-export function DevicePage({ d, info, nowS }: { d: DeviceT | null | undefined; info?: Info | null; nowS: number }) {
+export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: Info | null }) {
   const boots = useBoots();
   const crashes = useCrashes();
   if (!d) return <div className="card empty" style={{ height: 200 }}>The board has not reported yet.</div>;
@@ -28,8 +27,8 @@ export function DevicePage({ d, info, nowS }: { d: DeviceT | null | undefined; i
   const heapPct = d.free_heap && d.min_free_heap ? Math.round((d.min_free_heap / d.free_heap) * 100) : null;
   return (
     <div className="page">
-      <div className="grid-3">
-        <Card title="Board" icon={Cpu} subtitle={d.last_seen ? `Reported ${ago(nowS - d.last_seen)} ago` : "Not reported yet"}>
+      <div className="grid-2">
+        <Card title="Board" icon={Cpu} subtitle={d.last_seen ? <>Reported <Ago ts={d.last_seen} /></> : "Not reported yet"}>
           <KV
             items={[
               ["Firmware", d.firmware_version ?? "–"],
@@ -64,10 +63,6 @@ export function DevicePage({ d, info, nowS }: { d: DeviceT | null | undefined; i
             ]}
           />
         </Card>
-      </div>
-
-      <div className="grid-2">
-        <ControlPanel d={d} />
         <Card title="BMS" icon={Cpu} subtitle={info?.device_model ?? "JK-B1A8S10P"}>
           <KV
             items={[
@@ -140,56 +135,5 @@ export function DevicePage({ d, info, nowS }: { d: DeviceT | null | undefined; i
         </Card>
       </div>
     </div>
-  );
-}
-
-function ControlPanel({ d }: { d: DeviceT }) {
-  const control = useControl();
-  const [version, setVersion] = useState("");
-  const [msg, setMsg] = useState("");
-  const run = async (what: string, fn: () => Promise<void>) => {
-    try {
-      await fn();
-      setMsg(`${what} sent. The board reads it at its next check (every 5 min).`);
-    } catch (e) {
-      setMsg(`${what} failed: ${(e as Error).message}`);
-    }
-  };
-  const valid = /^[0-9A-Za-z._-]+$/.test(version) && version !== d.firmware_version;
-  return (
-    <Card title="Remote control" icon={RefreshCw} subtitle="Read by the board every 5 minutes">
-      <div className="pending">
-        <span>Pending update</span>
-        {control?.ota ? <StatusPill kind="warning">{control.ota}</StatusPill> : <StatusPill kind="muted">None</StatusPill>}
-        <span>Pending restart</span>
-        {control?.restart ? <StatusPill kind="warning">Requested</StatusPill> : <StatusPill kind="muted">None</StatusPill>}
-      </div>
-      <label className="field-label" htmlFor="fw">
-        Firmware update
-      </label>
-      <div className="control-row">
-        <input id="fw" value={version} onChange={(e) => setVersion(e.target.value.trim())} placeholder={`Version, current ${d.firmware_version ?? "–"}`} />
-        <button
-          className="primary"
-          disabled={!valid}
-          onClick={() => window.confirm(`Install firmware ${version} on the board? It downloads jk-bms-${version}.ota.bin from the OTA site.`) && run(`Update to ${version}`, () => setOta(version))}
-        >
-          <Send size={14} aria-hidden /> Install
-        </button>
-        <button className="secondary" disabled={!control?.ota} onClick={() => run("Cancel update", clearOta)}>
-          <X size={14} aria-hidden /> Cancel
-        </button>
-      </div>
-      <label className="field-label">Restart</label>
-      <div className="control-row">
-        <button className="secondary" onClick={() => window.confirm("Restart the board (1 s radio reset)?") && run("Restart", requestRestart)}>
-          <RotateCcw size={14} aria-hidden /> Restart board
-        </button>
-        <button className="secondary" disabled={!control?.restart} onClick={() => run("Clear restart", clearRestart)}>
-          <X size={14} aria-hidden /> Clear request
-        </button>
-      </div>
-      {msg && <p className="notice">{msg}</p>}
-    </Card>
   );
 }
