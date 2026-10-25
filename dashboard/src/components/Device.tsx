@@ -2,13 +2,10 @@ import { Bug, Cpu, HardDrive, History, RefreshCw, RotateCcw, Send, Wifi, X } fro
 import { useState } from "react";
 import { clearOta, clearRestart, requestRestart, setOta, useBoots, useControl, useCrashes } from "../data";
 import type { Device as DeviceT, Info } from "../types";
-import { ago, Card, StatusPill, type Kind } from "./ui";
+import { ago, Card, rssiKind, rssiLabel, StatusPill } from "./ui";
 
 const when = (ts: number) =>
   new Date(ts * 1000).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
-
-const rssiKind = (v?: number): Kind => (v === undefined || v === 0 ? "muted" : v > -67 ? "good" : v > -80 ? "warning" : "serious");
-const rssiLabel = (v?: number) => (v === undefined || v === 0 ? "–" : `${v} dBm · ${v > -67 ? "Good" : v > -80 ? "Fair" : "Weak"}`);
 
 function KV({ items }: { items: [string, React.ReactNode][] }) {
   return (

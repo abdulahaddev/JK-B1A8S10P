@@ -1,12 +1,29 @@
 import type { LucideIcon } from "lucide-react";
-import { Activity, ArrowDownRight, ArrowUpRight, BatteryCharging, CalendarDays, Gauge, Grid2x2, Pause, Thermometer, TrendingUp, Zap } from "lucide-react";
+import {
+  Activity,
+  ArrowDownRight,
+  ArrowUpRight,
+  BatteryCharging,
+  Bluetooth,
+  BluetoothOff,
+  CalendarDays,
+  Cpu,
+  Gauge,
+  Grid2x2,
+  Pause,
+  Thermometer,
+  TrendingUp,
+  Wifi,
+  WifiOff,
+  Zap,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { cells, integrate, powerW, spreadMv, stats, todayStart } from "../analytics";
 import type { Tokens } from "../theme";
-import type { Info, Reading } from "../types";
+import type { Device, Info, Reading } from "../types";
 import { CELLS, cellKey } from "../types";
 import { TimeChart, type Metric } from "./Chart";
-import { Card, Segmented, Sparkline, StatusPill } from "./ui";
+import { ago, Card, HEALTH_LABEL, healthKind, linkHealth, rssiKind, rssiLabel, Segmented, Sparkline, StatusPill, type Kind } from "./ui";
 
 const fmtHours = (h: number) => (h < 1 ? `${Math.round(h * 60)} min` : h < 48 ? `${h.toFixed(1)} h` : `${(h / 24).toFixed(1)} days`);
 
@@ -43,7 +60,58 @@ function SocRing({ soc, color, track }: { soc: number; color: string; track: str
   );
 }
 
-function Hero({ r, info, tokens: t }: { r: Reading; info?: Info | null; tokens: Tokens }) {
+function Link({ icon: Icon, label, value, detail, kind }: { icon: LucideIcon; label: string; value: string; detail: string; kind: Kind }) {
+  return (
+    <div className={`link link-${kind}`}>
+      <span className="link-icon" aria-hidden>
+        <Icon size={17} />
+      </span>
+      <div className="link-body">
+        <span className="link-label">{label}</span>
+        <b>
+          <span className={`dot dot-${kind}`} aria-hidden />
+          {value}
+        </b>
+        <span className="link-detail">{detail}</span>
+      </div>
+    </div>
+  );
+}
+
+/** Board, WiFi and BMS Bluetooth state; WiFi/Bluetooth are last-known values once the board stops reporting. */
+function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
+  const h = linkHealth(d, nowS);
+  const live = h === "online" || h === "delayed";
+  const queued = d?.buffered ?? 0;
+  const ble = d?.ble_connected === 1;
+  const boardDetail = d?.last_seen
+    ? [`${ago(nowS - d.last_seen)} ago`, d.firmware_version && `fw ${d.firmware_version}`, live && d.uptime_s !== undefined && `up ${ago(d.uptime_s)}`, queued > 2 && `${queued} queued`]
+        .filter(Boolean)
+        .join(" · ")
+    : "Waiting for the first report";
+  const wifiOk = live && d?.wifi_rssi !== undefined && d.wifi_rssi !== 0;
+  return (
+    <div className="links">
+      <Link icon={Cpu} label="Board" value={HEALTH_LABEL[h]} detail={boardDetail} kind={queued > 2 && h === "online" ? "warning" : healthKind(h)} />
+      <Link
+        icon={wifiOk ? Wifi : WifiOff}
+        label="WiFi"
+        value={!live ? "Unknown" : wifiOk ? (rssiLabel(d?.wifi_rssi).split(" · ")[1] ?? "Connected") : "No signal"}
+        detail={`${d?.wifi_rssi ? `${live ? "" : "Last "}${d.wifi_rssi} dBm` : "–"} · ${d?.wifi_disconnects ?? 0} drops`}
+        kind={!live ? "muted" : wifiOk ? rssiKind(d?.wifi_rssi) : "critical"}
+      />
+      <Link
+        icon={ble ? Bluetooth : BluetoothOff}
+        label="BMS Bluetooth"
+        value={!live ? `Last: ${ble ? "connected" : "disconnected"}` : ble ? "Connected" : "Disconnected"}
+        detail={`${d?.bms_rssi ? `${d.bms_rssi} dBm` : "–"} · ${d?.ble_disconnects ?? 0} drops`}
+        kind={!live ? "muted" : ble ? rssiKind(d?.bms_rssi) : "critical"}
+      />
+    </div>
+  );
+}
+
+function Hero({ r, info, d, nowS, tokens: t }: { r: Reading; info?: Info | null; d: Device | null | undefined; nowS: number; tokens: Tokens }) {
   const i = r.current ?? 0;
   const state = packState(r);
   const full = info?.full_charge_capacity;
@@ -51,41 +119,46 @@ function Hero({ r, info, tokens: t }: { r: Reading; info?: Info | null; tokens: 
   const p = powerW(r);
   const StateIcon = state === "Charging" ? ArrowUpRight : state === "Discharging" ? ArrowDownRight : Pause;
   const low = r.state_of_charge < 20;
+  const stale = nowS - r.ts > 900;
   return (
     <section className="card hero">
-      <SocRing soc={r.state_of_charge} color={low ? t.critical : t.series[0]} track={t.grid} />
-      <div className="hero-body">
-        <div className="hero-top">
-          <span className={`state state-${state.toLowerCase()}`}>
-            <StateIcon size={15} aria-hidden /> {state}
-          </span>
-          {low && <StatusPill kind="critical">Low charge</StatusPill>}
-        </div>
-        <div className="hero-power">
-          {state === "Idle" ? "0" : `${p > 0 ? "+" : "−"}${Math.abs(p).toFixed(0)}`}
-          <span>W</span>
-        </div>
-        <p className="hero-note">
-          {hours !== null && Number.isFinite(hours) ? `${state === "Charging" ? "Full" : "Empty"} in about ${fmtHours(hours)}` : state === "Idle" ? "No load right now" : "Estimating…"}
-        </p>
-        <div className="hero-facts">
-          <div>
-            <span>Remaining</span>
-            <b>
-              {r.capacity_remaining.toFixed(1)}
-              {full ? ` / ${full.toFixed(0)}` : ""} Ah
-            </b>
+      <div className="hero-main">
+        <SocRing soc={r.state_of_charge} color={low ? t.critical : t.series[0]} track={t.grid} />
+        <div className="hero-body">
+          <div className="hero-top">
+            <span className={`state state-${state.toLowerCase()}`}>
+              <StateIcon size={15} aria-hidden /> {state}
+            </span>
+            {low && <StatusPill kind="critical">Low charge</StatusPill>}
+            {stale && <StatusPill kind="warning">Reading {ago(nowS - r.ts)} old</StatusPill>}
           </div>
-          <div>
-            <span>Health</span>
-            <b>{info?.state_of_health !== undefined ? `${info.state_of_health}%` : "–"}</b>
+          <div className="hero-power">
+            {state === "Idle" ? "0" : `${p > 0 ? "+" : "−"}${Math.abs(p).toFixed(0)}`}
+            <span>W</span>
           </div>
-          <div>
-            <span>Cycles</span>
-            <b>{info?.charging_cycles ?? "–"}</b>
+          <p className="hero-note">
+            {hours !== null && Number.isFinite(hours) ? `${state === "Charging" ? "Full" : "Empty"} in about ${fmtHours(hours)}` : state === "Idle" ? "No load right now" : "Estimating…"}
+          </p>
+          <div className="hero-facts">
+            <div>
+              <span>Remaining</span>
+              <b>
+                {r.capacity_remaining.toFixed(1)}
+                {full ? ` / ${full.toFixed(0)}` : ""} Ah
+              </b>
+            </div>
+            <div>
+              <span>Health</span>
+              <b>{info?.state_of_health !== undefined ? `${info.state_of_health}%` : "–"}</b>
+            </div>
+            <div>
+              <span>Cycles</span>
+              <b>{info?.charging_cycles ?? "–"}</b>
+            </div>
           </div>
         </div>
       </div>
+      <Links d={d} nowS={nowS} />
     </section>
   );
 }
@@ -222,6 +295,8 @@ export function Overview({
   rows,
   loading,
   now,
+  device,
+  clock,
   tokens: t,
 }: {
   latest?: Reading;
@@ -229,6 +304,8 @@ export function Overview({
   rows: Reading[] | null;
   loading: boolean;
   now: number;
+  device: Device | null | undefined;
+  clock: number; // live wall clock for "x ago"
   tokens: Tokens;
 }) {
   const [trend, setTrend] = useState<TrendId>("soc");
@@ -263,7 +340,7 @@ export function Overview({
   return (
     <div className="page">
       <div className="overview-top">
-        <Hero r={r} info={info} tokens={t} />
+        <Hero r={r} info={info} d={device} nowS={clock} tokens={t} />
         <div className="kpis">
           <Kpi icon={BatteryCharging} label="Pack voltage" value={r.total_voltage.toFixed(2)} unit="V" note={`${(r.total_voltage / 4).toFixed(3)} V per cell`} spark={sparks.voltage} color={t.series[0]} />
           <Kpi icon={Zap} label="Current" value={`${i > 0 ? "+" : ""}${i.toFixed(2)}`} unit="A" note={packState(r)} spark={sparks.current} color={t.series[2]} />

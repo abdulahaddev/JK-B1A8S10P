@@ -6,7 +6,7 @@ import { Analytics } from "./components/Analytics";
 import { DevicePage } from "./components/Device";
 import { Energy } from "./components/Energy";
 import { Overview } from "./components/Overview";
-import { ago, linkHealth, Segmented, StatusPill } from "./components/ui";
+import { ago, Segmented, StatusPill } from "./components/ui";
 import { useDevice, useInfo, useLatest, useReadings } from "./data";
 import { useTheme, type Tokens } from "./theme";
 import type { Reading } from "./types";
@@ -71,10 +71,10 @@ function usePage() {
 }
 
 // Each page fetches only its own history window.
-function OverviewPage(p: { latest?: Reading; info: ReturnType<typeof useInfo>; tokens: Tokens }) {
+function OverviewPage(p: { latest?: Reading; info: ReturnType<typeof useInfo>; device: ReturnType<typeof useDevice>; clock: number; tokens: Tokens }) {
   const now = useNow(120);
   const day = useReadings(now - 86400, now, 3600);
-  return <Overview latest={p.latest} info={p.info} rows={day.rows} loading={day.loading} now={now} tokens={p.tokens} />;
+  return <Overview latest={p.latest} info={p.info} device={p.device} clock={p.clock} rows={day.rows} loading={day.loading} now={now} tokens={p.tokens} />;
 }
 
 function AnalyticsPage({ rangeId, tokens }: { rangeId: RangeId; tokens: Tokens }) {
@@ -101,10 +101,6 @@ export default function App() {
   const latest = useLatest<Reading>("telemetry", 1)[0];
   const clock = useNow(5); // for "x s ago"
 
-  const health = linkHealth(device, clock);
-  const healthKind = health === "online" ? "good" : health === "delayed" ? "warning" : health === "offline" ? "critical" : "muted";
-  const healthText = { online: "Online", delayed: "Delayed", offline: "Offline", unknown: "No data" }[health];
-  const ble = device?.ble_connected === 1;
   const current = PAGES.find((p) => p.id === page)!;
 
   return (
@@ -127,19 +123,6 @@ export default function App() {
             </a>
           ))}
         </nav>
-        <div className="side-foot">
-          <div className="side-status">
-            <span className={`dot dot-${healthKind}`} aria-hidden />
-            <div>
-              <b>Board {healthText.toLowerCase()}</b>
-              <span>{device?.last_seen ? `${ago(clock - device.last_seen)} ago · fw ${device.firmware_version ?? "–"}` : "Waiting for data"}</span>
-            </div>
-          </div>
-          <button className="theme-btn" onClick={toggle} aria-label={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
-            {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            <span>{mode === "dark" ? "Light mode" : "Dark mode"}</span>
-          </button>
-        </div>
       </aside>
 
       <main className="main">
@@ -152,11 +135,8 @@ export default function App() {
             </p>
           </div>
           <div className="topbar-right">
-            <StatusPill kind={healthKind}>Board {healthText}</StatusPill>
-            <StatusPill kind={ble ? "good" : "critical"}>BMS {ble ? "connected" : "disconnected"}</StatusPill>
-            {(device?.buffered ?? 0) > 2 && <StatusPill kind="warning">{device!.buffered} queued</StatusPill>}
             {page === "analytics" && <Segmented options={RANGES} value={rangeId} onChange={setRangeId} label="Time range" />}
-            <button className="icon-btn mobile-only" onClick={toggle} aria-label="Toggle theme">
+            <button className="icon-btn theme-icon" onClick={toggle} aria-label={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={mode === "dark" ? "Light mode" : "Dark mode"}>
               {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
@@ -167,7 +147,7 @@ export default function App() {
           </div>
         ) : null}
 
-        {page === "overview" && <OverviewPage latest={latest} info={info} tokens={t} />}
+        {page === "overview" && <OverviewPage latest={latest} info={info} device={device} clock={clock} tokens={t} />}
         {page === "analytics" && <AnalyticsPage rangeId={rangeId} tokens={t} />}
         {page === "energy" && <EnergyPage tokens={t} />}
         {page === "device" && <DevicePage d={device} info={info} nowS={clock} />}

@@ -16,6 +16,13 @@ export function linkHealth(d: Device | null | undefined, nowS: number): Health {
 
 export type Kind = "good" | "warning" | "serious" | "critical" | "muted";
 
+export const healthKind = (h: Health): Kind => (h === "online" ? "good" : h === "delayed" ? "warning" : h === "offline" ? "critical" : "muted");
+export const HEALTH_LABEL: Record<Health, string> = { online: "Online", delayed: "Delayed", offline: "Offline", unknown: "No data" };
+
+/** Signal strength bands: > -67 dBm good, > -80 fair, else weak; 0 or missing = unknown. */
+export const rssiKind = (v?: number): Kind => (v === undefined || v === 0 ? "muted" : v > -67 ? "good" : v > -80 ? "warning" : "serious");
+export const rssiLabel = (v?: number) => (v === undefined || v === 0 ? "–" : `${v} dBm · ${v > -67 ? "Good" : v > -80 ? "Fair" : "Weak"}`);
+
 const PILL_ICON: Record<Kind, LucideIcon> = {
   good: CheckCircle2,
   warning: AlertTriangle,
