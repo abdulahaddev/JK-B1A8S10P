@@ -38,7 +38,7 @@ The hosting has bot protection, so the site is read only on the first unlock whe
 and after that only when you press **Sync** (at most once a minute). The site sends no CORS headers, so the dev and preview servers proxy `/ota-site` and add
 the login from `../secrets.yaml`. A static build hosted elsewhere needs an equivalent proxy.
 
-Every chart has a table view. Light and dark themes follow the OS until toggled.
+Every chart has a table view. Light theme by default; the toggle switches to dark (remembered per browser).
 
 ## Security note
 

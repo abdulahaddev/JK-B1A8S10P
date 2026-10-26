@@ -1,4 +1,4 @@
-/* Tokens mirror theme.ts. Light by default, dark via OS or the toggle. */
+/* Tokens mirror theme.ts. Light by default, dark via the toggle (data-theme). */
 :root {
   color-scheme: light;
   --page: #f4f6f9;
@@ -21,27 +21,6 @@
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 2px 8px rgba(15, 23, 42, 0.04);
   --sidebar: #ffffff;
   --radius: 14px;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --page: #0b0e13;
-    --surface: #151a21;
-    --surface-2: #1b2129;
-    --ink: #e6e9ef;
-    --ink2: #a3adbb;
-    --muted: #7d8796;
-    --grid: #222932;
-    --axis: #303846;
-    --border: #242b35;
-    --accent: #3987e5;
-    --accent-ink: #79adf0;
-    --accent-soft: rgba(57, 135, 229, 0.16);
-    --good-text: #2fbf2f;
-    --warning: #fab219;
-    --shadow: none;
-    --sidebar: #10141a;
-  }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -397,3 +376,21 @@ tbody tr:last-child td { border-bottom: 0; }
 @media (max-width: 520px) {
   .rc-open span { display: none; }
 }
+
+/* Graph range dropdown in the top bar (Overview and Analytics) */
+.range-select {
+  display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 6px 0 11px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--ink2); cursor: pointer;
+}
+.range-select select { border: 0; background: transparent; color: var(--ink); font-size: 13px; font-weight: 500; padding: 0 2px; cursor: pointer; }
+.range-select select option { color: var(--ink); background: var(--surface); }
+.range-select:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* Confirmation mini-dialog above the Remote Control dialog */
+.confirm-backdrop { z-index: 60; background: rgba(15, 23, 42, 0.35); }
+.modal.mini { width: min(400px, 100%); padding: 20px; }
+.mini-body { display: flex; gap: 14px; align-items: flex-start; }
+.mini-body h3 { margin: 2px 0 6px; font-size: 15px; }
+.mini-body p { margin: 0; font-size: 13px; color: var(--ink2); line-height: 1.5; word-break: break-word; }
+.mini-icon { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: 10px; color: var(--warning); background: rgba(250, 178, 25, 0.14); }
+.modal.mini .modal-actions { margin-top: 18px; }

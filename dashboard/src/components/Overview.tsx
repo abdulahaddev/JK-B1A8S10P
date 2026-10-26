@@ -105,8 +105,8 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
         icon={ble ? Bluetooth : BluetoothOff}
         label="Bluetooth"
         value={!live ? "Unknown" : ble ? "Connected" : "Disconnected"}
-        detail={live && ble && d?.bms_rssi ? `${d.bms_rssi} dBm` : ""}
-        kind={!live ? "muted" : ble ? rssiKind(d?.bms_rssi) : "critical"}
+        detail={live && ble && (d?.bms_link_rssi ?? d?.bms_rssi) ? `${d?.bms_link_rssi ?? d?.bms_rssi} dBm` : ""}
+        kind={!live ? "muted" : ble ? rssiKind(d?.bms_link_rssi ?? d?.bms_rssi) : "critical"}
       />
     </div>
   );
@@ -299,8 +299,11 @@ export function Overview({
   latest,
   info,
   rows,
+  todayRows,
   loading,
+  from,
   now,
+  rangeLabel,
   device,
   clock,
   tokens: t,
@@ -308,15 +311,19 @@ export function Overview({
   latest?: Reading;
   info?: Info | null;
   rows: Reading[] | null;
+  todayRows: Reading[] | null; // since midnight, for the Today card
   loading: boolean;
+  from: number; // start of the graph range (unix s)
   now: number;
+  rangeLabel: string;
   device: Device | null | undefined;
   clock: number; // live wall clock for "x ago"
   tokens: Tokens;
 }) {
   const [trend, setTrend] = useState<TrendId>("soc");
   const sparks = useMemo(() => {
-    const recent = (rows ?? []).filter((r) => r.ts >= now - 6 * 3600);
+    // Sparklines: the last 6 hours, or the whole range when it is shorter
+    const recent = (rows ?? []).filter((r) => r.ts >= Math.max(from, now - 6 * 3600));
     const step = Math.max(1, Math.floor(recent.length / 60));
     const thin = recent.filter((_, i) => i % step === 0);
     return {
@@ -325,7 +332,7 @@ export function Overview({
       spread: thin.map(spreadMv),
       temp: thin.map((r) => r.mosfet_temperature ?? 0),
     };
-  }, [rows, now]);
+  }, [rows, from, now]);
 
   if (!latest) return <div className="card empty" style={{ height: 200 }}>Waiting for the first reading…</div>;
 
@@ -372,13 +379,13 @@ export function Overview({
       </div>
 
       <TimeChart
-        title="Last 24 hours"
+        title={rangeLabel}
         icon={TrendingUp}
         unit={cfg.unit}
         decimals={cfg.dec}
         rows={rows}
         loading={loading}
-        from={now - 86400}
+        from={from}
         to={now}
         metrics={[cfg.metric]}
         tokens={t}
@@ -392,7 +399,7 @@ export function Overview({
 
       <div className="grid-2">
         <CellsCard r={r} info={info} tokens={t} />
-        <TodayCard rows={rows ?? []} />
+        <TodayCard rows={todayRows ?? []} />
       </div>
       <p className="foot-note">
         <Gauge size={13} aria-hidden /> Live values update as the board reports; charts refresh every few minutes.

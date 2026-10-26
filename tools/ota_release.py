@@ -158,6 +158,7 @@ def wait_healthy(secrets: dict, minutes: int, report: Report) -> bool:
 def watch(secrets: dict, version: str, report: Report) -> bool:
     start = time.time()
     last = None
+    start_status = None
     while time.time() - start < TIMEOUT_S:
         try:
             d = firebase(secrets, "GET", "device") or {}
@@ -174,11 +175,20 @@ def watch(secrets: dict, version: str, report: Report) -> bool:
             last = state
         if d.get("firmware_version") == version and d.get("ble_connected") == 1:
             return True
-        # Fail fast instead of waiting out the timeout
+        # Fail fast instead of waiting out the timeout, but only on a status reported after the signal
+        # (a stale "try 5/5" from an earlier round once ended a release at its first poll)
         status = str(d.get("ota_status", ""))
+        if start_status is None:
+            start_status = status
+        fresh = status != start_status
         tries = re.search(r"\(try (\d+)/(\d+)", status)
-        if tries and tries.group(1) == tries.group(2) and version in status:
+        if fresh and tries and tries.group(1) == tries.group(2) and version in status:
             report.log(f"all download tries failed: {status}")
+            return False
+        # 1.2.28+: one attempt per signal, and a refused host
+        if fresh and version in status and (status.startswith("download failed") and not tries
+                                            or status.startswith("update refused")):
+            report.log(f"update not installed: {status}")
             return False
         if "rolled back" in status and d.get("firmware_version") != version:
             report.log(f"update rolled back: {status}")
@@ -246,6 +256,8 @@ def main() -> int:
         # 4. signal once the board is healthy, 5. watch
         if not wait_healthy(secrets, wait_min, report):
             raise RuntimeError(f"board not healthy after {wait_min} min; not signalled")
+        # 1.2.28+ downloads from control/ota_host (allowed domains only); older boards ignore it
+        firebase(secrets, "PUT", "control/ota_host", secrets["ota_base_url"])
         firebase(secrets, "PUT", "control/ota", version)
         report.log(f'control/ota = "{version}"; watching device every {POLL_S}s for up to {TIMEOUT_S // 60} min')
         ok = watch(secrets, version, report)

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { SlidersHorizontal, BarChart3, BatteryCharging, Cpu, LayoutDashboard, Moon, Sun, Zap } from "lucide-react";
+import { CalendarRange, SlidersHorizontal, BarChart3, BatteryCharging, Cpu, LayoutDashboard, Moon, Sun, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { todayStart } from "./analytics";
 import { Analytics } from "./components/Analytics";
@@ -7,7 +7,7 @@ import { DevicePage } from "./components/Device";
 import { Energy } from "./components/Energy";
 import { Overview } from "./components/Overview";
 import { RemoteControl } from "./components/RemoteControl";
-import { Ago, Segmented, StatusPill } from "./components/ui";
+import { Ago, StatusPill } from "./components/ui";
 import { useControlWatcher } from "./controlLog";
 import { useControl, useDevice, useInfo, useLatest, useReadings } from "./data";
 import { useTheme, type Tokens } from "./theme";
@@ -21,11 +21,11 @@ const PAGES = [
 ] as const satisfies readonly { id: string; label: string; icon: LucideIcon; sub: string }[];
 type PageId = (typeof PAGES)[number]["id"];
 
+// Graph range for Overview and Analytics (raw readings; a month needs hourly summaries, see BACKLOG)
 const RANGES = [
-  { id: "1h", label: "1H", name: "Last hour", s: 3600, refresh: 60 },
-  { id: "6h", label: "6H", name: "Last 6 hours", s: 6 * 3600, refresh: 60 },
-  { id: "24h", label: "24H", name: "Last 24 hours", s: 86400, refresh: 120 },
-  { id: "7d", label: "7D", name: "Last 7 days", s: 7 * 86400, refresh: 600 },
+  { id: "1h", label: "Last hour", name: "Last hour", s: 3600, refresh: 60 },
+  { id: "24h", label: "Last day", name: "Last 24 hours", s: 86400, refresh: 120 },
+  { id: "7d", label: "Last week", name: "Last 7 days", s: 7 * 86400, refresh: 600 },
 ] as const;
 type RangeId = (typeof RANGES)[number]["id"];
 
@@ -73,10 +73,29 @@ function usePage() {
 }
 
 // Each page fetches only its own history window.
-function OverviewPage(p: { latest?: Reading; info: ReturnType<typeof useInfo>; device: ReturnType<typeof useDevice>; clock: number; tokens: Tokens }) {
-  const now = useNow(120);
-  const day = useReadings(now - 86400, now, 3600);
-  return <Overview latest={p.latest} info={p.info} device={p.device} clock={p.clock} rows={day.rows} loading={day.loading} now={now} tokens={p.tokens} />;
+function OverviewPage(p: { rangeId: RangeId; latest?: Reading; info: ReturnType<typeof useInfo>; device: ReturnType<typeof useDevice>; clock: number; tokens: Tokens }) {
+  const range = RANGES.find((r) => r.id === p.rangeId)!;
+  const now = useNow(range.refresh);
+  const trend = useReadings(now - range.s, now, 3600);
+  // The Today card always covers since midnight: a range of a day or more already holds it
+  const own = range.s < 86400;
+  const today = useReadings(own ? todayStart() : 0, own ? now : 0, 3600);
+  const todayRows = own ? today.rows : trend.rows;
+  return (
+    <Overview
+      latest={p.latest}
+      info={p.info}
+      device={p.device}
+      clock={p.clock}
+      rows={trend.rows}
+      todayRows={todayRows}
+      loading={trend.loading}
+      from={now - range.s}
+      now={now}
+      rangeLabel={range.name}
+      tokens={p.tokens}
+    />
+  );
 }
 
 function AnalyticsPage({ rangeId, tokens }: { rangeId: RangeId; tokens: Tokens }) {
@@ -146,7 +165,18 @@ export default function App() {
             </p>
           </div>
           <div className="topbar-right">
-            {page === "analytics" && <Segmented options={RANGES} value={rangeId} onChange={setRangeId} label="Time range" />}
+            {(page === "overview" || page === "analytics") && (
+              <label className="range-select" title="Time range of the graphs">
+                <CalendarRange size={15} aria-hidden />
+                <select value={rangeId} onChange={(e) => setRangeId(e.target.value as RangeId)} aria-label="Time range">
+                  {RANGES.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             <button className="secondary rc-open" onClick={() => setControlOpen(true)} title="Firmware update and restart (password)">
               <SlidersHorizontal size={15} aria-hidden />
               <span>Remote control</span>
@@ -163,7 +193,7 @@ export default function App() {
           </div>
         ) : null}
 
-        {page === "overview" && <OverviewPage latest={latest} info={info} device={device} clock={clock} tokens={t} />}
+        {page === "overview" && <OverviewPage rangeId={rangeId} latest={latest} info={info} device={device} clock={clock} tokens={t} />}
         {page === "analytics" && <AnalyticsPage rangeId={rangeId} tokens={t} />}
         {page === "energy" && <EnergyPage tokens={t} />}
         {page === "device" && <DevicePage d={device} info={info} />}

@@ -44,6 +44,15 @@ export interface Device {
   upload_heap_low?: number; // heap low point of the last upload
   upload_heap_base?: number; // learned fixed heap cost per request
   upload_heap_per?: number; // learned heap cost per reading
+  // fw 1.2.28+
+  control_s?: number; // control read interval in use
+  ota_check?: string; // result of the last download check
+  ota_check_ts?: number;
+  wifi_disc_reason?: number; // ESP-IDF wifi_err_reason_t of the last disconnect
+  wifi_disc_ts?: number;
+  upload_fail?: string; // why the last upload failed
+  upload_fail_ts?: number;
+  bms_link_rssi?: number; // signal of the connected BMS link
   control_errors?: number;
   firmware_version?: string;
   ota_status?: string;
@@ -88,7 +97,10 @@ export interface Crash {
 }
 
 export interface Control {
-  ota?: string;
+  ota?: string; // version to install (one attempt; the board removes it when done)
+  ota_host?: string; // OTA base URL under an allowed domain (fw 1.2.28+), kept
+  ota_check?: string; // version whose download the board checks once (fw 1.2.28+)
+  check_s?: number; // control read interval in seconds, 30..3600 (fw 1.2.28+), kept
   restart?: string;
 }
 

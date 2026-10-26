@@ -61,10 +61,9 @@ function stored(): Mode | null {
   }
 }
 
-/** Theme follows the OS until the viewer picks one; the pick is remembered per browser. */
+/** Light until the viewer picks dark with the toggle; the pick is remembered per browser. */
 export function useTheme() {
-  const system = () => (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-  const [mode, setMode] = useState<Mode>(() => stored() ?? system());
+  const [mode, setMode] = useState<Mode>(() => stored() ?? "light");
   useEffect(() => {
     document.documentElement.dataset.theme = mode;
   }, [mode]);

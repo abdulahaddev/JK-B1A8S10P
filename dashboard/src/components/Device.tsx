@@ -3,6 +3,33 @@ import { useBoots, useCrashes } from "../data";
 import type { Device as DeviceT, Info } from "../types";
 import { Ago, ago, Card, rssiKind, rssiLabel, StatusPill } from "./ui";
 
+// ESP-IDF wifi_err_reason_t of the last WiFi disconnect (device/wifi_disc_reason)
+const WIFI_REASONS: Record<number, string> = {
+  1: "unspecified",
+  2: "authentication expired",
+  3: "deauthenticated by the router",
+  4: "inactivity (association expired)",
+  5: "router has too many clients",
+  6: "not authenticated",
+  7: "not associated",
+  8: "left the network",
+  15: "WPA handshake timeout",
+  16: "group key update timeout",
+  23: "802.1X authentication failed",
+  200: "beacon timeout (router not heard)",
+  201: "router not found",
+  202: "authentication failed (password?)",
+  203: "association failed",
+  204: "handshake timeout",
+  205: "connection failed",
+  206: "router restarted (TSF reset)",
+  207: "roaming",
+  209: "SA query timeout",
+  210: "no router with compatible security",
+  212: "router below the RSSI threshold",
+};
+const wifiReason = (code: number) => `${WIFI_REASONS[code] ?? "reason"} (${code})`;
+
 const when = (ts: number) =>
   new Date(ts * 1000).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
 
@@ -44,10 +71,19 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
           <KV
             items={[
               ["WiFi signal", <StatusPill kind={rssiKind(d.wifi_rssi)}>{rssiLabel(d.wifi_rssi)}</StatusPill>],
-              ["BMS Bluetooth", <StatusPill kind={rssiKind(d.bms_rssi)}>{rssiLabel(d.bms_rssi)}</StatusPill>],
+              // 1.2.28+: the connected link's own signal; older boards only report the (stale) advertisement RSSI
+              d.bms_link_rssi !== undefined
+                ? ["BMS link signal", <StatusPill kind={rssiKind(d.bms_link_rssi)}>{rssiLabel(d.bms_link_rssi)}</StatusPill>]
+                : ["BMS advert signal", <StatusPill kind={rssiKind(d.bms_rssi)}>{rssiLabel(d.bms_rssi)}</StatusPill>],
               ["BMS link", <StatusPill kind={d.ble_connected === 1 ? "good" : "critical"}>{d.ble_connected === 1 ? "Connected" : "Not connected"}</StatusPill>],
               ["WiFi drops", d.wifi_disconnects ?? 0],
+              ...(d.wifi_disc_reason !== undefined
+                ? [["Last WiFi drop", <>{wifiReason(d.wifi_disc_reason)}{d.wifi_disc_ts ? <> · {when(d.wifi_disc_ts)}</> : null}</>] as [string, React.ReactNode]]
+                : []),
               ["BMS drops", d.ble_disconnects ?? 0],
+              ...(d.upload_fail
+                ? [["Last upload failure", <>{d.upload_fail}{d.upload_fail_ts ? <> · {when(d.upload_fail_ts)}</> : null}</>] as [string, React.ReactNode]]
+                : []),
             ]}
           />
         </Card>

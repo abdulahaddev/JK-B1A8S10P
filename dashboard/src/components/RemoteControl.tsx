@@ -1,8 +1,9 @@
-import { AlertTriangle, Eraser, KeyRound, Lock, RefreshCw, RotateCcw, Send, Terminal, X } from "lucide-react";
+import { AlertTriangle, Eraser, KeyRound, Lock, RefreshCw, RotateCcw, SearchCheck, Send, Server, Terminal, Timer, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { clearLog, log, useLog } from "../controlLog";
-import { clearOta, clearRestart, requestRestart, setOta, useControl } from "../data";
-import { compareVersions, ensureReleases, syncReleases, useReleases } from "../ota";
+import { clearLog, log, markSent, sentTime, useLog, type Command } from "../controlLog";
+import { clearOta, clearRestart, requestOtaCheck, requestRestart, setCheckInterval, setOta, setOtaHost, useControl } from "../data";
+import { compareVersions, ensureReleases, loadDefaultBase, syncReleases, useReleases } from "../ota";
+import { ALLOWED_DOMAINS, allowedBase } from "../otaHost";
 import { sha256Hex } from "../sha256";
 import type { Device } from "../types";
 import { Ago, StatusPill } from "./ui";
@@ -47,7 +48,6 @@ function PasswordDialog({ onOk, onCancel }: { onOk: () => void; onCancel: () => 
     if (sha256Hex(value) === PASSWORD_SHA256) {
       unlockedUntil = Date.now() + UNLOCK_MS;
       log("info", "Remote control unlocked");
-      ensureReleases(); // reads the OTA site only when no list is stored in this browser yet
       onOk();
     } else {
       setError("Wrong password");
@@ -109,29 +109,118 @@ function Console() {
   );
 }
 
+const INTERVALS = [
+  { s: 30, label: "30 s (testing)" },
+  { s: 300, label: "5 min" },
+  { s: 900, label: "15 min" },
+  { s: 3600, label: "1 h" },
+] as const;
+
+/** A command still in control: how long since this browser sent it, flagged after two read intervals. */
+function Pending({ what, interval }: { what: Command; interval: number }) {
+  const at = sentTime(what);
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => tick((x) => x + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+  if (!at) return <StatusPill kind="warning">pending</StatusPill>;
+  const s = Math.round((Date.now() - at) / 1000);
+  const late = s > 2 * interval;
+  return (
+    <StatusPill kind={late ? "serious" : "warning"}>
+      pending {s < 90 ? `${s} s` : `${Math.round(s / 60)} min`}
+      {late ? " · not read yet" : ""}
+    </StatusPill>
+  );
+}
+
+interface Confirm {
+  title: string;
+  text: string;
+  label: string;
+  run: () => void;
+}
+
+/** Small confirmation dialog above the Remote Control dialog; Escape or a click outside cancels it only. */
+function ConfirmDialog({ c, onCancel }: { c: Confirm; onCancel: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.stopPropagation(); // capture phase: keeps the Remote Control dialog open
+      onCancel();
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [onCancel]);
+  return (
+    <div className="modal-backdrop confirm-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onCancel()}>
+      <div className="modal mini" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+        <div className="mini-body">
+          <span className="mini-icon" aria-hidden>
+            <AlertTriangle size={18} />
+          </span>
+          <div>
+            <h3 id="confirm-title">{c.title}</h3>
+            <p id="confirm-text">{c.text}</p>
+          </div>
+        </div>
+        <div className="modal-actions">
+          <button className="secondary" onClick={onCancel}>
+            Cancel
+          </button>
+          <button className="primary" onClick={c.run} autoFocus>
+            {c.label}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: () => void }) {
   const control = useControl();
-  const releases = useReleases();
+  const [hostInput, setHostInput] = useState("");
+  const base = allowedBase(hostInput.trim());
+  const releases = useReleases(base);
   const [version, setVersion] = useState("");
-  const [confirm, setConfirm] = useState<{ text: string; run: () => void } | null>(null);
+  const [confirm, setConfirm] = useState<Confirm | null>(null);
+  const [intervalSel, setIntervalSel] = useState<number | null>(null); // null: show the value in control
   const current = d?.firmware_version;
+  const fw128 = d?.control_s !== undefined; // 1.2.28+ reports its control interval
+  const interval = d?.control_s ?? control?.check_s ?? 300;
+  const chosen = intervalSel ?? control?.check_s ?? 300;
 
-  const send = async (what: string, fn: () => Promise<void>) => {
+  // Host: the one in control, else the dev server's default (ota_base_url)
+  const hostSet = useRef(false);
+  useEffect(() => {
+    if (hostSet.current || control === undefined) return;
+    hostSet.current = true;
+    const fromControl = allowedBase(control?.ota_host ?? "");
+    if (fromControl) setHostInput(fromControl);
+    else void loadDefaultBase().then((b) => setHostInput((h) => h || b));
+  }, [control]);
+  useEffect(() => {
+    if (base) ensureReleases(base); // reads the host only when nothing is stored for it yet
+  }, [base]);
+
+  const send = async (what: string, fn: () => Promise<void>, cmd?: Command) => {
     setConfirm(null);
     log("info", `${what}: sending…`);
     try {
       await fn();
-      log("ok", `${what}: sent. The board reads it at its next check (every 5 min).`);
+      if (cmd) markSent(cmd);
+      log("ok", `${what}: sent. The board acts on it at its next control read (every ${interval} s).`);
     } catch (e) {
       log("error", `${what} failed: ${(e as Error).message}`);
     }
   };
 
   const sync = async () => {
-    log("info", "Syncing firmware list from the OTA site…");
-    await syncReleases();
+    log("info", `Syncing firmware list from ${base}…`);
+    await syncReleases(base);
   };
-  // Report the outcome of every load (including the one at app start) once the modal is open
+  // Report the outcome of every load once the modal is open
   const reported = useRef(releases.syncedAt ?? 0);
   useEffect(() => {
     if (releases.loading) return;
@@ -142,6 +231,8 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
 
   const sel = releases.list?.find((r) => r.version === version);
   const older = sel && current ? compareVersions(sel.version, current) < 0 : false;
+  const status = d?.ota_status ?? "";
+  const failedThis = !!sel && (status.startsWith("download failed " + sel.version) || status.startsWith("update refused")) && status.includes(sel.version);
 
   return (
     <Modal title="Remote control" icon={<RefreshCw size={16} />} onClose={onClose} wide>
@@ -152,15 +243,62 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
           </span>
           <span>Last report {d?.last_seen ? <Ago ts={d.last_seen} /> : "–"}</span>
           <span>
-            Update {control?.ota ? <StatusPill kind="warning">{control.ota} pending</StatusPill> : <StatusPill kind="muted">none</StatusPill>}
+            Update {control?.ota ? <Pending what="ota" interval={interval} /> : <StatusPill kind="muted">none</StatusPill>}
           </span>
           <span>
-            Restart {control?.restart ? <StatusPill kind="warning">pending</StatusPill> : <StatusPill kind="muted">none</StatusPill>}
+            Restart {control?.restart ? <Pending what="restart" interval={interval} /> : <StatusPill kind="muted">none</StatusPill>}
           </span>
+          {control?.ota_check && (
+            <span>
+              Check <Pending what="ota_check" interval={interval} />
+            </span>
+          )}
+          {status && (
+            <span>
+              Status <b>{status}</b>
+            </span>
+          )}
         </div>
 
         <div className="rc-grid">
           <section>
+            <label className="field-label" htmlFor="rc-host">
+              OTA host
+            </label>
+            <div className="control-row">
+              <input
+                id="rc-host"
+                value={hostInput}
+                onChange={(e) => setHostInput(e.target.value)}
+                placeholder="https://sub.wafacredence.com/path"
+                spellCheck={false}
+                aria-invalid={!base}
+              />
+              <button
+                className="secondary"
+                disabled={!base || base === allowedBase(control?.ota_host ?? "")}
+                title="Store this host in control/ota_host"
+                onClick={() =>
+                  setConfirm({
+                    title: "Set OTA host",
+                    text: `Store ${base} as the OTA host? The board downloads updates and runs download checks from it (firmware 1.2.28+).`,
+                    label: "Set host",
+                    run: () => send(`OTA host ${base}`, () => setOtaHost(base)),
+                  })
+                }
+              >
+                <Server size={14} aria-hidden /> Set host
+              </button>
+            </div>
+            {control?.ota_host && <p className="field-hint">In control now: {control.ota_host}</p>}
+            {base ? (
+              <p className="field-hint">Allowed: {ALLOWED_DOMAINS.join(", ")} and their subdomains, https only.</p>
+            ) : (
+              <p className="field-error">
+                <AlertTriangle size={13} aria-hidden /> Not allowed: use https:// on {ALLOWED_DOMAINS.join(" or ")} (or a subdomain), no port or login.
+              </p>
+            )}
+
             <label className="field-label" htmlFor="rc-fw">
               Firmware update
             </label>
@@ -176,7 +314,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
                   </option>
                 ))}
               </select>
-              <button className="secondary" onClick={sync} disabled={releases.loading} title="Reload the list from the OTA site">
+              <button className="secondary" onClick={sync} disabled={!base || releases.loading} title="Reload the list from this host">
                 <RefreshCw size={14} className={releases.loading ? "spin" : ""} aria-hidden /> Sync
               </button>
             </div>
@@ -188,26 +326,51 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
               <p className="field-hint">
                 {releases.syncedAt ? (
                   <>
-                    {releases.list?.length} versions, stored in this browser · last synced <Ago ts={releases.syncedAt / 1000} />
+                    {releases.list?.length} versions on this host, stored in this browser · last synced <Ago ts={releases.syncedAt / 1000} />
                   </>
                 ) : releases.loading ? (
-                  "Reading the OTA site…"
+                  "Reading the host…"
                 ) : (
-                  "No list stored yet. Press Sync to read the OTA site."
+                  "No list stored for this host. Press Sync to read it."
                 )}
               </p>
             )}
-            {older && <p className="field-warn">Older than the installed {current}. A version that rolled back before is refused by the board.</p>}
+            {older && <p className="field-warn">Older than the installed {current}.</p>}
+            {d?.ota_check && <p className="field-hint">Last check: {d.ota_check}{d.ota_check_ts ? <> · <Ago ts={d.ota_check_ts} /></> : null}</p>}
             <div className="control-row">
               <button
-                className="primary"
-                disabled={!sel}
-                onClick={() => sel && setConfirm({ text: `Install firmware ${sel.version} on the board?`, run: () => send(`Update to ${sel.version}`, () => setOta(sel.version)) })}
+                className="secondary"
+                disabled={!sel || !base || !fw128}
+                title={fw128 ? "The board fetches this version's .md5 once and reports the result" : "Needs firmware 1.2.28 or newer"}
+                onClick={() =>
+                  sel &&
+                  setConfirm({
+                    title: "Check download",
+                    text: `Ask the board to fetch the .md5 of ${sel.version} from ${base} once and report the result?`,
+                    label: "Check",
+                    run: () => send(`Download check ${sel.version}`, () => requestOtaCheck(sel.version, base), "ota_check"),
+                  })
+                }
               >
-                <Send size={14} aria-hidden /> Install
+                <SearchCheck size={14} aria-hidden /> Check download
+              </button>
+              <button
+                className="primary"
+                disabled={!sel || !base}
+                onClick={() =>
+                  sel &&
+                  setConfirm({
+                    title: `Install firmware ${sel.version}`,
+                    text: `Install ${sel.version} (now ${current ?? "unknown"}) from ${base}? One attempt: the board pauses uploads and Bluetooth during the download, then reboots into the new firmware.`,
+                    label: "Install",
+                    run: () => send(`Update to ${sel.version}`, () => setOta(sel.version, base), "ota"),
+                  })
+                }
+              >
+                <Send size={14} aria-hidden /> {failedThis ? "Install again" : "Install"}
               </button>
               <button className="secondary" disabled={!control?.ota} onClick={() => send("Cancel update", clearOta)}>
-                <X size={14} aria-hidden /> Cancel pending
+                <X size={14} aria-hidden /> Cancel
               </button>
             </div>
           </section>
@@ -216,28 +379,55 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
             <label className="field-label">Restart</label>
             <p className="field-hint">Resets the radios for 1 s; the board reconnects by itself.</p>
             <div className="control-row">
-              <button className="secondary" onClick={() => setConfirm({ text: "Restart the board?", run: () => send("Restart", requestRestart) })}>
+              <button className="secondary" onClick={() =>
+                  setConfirm({
+                    title: "Restart board",
+                    text: `Restart the board? It resets its radios for 1 s at its next control read (within ${interval} s); queued readings in restart-safe memory are kept.`,
+                    label: "Restart",
+                    run: () => send("Restart", requestRestart, "restart"),
+                  })
+                }>
                 <RotateCcw size={14} aria-hidden /> Restart board
               </button>
               <button className="secondary" disabled={!control?.restart} onClick={() => send("Clear restart", clearRestart)}>
                 <X size={14} aria-hidden /> Clear request
               </button>
             </div>
+
+            <label className="field-label" htmlFor="rc-interval">
+              Control read interval
+            </label>
+            <div className="control-row">
+              <select id="rc-interval" className="select" value={String(chosen)} onChange={(e) => setIntervalSel(Number(e.target.value))}>
+                {INTERVALS.map((o) => (
+                  <option key={o.s} value={o.s}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                className="secondary"
+                disabled={chosen === (control?.check_s ?? 300)}
+                onClick={() =>
+                  setConfirm({
+                    title: "Change control read interval",
+                    text: `Let the board read control every ${chosen} s (now ${control?.check_s ?? 300} s)? It applies after its next read; commands then take effect within ${chosen} s.`,
+                    label: "Apply",
+                    run: () => send(`Read interval ${chosen} s`, () => setCheckInterval(chosen)).then(() => setIntervalSel(null)),
+                  })
+                }
+              >
+                <Timer size={14} aria-hidden /> Apply
+              </button>
+            </div>
+            <p className="field-hint">
+              {fw128 ? `The board reads control every ${d?.control_s} s` : "Needs firmware 1.2.28 or newer (older boards read every 5 min)"}. Commands take effect within one interval.
+            </p>
+            {(control?.check_s ?? 300) < 300 && <p className="field-warn">30 s is for testing: each read is an HTTPS request. Set it back when done.</p>}
           </section>
         </div>
 
-        {confirm && (
-          <div className="confirm" role="alertdialog" aria-label={confirm.text}>
-            <AlertTriangle size={16} aria-hidden />
-            <span>{confirm.text}</span>
-            <button className="secondary" onClick={() => setConfirm(null)}>
-              Back
-            </button>
-            <button className="primary" onClick={confirm.run} autoFocus>
-              Confirm
-            </button>
-          </div>
-        )}
+        {confirm && <ConfirmDialog c={confirm} onCancel={() => setConfirm(null)} />}
 
         <Console />
 

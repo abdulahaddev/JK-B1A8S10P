@@ -106,6 +106,8 @@ inline void begin() {
 }
 
 inline size_t size() { return ram_ring.count + rtc_state.ring.count; }
+// Readings in the RAM ring: the older part of the queue, lost on any reboot (an OTA install included)
+inline size_t ram_size() { return ram_ring.count; }
 inline uint32_t boot_count() { return rtc_state.boot_count; }
 
 inline void push(const Record &r) {

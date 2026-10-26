@@ -125,13 +125,19 @@ def cmd_status(_args):
     d = firebase("GET", "device") or {}
     print(bold("control"))
     row("ota", ok(control["ota"]) if "ota" in control else dim("(none)"))
+    row("ota host", control.get("ota_host") or dim("(none)"))
     row("restart", warn(control["restart"]) if "restart" in control else dim("(none)"))
+    row("read interval", f"{control['check_s']} s" if "check_s" in control else dim("(default 300 s)"))
     print(bold("device"))
     last = d.get("last_seen", 0)
     stale = time.time() - last > 180
     row("last report", (bad if stale else ok)(f"{hhmm(last)}  ({ago(last)})"))
     row("firmware", d.get("firmware_version", "-"))
     row("ota status", d.get("ota_status", "-"))
+    if "ota_check" in d:
+        row("download check", f"{d['ota_check']}" + dim(f"  ({ago(d.get('ota_check_ts'))})"))
+    if "control_s" in d:
+        row("control read", f"every {d['control_s']} s")
     row("reset / uptime", f"{d.get('reset_reason', '-')} / {d.get('uptime_s', '-')}s  (boot {d.get('boot_count', '-')})")
     ble = d.get("ble_connected")
     row("BMS link", (ok("connected") if ble == 1 else bad("not connected"))
@@ -171,8 +177,11 @@ def cmd_ota(args):
     if missing:
         print(bad("not set: upload the missing files first"))
         return
+    # 1.2.28+ downloads from control/ota_host (allowed domains only) and refuses an update without it
+    if SECRETS_DATA.get("ota_base_url"):
+        firebase("PUT", "control/ota_host", SECRETS_DATA["ota_base_url"])
     firebase("PUT", "control/ota", version)
-    print(ok(f'control/ota = "{version}"') + dim(f"  (board {running} installs it at its next check, within 5 min)"))
+    print(ok(f'control/ota = "{version}"') + dim(f"  (board {running} installs it at its next control read)"))
 
 
 def cmd_restart(args):

@@ -1,7 +1,8 @@
-// Firmware versions on the OTA site, read from its file index through the /ota-site proxy (vite.config.ts).
-// The hosting has bot protection, so the site is read as rarely as possible: the list is kept in
-// localStorage, fetched only on the first unlock when nothing is stored, and otherwise only by Sync.
+// Firmware versions on an OTA host, read from its file index through the /ota-site/<host> dev proxy
+// (vite.config.ts). The hosting has bot protection, so a host is read as rarely as possible: each host's
+// list is kept in localStorage, fetched only on the first unlock when nothing is stored, otherwise by Sync.
 import { useSyncExternalStore } from "react";
+import { proxyPath } from "./otaHost";
 
 export interface Release {
   version: string;
@@ -17,8 +18,9 @@ export interface ReleasesState {
 }
 
 const NAME = /^jk-bms-([0-9A-Za-z._-]+)\.ota\.bin$/;
-const STORE_KEY = "ota-releases";
-const MIN_GAP_MS = 60_000; // at most one site request per minute, even with repeated Sync clicks
+const STORE_KEY = "ota-releases:"; // + base URL
+const MIN_GAP_MS = 60_000; // at most one request per host and minute, even with repeated Sync clicks
+const EMPTY: ReleasesState = { list: null, error: null, loading: false, syncedAt: null };
 
 /** Version order: numeric parts compared as numbers (1.2.10 > 1.2.9). */
 export const compareVersions = (a: string, b: string) => {
@@ -54,64 +56,81 @@ function parse(html: string): Release[] {
   return out.sort((a, b) => compareVersions(b.version, a.version));
 }
 
-function stored(): Pick<ReleasesState, "list" | "syncedAt"> {
+function stored(base: string): ReleasesState {
   try {
-    const v = JSON.parse(localStorage.getItem(STORE_KEY) ?? "null");
-    if (v && Array.isArray(v.list) && v.list.length) return { list: v.list, syncedAt: v.syncedAt ?? null };
+    const v = JSON.parse(localStorage.getItem(STORE_KEY + base) ?? "null");
+    if (v && Array.isArray(v.list) && v.list.length) return { ...EMPTY, list: v.list, syncedAt: v.syncedAt ?? null };
   } catch {
     /* unreadable or blocked storage: treat as empty */
   }
-  return { list: null, syncedAt: null };
+  return EMPTY;
 }
 
-let state: ReleasesState = { ...stored(), error: null, loading: false };
-let lastRequest = 0;
+const states = new Map<string, ReleasesState>();
+const lastRequest = new Map<string, number>();
 const subs = new Set<() => void>();
-const set = (s: Partial<ReleasesState>) => {
-  state = { ...state, ...s };
+const get = (base: string) => {
+  if (!states.has(base)) states.set(base, stored(base));
+  return states.get(base)!;
+};
+const set = (base: string, s: Partial<ReleasesState>) => {
+  states.set(base, { ...get(base), ...s });
   subs.forEach((f) => f());
 };
 
-/** Reads the OTA site and replaces the stored list. Used by the Sync button. */
-export async function syncReleases() {
-  if (state.loading) return;
-  const wait = lastRequest + MIN_GAP_MS - Date.now();
+/** Reads the host's index and replaces its stored list. Used by the Sync button. */
+export async function syncReleases(base: string) {
+  if (!base || get(base).loading) return;
+  const wait = (lastRequest.get(base) ?? 0) + MIN_GAP_MS - Date.now();
   if (wait > 0) {
-    set({ error: `Synced a moment ago; try again in ${Math.ceil(wait / 1000)} s.` });
+    set(base, { error: `Synced a moment ago; try again in ${Math.ceil(wait / 1000)} s.` });
     return;
   }
-  lastRequest = Date.now();
-  set({ loading: true, error: null });
+  lastRequest.set(base, Date.now());
+  set(base, { loading: true, error: null });
   try {
-    const res = await fetch("/ota-site/", { cache: "no-store" });
-    if (res.status === 404) throw new Error("OTA site proxy not available. Run the dashboard with npm run dev (or npm run preview).");
-    if (res.status === 401 || res.status === 403) throw new Error(`OTA site refused the request (HTTP ${res.status}).`);
-    if (!res.ok) throw new Error(`OTA site answered HTTP ${res.status}.`);
-    const list = parse(await res.text());
-    if (!list.length) throw new Error("No firmware files found on the OTA site (or it returned a bot-check page).");
+    const res = await fetch(`/ota-site/${proxyPath(base)}/`, { cache: "no-store" });
+    const text = await res.text();
+    // Without the dev/preview server a static host answers with the dashboard itself
+    if (text.includes('id="root"')) throw new Error("OTA proxy not available. Run the dashboard with npm run dev (or npm run preview).");
+    if (res.status === 502 || text === "host not allowed") throw new Error(text);
+    if (res.status === 401 || res.status === 403) throw new Error(`OTA host refused the request (HTTP ${res.status}).`);
+    if (!res.ok) throw new Error(`OTA host answered HTTP ${res.status}.`);
+    const list = parse(text);
+    if (!list.length) throw new Error("No firmware files found on this host (or it returned a bot-check page).");
     const syncedAt = Date.now();
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify({ list, syncedAt }));
+      localStorage.setItem(STORE_KEY + base, JSON.stringify({ list, syncedAt }));
     } catch {
       /* storage full or blocked: keep it for this visit only */
     }
-    set({ list, syncedAt, loading: false });
+    set(base, { list, syncedAt, loading: false });
   } catch (e) {
-    set({ loading: false, error: e instanceof TypeError ? "Could not reach the OTA site (network error)." : (e as Error).message });
+    set(base, { loading: false, error: e instanceof TypeError ? "Could not reach the dashboard's OTA proxy (network error)." : (e as Error).message });
   }
 }
 
-/** After a successful unlock: fetch only when nothing is stored yet. */
-export function ensureReleases() {
-  if (!state.list) void syncReleases();
+/** After a successful unlock: fetch only when nothing is stored for this host yet. */
+export function ensureReleases(base: string) {
+  if (base && !get(base).list) void syncReleases(base);
 }
 
-export function useReleases(): ReleasesState {
+export function useReleases(base: string): ReleasesState {
   return useSyncExternalStore(
     (f) => {
       subs.add(f);
       return () => subs.delete(f);
     },
-    () => state,
+    () => (base ? get(base) : EMPTY),
   );
+}
+
+/** Default OTA base URL from the dev server (ota_base_url in secrets.yaml), "" when not available. */
+let defaultBase: Promise<string> | null = null;
+export function loadDefaultBase(): Promise<string> {
+  defaultBase ??= fetch("/ota-site-config")
+    .then((r) => (r.ok ? r.json() : { base: "" }))
+    .then((j: { base?: string }) => j.base ?? "")
+    .catch(() => "");
+  return defaultBase;
 }

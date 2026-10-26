@@ -11,6 +11,7 @@ import {
   remove,
   set,
   startAt,
+  update,
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
 import type { Boot, Control, Crash, Device, Info, Reading } from "./types";
@@ -122,8 +123,14 @@ export function useShifted(from: number, to: number, shiftS: number) {
   return { rows: shiftS ? rows : null, loading };
 }
 
-// Remote control (same nodes as tools/control.py)
-export const setOta = (version: string) => set(ref(db, "control/ota"), version);
+// Remote control (same nodes as tools/control.py). 1.2.28+ boards remove handled commands themselves;
+// the clear functions stay for cancelling and for older boards.
+// The host goes in the same write, so a board never reads a version without its host.
+export const setOta = (version: string, host: string) => update(ref(db, "control"), { ota: version, ota_host: host });
 export const clearOta = () => remove(ref(db, "control/ota"));
+export const requestOtaCheck = (version: string, host: string) => update(ref(db, "control"), { ota_check: version, ota_host: host });
+export const clearOtaCheck = () => remove(ref(db, "control/ota_check"));
+export const setCheckInterval = (seconds: number) => set(ref(db, "control/check_s"), seconds);
+export const setOtaHost = (host: string) => set(ref(db, "control/ota_host"), host);
 export const requestRestart = () => set(ref(db, "control/restart"), String(Math.floor(Date.now() / 1000)));
 export const clearRestart = () => remove(ref(db, "control/restart"));
