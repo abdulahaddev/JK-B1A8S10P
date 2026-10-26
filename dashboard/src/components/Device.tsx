@@ -58,6 +58,10 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
               ["Lowest free", d.min_free_heap ? `${(d.min_free_heap / 1024).toFixed(0)} KB` : "–"],
               ["Largest block", d.max_block ? `${(d.max_block / 1024).toFixed(0)} KB` : "–"],
               ["Queued / dropped", `${d.buffered ?? 0} / ${d.dropped ?? 0}`],
+              ["Last batch / limit", `${d.upload_batch ?? "–"} / ${d.upload_cap ?? "–"}`],
+              ["Last upload took", d.upload_ms ? `${(d.upload_ms / 1000).toFixed(1)} s (avg ${((d.upload_ms_avg ?? 0) / 1000).toFixed(1)} s)` : "–"],
+              ["Upload heap low", d.upload_heap_low ? `${(d.upload_heap_low / 1024).toFixed(1)} KB` : "–"],
+              ["Learned cost", d.upload_heap_base ? `${(d.upload_heap_base / 1024).toFixed(1)} KB + ${((d.upload_heap_per ?? 0) / 1024).toFixed(2)} KB/reading` : "–"],
               ["Upload errors", d.upload_errors ?? 0],
               ["Control errors", d.control_errors ?? 0],
             ]}

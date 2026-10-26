@@ -53,6 +53,7 @@ template<size_t N> struct Ring {
     count--;
     return r;
   }
+  void pop_back() { count--; }  // drop the newest record (count > 0)
   bool valid() const { return head < N && count <= N; }
 };
 
@@ -126,6 +127,14 @@ inline void discard(size_t n) {
     if (ram_ring.count > 0) ram_ring.pop();
     else rtc_state.ring.pop();
   }
+}
+
+// Remove the newest record after it was uploaded, only if it is still the one with timestamp ts
+inline bool discard_newest(uint32_t ts) {
+  if (size() == 0 || peek(size() - 1).ts != ts) return false;
+  if (rtc_state.ring.count > 0) rtc_state.ring.pop_back();  // pushes always land in the RTC ring
+  else ram_ring.pop_back();
+  return true;
 }
 
 inline uint32_t &watchdog_resets() { return rtc_state.watchdog_resets; }

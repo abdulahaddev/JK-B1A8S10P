@@ -128,7 +128,10 @@ def site_get(secrets: dict, name: str) -> bytes:
 def healthy(d: dict) -> bool:
     fresh = time.time() - d.get("last_seen", 0) < 180
     busy = str(d.get("ota_status", "")).startswith(("downloading", "verifying"))
-    return fresh and d.get("ble_connected") == 1 and not busy
+    # Backlog cleared: more free heap for the download and no upload competing for the radio
+    # (firmware 1.2.27+ waits for this itself; older boards install as soon as they read the signal)
+    cleared = d.get("buffered", 0) <= 2
+    return fresh and d.get("ble_connected") == 1 and not busy and cleared
 
 
 def wait_healthy(secrets: dict, minutes: int, report: Report) -> bool:
@@ -143,9 +146,9 @@ def wait_healthy(secrets: dict, minutes: int, report: Report) -> bool:
         if healthy(d):
             report.log(f"board healthy: fw={d.get('firmware_version')} ble=1 ota={d.get('ota_status')!r}")
             return True
-        state = (d.get("ble_connected"), d.get("ota_status"), d.get("boot_count"))
+        state = (d.get("ble_connected"), d.get("ota_status"), d.get("boot_count"), d.get("buffered"))
         if state != last:
-            report.log(f"waiting for a healthy board: ble={state[0]} ota={state[1]!r} boot={state[2]}")
+            report.log(f"waiting for a healthy board: ble={state[0]} ota={state[1]!r} boot={state[2]} queued={state[3]}")
             last = state
         if time.time() - start > minutes * 60:
             return False

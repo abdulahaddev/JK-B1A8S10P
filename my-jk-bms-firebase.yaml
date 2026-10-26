@@ -1,21 +1,37 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.26"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.27"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
   log_level: INFO             # DEBUG logs every sensor and delays the OLED redraw ~110ms; NONE turns logging OFF
   log_baud_rate: "115200"     # Change to 0 to turn OFF serial output
   sample_interval: "30s"      # One telemetry reading into the buffer
+  sample_interval_ms: "30000" # Same, in ms (upload timing); keep both in sync
   upload_check_interval: "10s"
-  upload_batch_max: "10"      # Most buffered readings per upload request
-  # The batch is sized from free heap at upload time. Measured: TLS + request needs ~34 KB, each
-  # reading in the batch ~1 KB (10 readings took min free heap from 30 KB to 22 KB).
-  upload_tls_heap: "34000"
-  upload_heap_per_reading: "1000"
-  upload_heap_reserve: "24000" # Free heap to keep while the request is in flight
+  upload_batch_max: "8"       # Hard ceiling, never crossed; the learned limits normally stay below it
+  # The batch is the smallest of the memory fit, the adaptive limit (grows while uploads are quick and
+  # succeed, halves when one is slow or fails) and upload_batch_max.
+  # Memory fit is measured, not assumed: every upload records its own heap low point
+  # (heap_caps_monitor_local_minimum_free_size_*), learns from it the fixed cost of a request (TLS +
+  # body) and the cost per reading, and the next batch keeps the low point above upload_heap_floor.
+  # A low point below the floor halves the adaptive limit at once.
+  upload_heap_base_init: "24000"  # First estimate of the fixed cost; replaced by measurements
+  upload_heap_per_reading: "1000" # First estimate per reading; replaced by measurements
+  upload_heap_floor: "22000"      # Free heap that must remain at the low point of an upload
+  upload_min_block: "16000"   # Largest free block below this: send 1 reading only
+  # Free time: with a backlog, extra uploads run later in the 30 s cycle while the learned upload time
+  # plus this gap still ends before the next reading (the gap leaves room for fresh BMS frames)
+  upload_gap_ms: "6000"
   upload_min_batch: "2"       # Upload once this many readings wait (about every 60s)...
   upload_max_age_ms: "60000"  # ...or at least this often, so device diagnostics stay fresh
+  # An upload blocks the main loop (median 4.8 s, logs/phase44) and shares the radio with BLE, so it
+  # starts right after a reading is stored, at most once per reading, leaving the rest of the 30 s
+  # cycle to the BMS link. Uploads slower than the budget shrink the next batch.
+  upload_phase_ms: "12000"
+  upload_time_budget_ms: "8000"
+  upload_backoff_max_ms: "120000" # Failed uploads wait 10, 20, 40, 80, 120 s (30 s max while confirming an update)
+  ota_backlog_wait_ms: "1800000"  # Install waits for an empty backlog, but at most 30 min (the update may be the fix)
   info_refresh_ms: "86400000" # Re-send the info node daily even if nothing changed
   energy_interval_ms: "3600000"
   i2c_sda_pin: GPIO21         # D21 on ESP32 DevKit (OLED SDA)
@@ -450,6 +466,78 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: '0'
+  - id: upload_cap        # adaptive batch limit, 1..upload_batch_max
+    type: uint32_t
+    restore_value: no
+    initial_value: '2'
+  - id: upload_fresh_ts   # timestamp of the fresh reading in the request in flight, 0 = none
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_old_n      # backlog readings (oldest first) in the request in flight
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_ms_avg     # learned upload duration (moving average), for free-time uploads
+    type: uint32_t
+    restore_value: no
+    initial_value: '6000'
+  - id: upload_heap_before  # free heap when the request in flight started
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_heap_low   # heap low point of the last upload (diagnostics)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_heap_base  # learned fixed heap cost of a request (TLS + body)
+    type: uint32_t
+    restore_value: no
+    initial_value: '${upload_heap_base_init}'
+  - id: upload_heap_per   # learned heap cost per reading
+    type: uint32_t
+    restore_value: no
+    initial_value: '${upload_heap_per_reading}'
+  - id: upload_prev_used  # heap used and batch size of the previous upload (per-reading slope)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_prev_n
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_start_ms   # when the request in flight was built
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_ms_last    # how long the last upload blocked (diagnostics)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_fails      # failed uploads in a row (backoff)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_next_ms    # no upload before this (backoff after a failure)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: sample_seq        # readings stored since boot
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: upload_seq        # sample_seq when the last upload started (one upload per reading)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: last_sample_ms    # when the last reading was stored
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: ota_wait_ms       # since when an update waits for the backlog to clear, 0 = not waiting
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
   # OTA. The two hashes are kept in flash so the previous firmware knows about a rolled-back update.
   - id: ota_attempt_hash  # fnv1 hash of the version being installed, 0 when none
     type: uint32_t
@@ -628,6 +716,8 @@ interval:
           if (id(bms_discharging).state) r.flags |= telemetry::DISCHARGING;
           if (id(bms_balancing).state) r.flags |= telemetry::BALANCING;
           telemetry::push(r);
+          id(sample_seq)++;
+          id(last_sample_ms) = millis();
 
   # Remote control from Firebase, read every ota_check_interval:
   #   control/ota      version to install (e.g. "1.2.0"); empty/null clears a failed version for retry
@@ -705,6 +795,18 @@ interval:
                         }
                         if (id(ota_tries) >= ${ota_max_tries}) return;
                         if (id(ota_tries) > 0 && (int32_t) (millis() - id(ota_next_try_ms)) < 0) return;  // backoff
+                        // Install with the backlog cleared: more free heap and no upload competing for the
+                        // radio. A board that cannot upload still installs after ota_backlog_wait_ms.
+                        if (telemetry::size() > ${upload_min_batch}) {
+                          if (id(ota_wait_ms) == 0) id(ota_wait_ms) = millis() | 1;
+                          if (millis() - id(ota_wait_ms) < ${ota_backlog_wait_ms}) {
+                            id(ota_status) = "waiting for backlog (" + std::to_string(telemetry::size()) + " queued) before " + v;
+                            ESP_LOGI("ota", "%s", id(ota_status).c_str());
+                            return;
+                          }
+                          ESP_LOGW("ota", "backlog not cleared after %u s, installing anyway", (unsigned) (${ota_backlog_wait_ms} / 1000));
+                        }
+                        id(ota_wait_ms) = 0;
                         id(ota_tries)++;
                         id(ota_attempt_hash) = fnv1_hash(v);
                         global_preferences->sync();
@@ -851,8 +953,21 @@ interval:
               - wifi.connected:
               - lambda: 'return id(sntp_time).now().is_valid();'
               - lambda: |-
-                  return telemetry::size() >= ${upload_min_batch} || id(info_dirty) ||
-                         millis() - id(last_upload_ms) >= ${upload_max_age_ms};
+                  // Never next to an install or radio reset (memory and radio belong to them)
+                  if (id(ota_install).is_running() || id(radio_reset).is_running()) return false;
+                  // Backoff only after a failure (a plain millis() compare would misfire after ~24.8 days idle)
+                  if (id(upload_fails) > 0 && (int32_t) (millis() - id(upload_next_ms)) < 0) return false;
+                  // First upload after boot (confirms a new firmware) and stale diagnostics go at once
+                  if (id(ota_pending_verify) || !id(uploaded_since_boot) ||
+                      millis() - id(last_upload_ms) >= ${upload_max_age_ms}) return true;
+                  const uint32_t since = millis() - id(last_sample_ms);
+                  // Right after a stored reading, once per reading
+                  const bool in_phase = id(sample_seq) != id(upload_seq) && since < ${upload_phase_ms};
+                  if (in_phase && (telemetry::size() >= ${upload_min_batch} || id(info_dirty))) return true;
+                  // Free time: with a backlog, more uploads in the same cycle while the learned upload time
+                  // plus a gap for fresh BMS frames still ends before the next reading
+                  const bool backlog = telemetry::size() > ${upload_min_batch};
+                  return backlog && id(last_sample_ms) != 0 && since + id(upload_ms_avg) + ${upload_gap_ms} < ${sample_interval_ms};
           then:
             - lambda: 'crash::step(crash::STEP_UPLOAD);'
             - http_request.send:
@@ -863,14 +978,28 @@ interval:
                 json: |-
                   const uint32_t now_ts = id(sntp_time).now().timestamp;
 
-                  // Batch as many readings as free heap allows (at least 1, at most upload_batch_max)
-                  const int32_t room = (int32_t) esp_get_free_heap_size() - ${upload_tls_heap} - ${upload_heap_reserve};
-                  const size_t fit = room > 0 ? (size_t) room / ${upload_heap_per_reading} : 0;
-                  const size_t n = std::min({telemetry::size(), (size_t) ${upload_batch_max}, std::max(fit, (size_t) 1)});
+                  // Batch: smallest of the measured memory fit, the adaptive limit and the hard cap (at least 1)
+                  const uint32_t free_now = esp_get_free_heap_size();
+                  const int32_t room = (int32_t) free_now - (int32_t) id(upload_heap_base) - ${upload_heap_floor};
+                  size_t fit = room > 0 ? (size_t) room / std::max<uint32_t>(id(upload_heap_per), 1) : 0;
+                  if (heap_caps_get_largest_free_block(MALLOC_CAP_8BIT) < ${upload_min_block}) fit = 0;  // fragmented
+                  const size_t n = std::min({telemetry::size(), (size_t) id(upload_cap), (size_t) ${upload_batch_max},
+                                             std::max(fit, (size_t) 1)});
+                  // Fresh snapshot first: a reading stored since the last upload always goes in this request;
+                  // the rest of the batch is the oldest backlog (the RAM part, which a reboot would lose).
+                  // Free-time uploads have no fresh reading and carry backlog only.
+                  const bool fresh = n > 0 && id(sample_seq) != id(upload_seq);
+                  const size_t old_n = fresh ? std::min(n - 1, telemetry::size() - 1) : n;
+                  id(upload_fresh_ts) = fresh ? telemetry::peek(telemetry::size() - 1).ts : 0;
+                  id(upload_old_n) = old_n;
                   id(upload_batch_n) = n;
                   id(upload_batch_last) = n;
-                  for (size_t i = 0; i < n; i++) {
-                    const telemetry::Record &r = telemetry::peek(i);
+                  id(upload_seq) = id(sample_seq);
+                  id(upload_start_ms) = millis();
+                  id(upload_heap_before) = free_now;
+                  const size_t first = fresh ? 1 : 0;
+                  for (size_t i = 0; i < first + old_n; i++) {
+                    const telemetry::Record &r = i < first ? telemetry::peek(telemetry::size() - 1) : telemetry::peek(i - first);
                     JsonObject o = root[std::string("telemetry/") + std::to_string(r.ts)].to<JsonObject>();
                     o["total_voltage"] = r.total_mv / 1000.0;
                     if (r.current_10ma != telemetry::NO_VALUE) o["current"] = r.current_10ma / 100.0;
@@ -911,6 +1040,12 @@ interval:
                   d["buffered"] = telemetry::size();
                   d["dropped"] = telemetry::dropped;
                   d["upload_batch"] = id(upload_batch_last);
+                  d["upload_cap"] = id(upload_cap);
+                  d["upload_ms"] = id(upload_ms_last);
+                  d["upload_ms_avg"] = id(upload_ms_avg);
+                  d["upload_heap_low"] = id(upload_heap_low);
+                  d["upload_heap_base"] = id(upload_heap_base);
+                  d["upload_heap_per"] = id(upload_heap_per);
                   d["firmware_version"] = "${fw_version}";
                   d["ota_status"] = id(ota_status);
 
@@ -970,6 +1105,11 @@ interval:
                   if (id(energy_in_flight)) {
                     root[std::string("energy/") + std::to_string(now_ts)] = energy;
                   }
+
+                  // Measure this request's heap low point (read and stopped in on_response / on_error).
+                  // stop() first: a request that ended without either callback must not leave it running.
+                  heap_caps_monitor_local_minimum_free_size_stop();
+                  heap_caps_monitor_local_minimum_free_size_start();
                 on_response:
                   then:
                     - lambda: |-
@@ -980,7 +1120,8 @@ interval:
                         if (ok) {
                           id(uploaded_since_boot) = true;
                           id(bad_requests) = 0;
-                          telemetry::discard(id(upload_batch_n));
+                          if (id(upload_fresh_ts) != 0) telemetry::discard_newest(id(upload_fresh_ts));
+                          telemetry::discard(id(upload_old_n));
                           if (id(ota_pending_verify)) {
                             // First good upload on a new firmware: keep it
                             esp_ota_mark_app_valid_cancel_rollback();
@@ -1011,12 +1152,55 @@ interval:
                           if (response->status_code == 400 && ++id(bad_requests) >= ${bad_request_limit}) {
                             ESP_LOGE("firebase", "Dropping %u readings rejected %u times", (unsigned) id(upload_batch_n),
                                      (unsigned) id(bad_requests));
-                            telemetry::discard(id(upload_batch_n));
+                            if (id(upload_fresh_ts) != 0) telemetry::discard_newest(id(upload_fresh_ts));
+                            telemetry::discard(id(upload_old_n));
                             id(bad_requests) = 0;
                           }
                         }
                         id(info_in_flight) = false;
                         id(energy_in_flight) = false;
+
+                        // Heap: this request's low point, then learn the fixed cost and the cost per reading.
+                        // A higher measured cost is taken at once, a lower one only slowly (stay conservative).
+                        const uint32_t low = heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT);
+                        heap_caps_monitor_local_minimum_free_size_stop();
+                        id(upload_heap_low) = low;
+                        const uint32_t n = std::max<uint32_t>(id(upload_batch_n), 1);
+                        if (id(upload_heap_before) > low) {
+                          const uint32_t used = id(upload_heap_before) - low;
+                          // Slope from two uploads whose batch sizes differ by 2 or more
+                          if (id(upload_prev_n) != 0 && (n >= id(upload_prev_n) + 2 || id(upload_prev_n) >= n + 2)) {
+                            const int32_t slope = ((int32_t) used - (int32_t) id(upload_prev_used)) /
+                                                  ((int32_t) n - (int32_t) id(upload_prev_n));
+                            const uint32_t per = (uint32_t) std::clamp<int32_t>(slope, 300, 4000);
+                            id(upload_heap_per) = per > id(upload_heap_per) ? per : (id(upload_heap_per) * 3 + per) / 4;
+                          }
+                          const uint32_t base = (uint32_t) std::max<int32_t>((int32_t) used - (int32_t) (n * id(upload_heap_per)), 8000);
+                          id(upload_heap_base) = base > id(upload_heap_base) ? base : (id(upload_heap_base) * 7 + base) / 8;
+                          id(upload_prev_used) = used;
+                          id(upload_prev_n) = n;
+                        }
+                        const bool heap_low = low < ${upload_heap_floor};
+                        if (heap_low) ESP_LOGW("firebase", "Heap low point %u B with %u readings, batch limit halved", (unsigned) low, (unsigned) n);
+
+                        // Adapt: a full batch that went up within the time budget and above the heap floor earns
+                        // one more reading; a slow, failed or memory-tight upload halves the limit
+                        const uint32_t took = millis() - id(upload_start_ms);
+                        id(upload_ms_last) = took;
+                        id(upload_ms_avg) = (id(upload_ms_avg) * 3 + took) / 4;
+                        if (ok && took <= ${upload_time_budget_ms} && !heap_low) {
+                          if (id(upload_batch_n) >= id(upload_cap)) id(upload_cap) = std::min<uint32_t>(id(upload_cap) + 1, ${upload_batch_max});
+                        } else {
+                          id(upload_cap) = std::max<uint32_t>(id(upload_cap) / 2, 1);
+                        }
+                        if (ok) {
+                          id(upload_fails) = 0;
+                          id(upload_next_ms) = millis();
+                        } else {
+                          id(upload_fails)++;
+                          const uint32_t cap_ms = id(ota_pending_verify) ? 30000 : ${upload_backoff_max_ms};
+                          id(upload_next_ms) = millis() + std::min<uint32_t>(10000u << std::min<uint32_t>(id(upload_fails) - 1, 4), cap_ms);
+                        }
                 on_error:
                   then:
                     - lambda: |-
@@ -1026,6 +1210,14 @@ interval:
                         id(last_upload_ms) = millis();
                         id(info_in_flight) = false;
                         id(energy_in_flight) = false;
+                        id(upload_heap_low) = heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT);
+                        heap_caps_monitor_local_minimum_free_size_stop();
+                        id(upload_ms_last) = millis() - id(upload_start_ms);
+                        id(upload_ms_avg) = (id(upload_ms_avg) * 3 + id(upload_ms_last)) / 4;
+                        id(upload_cap) = std::max<uint32_t>(id(upload_cap) / 2, 1);
+                        id(upload_fails)++;
+                        const uint32_t cap_ms = id(ota_pending_verify) ? 30000 : ${upload_backoff_max_ms};
+                        id(upload_next_ms) = millis() + std::min<uint32_t>(10000u << std::min<uint32_t>(id(upload_fails) - 1, 4), cap_ms);
                         ESP_LOGE("firebase", "HTTP request error, %u readings buffered", (unsigned) telemetry::size());
 
 # Short scan window (~9% duty) leaves radio time for the BMS connection and WiFi

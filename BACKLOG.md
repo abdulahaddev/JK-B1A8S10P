@@ -22,6 +22,14 @@ buffers) plus a 24 KB reserve, so at ~54 KB free heap it sends 1-2 readings per 
 takes ~15 min to clear. Recalibrate (TLS ~20 KB, reserve ~16 KB -> ~10 per batch), flash, and check
 min_free_heap stays above ~20 KB during the next catch-up.
 
+## Reuse the TLS connection between uploads (waiting)
+
+Every upload opens a new TLS connection to Firebase; the handshake (several round trips plus key
+exchange) costs more radio time and main-loop blocking than the readings themselves. ESPHome's
+`http_request` closes the connection after each request, so keeping it open needs a custom
+component on `esp_http_client` (keep-alive, reconnect on error, close before OTA and radio resets so
+the download gets the memory). Check the heap held by an idle open session against the OTA reserve.
+
 ## Remote-only safety rules (from the 1.2.23-1.2.25 night)
 
 Every remote step must have a remote way back before it is taken:

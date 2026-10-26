@@ -37,6 +37,13 @@ export interface Device {
   buffered?: number;
   dropped?: number;
   upload_errors?: number;
+  upload_batch?: number; // readings in the last request
+  upload_cap?: number; // adaptive batch limit (fw 1.2.27+)
+  upload_ms?: number; // how long the last upload blocked (fw 1.2.27+)
+  upload_ms_avg?: number; // learned upload time
+  upload_heap_low?: number; // heap low point of the last upload
+  upload_heap_base?: number; // learned fixed heap cost per request
+  upload_heap_per?: number; // learned heap cost per reading
   control_errors?: number;
   firmware_version?: string;
   ota_status?: string;
