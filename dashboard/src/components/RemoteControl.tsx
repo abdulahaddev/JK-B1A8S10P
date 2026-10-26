@@ -245,6 +245,10 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
   const sel = releases.list?.find((r) => r.version === version);
   const older = sel && current ? compareVersions(sel.version, current) < 0 : false;
   const status = d?.ota_status ?? "";
+  // Strict lock (fw 1.2.30+): an accepted or running update blocks other versions until it is done
+  const locked = /^(update accepted|downloading) (\S+)/.exec(status)?.[2] ?? /^update (\S+) waits for/.exec(status)?.[1] ?? "";
+  const installing = status.startsWith("downloading ");
+  const blockedBy = locked && sel && sel.version !== locked ? locked : "";
   const failedThis = !!sel && (status.startsWith("download failed " + sel.version) || status.startsWith("update refused")) && status.includes(sel.version);
 
   return (
@@ -349,6 +353,11 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
               </p>
             )}
             {older && <p className="field-warn">Older than the installed {current}.</p>}
+            {locked && (
+              <p className="field-warn">
+                {installing ? `Installing ${locked}: other updates and Cancel are blocked until it is done.` : `Update ${locked} is accepted on the board: other versions are refused until it is installed, fails, expires (5 min) or is cancelled.`}
+              </p>
+            )}
             {d?.ota_check && <p className="field-hint">Last check: {d.ota_check}{d.ota_check_ts ? <> · <Ago ts={d.ota_check_ts} /></> : null}</p>}
             <div className="control-row">
               <button
@@ -369,7 +378,8 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
               </button>
               <button
                 className="primary"
-                disabled={!sel || !base}
+                disabled={!sel || !base || !!blockedBy || installing}
+                title={blockedBy ? `Update ${blockedBy} is in progress on the board; cancel it first` : installing ? "An update is being installed" : undefined}
                 onClick={() =>
                   sel &&
                   setConfirm({
@@ -382,7 +392,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
               >
                 <Send size={14} aria-hidden /> {failedThis ? "Install again" : "Install"}
               </button>
-              <button className="secondary" disabled={!control?.ota} onClick={() => send("Cancel update", clearOta)}>
+              <button className="secondary" disabled={!control?.ota || installing} title={installing ? "Too late: the download has started" : undefined} onClick={() => send("Cancel update", clearOta)}>
                 <X size={14} aria-hidden /> Cancel
               </button>
             </div>

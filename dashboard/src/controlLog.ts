@@ -36,7 +36,7 @@ export function useLog(): LogLine[] {
 }
 
 const otaLevel = (s: string): Level =>
-  /fail|error|rolled back|refus|not usable|no response/i.test(s) ? "error" : /confirmed|updated|running|: ok$/i.test(s) ? "ok" : "info";
+  /fail|error|rolled back|refus|not usable|no response|expired|stopped|cancelled/i.test(s) ? "error" : /confirmed|updated|running|: ok$/i.test(s) ? "ok" : "info";
 
 // When this browser sent each command, to report how long the board took to act on it
 export type Command = "ota" | "restart" | "ota_check";

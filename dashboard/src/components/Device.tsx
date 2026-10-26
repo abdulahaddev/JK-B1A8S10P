@@ -16,6 +16,7 @@ const WIFI_REASONS: Record<number, string> = {
   15: "WPA handshake timeout",
   16: "group key update timeout",
   23: "802.1X authentication failed",
+  34: "router: too many unacknowledged frames (low ACK)",
   200: "beacon timeout (router not heard)",
   201: "router not found",
   202: "authentication failed (password?)",

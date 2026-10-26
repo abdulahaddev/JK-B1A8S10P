@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.29"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.30"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -31,10 +31,14 @@ substitutions:
   upload_phase_ms: "12000"
   upload_time_budget_ms: "8000"
   upload_backoff_max_ms: "120000" # Failed uploads wait 10, 20, 40, 80, 120 s (30 s max while confirming an update)
-  # An accepted update pauses uploads at once; the queue uploads after the reboot (RTC ring) or after a
-  # failed attempt. Only readings in the RAM ring (older than the newest 280) would be lost to the reboot,
-  # so while there are any, uploads continue until they are gone, at most this long.
-  ota_backlog_wait_ms: "1800000"
+  # One update at a time (strict lock): an accepted version pauses uploads, refuses other versions and is
+  # dropped ("expired") if it has not started within ota_accept_ms: no WiFi, or RAM-ring readings (older
+  # than the newest 280, lost to the reboot) still uploading. Re-signal once the backlog is down.
+  ota_accept_ms: "300000"
+  # The download itself (after BLE is off) may take at most this long; past it a clean restart (the update
+  # writes only to the inactive slot, the running firmware is untouched). A stall ends it earlier: the
+  # read timeout during the download is 30 s.
+  ota_download_ms: "300000"
   info_refresh_ms: "86400000" # Re-send the info node daily even if nothing changed
   energy_interval_ms: "3600000"
   i2c_sda_pin: GPIO21         # D21 on ESP32 DevKit (OLED SDA)
@@ -121,10 +125,16 @@ esphome:
               id(ota_display) = "OTA verifying ${fw_version}";
             } else if (id(ota_attempt_hash) != 0) {
               if (id(ota_attempt_hash) != fnv1_hash("${fw_version}")) {
-                // Rolled back: the first control read removes control/ota if it still names that version
+                // Not installed: the first control read removes control/ota if it still names that version
                 id(ota_failed_hash) = id(ota_attempt_hash);
-                id(ota_status) = "rolled back, running ${fw_version}";
-                id(ota_display) = "OTA rolled back";
+                if (strcmp(telemetry::restart_cause(), "ota_time_limit") == 0) {
+                  id(ota_status) = "update stopped: download took over " + std::to_string(${ota_download_ms} / 60000) +
+                                   " min, running ${fw_version}";
+                  id(ota_display) = "OTA too slow";
+                } else {
+                  id(ota_status) = "rolled back, running ${fw_version}";
+                  id(ota_display) = "OTA rolled back";
+                }
                 id(ota_show_until) = millis() + ${ota_text_long_ms};
               }
               id(ota_attempt_hash) = 0;
@@ -193,7 +203,8 @@ ota:
             char err[8];
             snprintf(err, sizeof(err), "0x%02X", (unsigned) x);  // ota::OTAResponseTypes, e.g. 0x8B = MD5 mismatch, 0xFF = read error
             // One attempt per signal: report, then remove control/ota at once (forced control read)
-            id(ota_status) = "download failed " + id(ota_target) + " (error " + err + ")";
+            id(ota_status) = "download failed " + id(ota_target) + " (error " + err + ", after " +
+                             std::to_string((millis() - id(ota_dl_start_ms)) / 1000) + " s)";
             id(ota_attempt_hash) = 0;
             global_preferences->sync();
             ESP_LOGE("ota", "%s", id(ota_status).c_str());
@@ -213,6 +224,15 @@ ota:
     on_progress:
       then:
         - lambda: |-
+            // Download time limit: a clean restart. The update writes only to the inactive slot, so the
+            // running firmware is untouched; the next boot reports it (restart cause ota_time_limit).
+            if (millis() - id(ota_dl_start_ms) > ${ota_download_ms}) {
+              ESP_LOGE("ota", "Download of %s over %u s at %d%%, restarting", id(ota_target).c_str(),
+                       (unsigned) (${ota_download_ms} / 1000), (int) x);
+              telemetry::set_restart_cause(telemetry::CAUSE_OTA_TIME_LIMIT);
+              global_preferences->sync();
+              radio_sleep(1000000);  // stops BLE and WiFi first, then a 1 s deep sleep
+            }
             const int step = (int) x / 10;
             if (step == id(ota_progress_step)) return;
             id(ota_progress_step) = step;
@@ -594,6 +614,18 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: ota_dl_start_ms   # when the download started (download time limit)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: put_unlocks       # the pending write-back removes control/ota of a finished attempt: unlock on success
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: ota_restore       # write-back puts control/ota back to the locked version (another one was refused)
+    type: bool
+    restore_value: no
+    initial_value: 'false'
   # Control read (dynamic interval) and removal of handled commands
   - id: control_s         # interval in use, from control/check_s
     type: uint32_t
@@ -835,6 +867,8 @@ interval:
                 id(control_force) = false;
                 id(control_last_ms) = millis();
                 id(control_put) = false;
+                id(put_unlocks) = false;
+                id(ota_restore) = false;
                 id(restart_go) = false;
                 id(check_target) = "";
             - http_request.get:
@@ -906,7 +940,7 @@ interval:
                           }
                         }
 
-                        // Update request: one attempt per signal, only from an allowed host
+                        // Update request: one update at a time (strict lock), one attempt per signal, allowed hosts only
                         const std::string v = otactl::clean_version(doc["ota"] | "");
                         if (v.empty()) {
                           if (id(ota_requested)) {
@@ -914,23 +948,31 @@ interval:
                             id(ota_status) = "update " + id(ota_target) + " cancelled";
                             ESP_LOGI("ota", "%s", id(ota_status).c_str());
                           }
+                          id(ota_done) = "";  // nothing left to clean up: unlocked
                         } else if (!id(ota_pending_verify) && !id(restart_go)) {
                           if (v == "${fw_version}") {
                             clear_ota = true;  // installed and confirmed
                           } else if (id(ota_failed_hash) != 0 && fnv1_hash(v) == id(ota_failed_hash)) {
-                            clear_ota = true;  // rolled back (ota_status says so); a new signal may try again
+                            clear_ota = true;  // rolled back or stopped (ota_status says so); a new signal may try again
                             id(ota_failed_hash) = 0;
                             global_preferences->sync();
                           } else if (v == id(ota_done)) {
-                            clear_ota = true;  // failed or refused this boot: only clean up
-                          } else if (id(ota_requested) && v == id(ota_target)) {
-                            // accepted, waiting for the install to start
+                            clear_ota = true;  // failed, refused or expired: remove it, unlock once removed
+                            id(put_unlocks) = true;
+                          } else if (id(ota_requested)) {
+                            if (v != id(ota_target)) {
+                              // Locked on another version: refuse this one, put the accepted one back
+                              id(ota_status) = "refused " + v + ": update " + id(ota_target) + " in progress";
+                              id(ota_restore) = true;
+                              ESP_LOGW("ota", "%s", id(ota_status).c_str());
+                            }
                           } else {
                             const std::string base = otactl::allowed_base(doc["ota_host"] | "");
                             if (base.empty()) {
                               id(ota_status) = "update refused: no/unknown OTA host for " + v;
                               id(ota_done) = v;
                               clear_ota = true;
+                              id(put_unlocks) = true;
                               ESP_LOGW("ota", "%s", id(ota_status).c_str());
                             } else {
                               id(ota_target) = v;
@@ -958,12 +1000,16 @@ interval:
                         }
 
                         // Write control back without the handled commands (settings and anything else stay)
-                        if (clear_restart || clear_ota || clear_check) {
+                        if (clear_restart || clear_ota || clear_check || id(ota_restore)) {
                           JsonDocument out;
                           for (JsonPair kv : doc.as<JsonObject>()) {
                             const char *k = kv.key().c_str();
                             if ((clear_restart && strcmp(k, "restart") == 0) || (clear_ota && strcmp(k, "ota") == 0) ||
                                 (clear_check && strcmp(k, "ota_check") == 0)) continue;
+                            if (id(ota_restore) && strcmp(k, "ota") == 0) {
+                              out[k] = id(ota_target);  // refused version replaced by the locked one
+                              continue;
+                            }
                             out[k] = kv.value();
                           }
                           std::string rest;
@@ -1045,6 +1091,7 @@ interval:
                                 ESP_LOGW("control", "removing handled commands failed with code %d", response->status_code);
                               } else {
                                 ESP_LOGI("control", "handled commands removed");
+                                if (id(put_unlocks)) id(ota_done) = "";  // the finished attempt is gone: unlocked
                               }
                       on_error:
                         then:
@@ -1098,15 +1145,25 @@ interval:
           }
 
   # Start an accepted update. Uploads are paused from acceptance; only readings in the RAM ring (lost to
-  # the reboot) are uploaded first, for at most ota_backlog_wait_ms.
+  # the reboot) are uploaded first. Not started within ota_accept_ms (no WiFi, RAM ring not empty): expired.
   - interval: 10s
     then:
       - if:
           condition:
             lambda: |-
               if (!id(ota_requested) || id(ota_install).is_running() || id(radio_reset).is_running()) return false;
+              if (millis() - id(ota_request_ms) >= ${ota_accept_ms}) {
+                // Expired: unlock via the next control read, which removes the command (ota_done)
+                id(ota_requested) = false;
+                id(ota_status) = "update " + id(ota_target) + " expired (not started within " +
+                                 std::to_string(${ota_accept_ms} / 60000) + " min)";
+                id(ota_done) = id(ota_target);
+                id(control_force) = true;
+                ESP_LOGW("ota", "%s", id(ota_status).c_str());
+                return false;
+              }
               const size_t ram = telemetry::ram_size();
-              if (ram > 0 && millis() - id(ota_request_ms) < ${ota_backlog_wait_ms}) {
+              if (ram > 0) {
                 id(ota_status) = "update " + id(ota_target) + " waits for " + std::to_string(ram) + " older readings to upload";
                 return false;
               }
@@ -1643,6 +1700,7 @@ script:
           id(ota_progress_step) = 0;
           id(ota_show_until) = millis() + ${ota_text_long_ms};
           crash::step(crash::STEP_OTA_FLASH);
+          id(ota_dl_start_ms) = millis();  // download time limit, checked in ota_http on_progress
       - component.update: oled_display
       - ota.http_request.flash:
           id: ota_http

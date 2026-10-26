@@ -102,14 +102,43 @@ buffers) plus a 24 KB reserve, so at ~54 KB free heap it sends 1-2 readings per 
 takes ~15 min to clear. Recalibrate (TLS ~20 KB, reserve ~16 KB -> ~10 per batch), flash, and check
 min_free_heap stays above ~20 KB during the next catch-up.
 
+## Firmware 1.2.30 plan: strict OTA lock (next)
+
+One update at a time, decided by the board:
+
+| Board state | `control/ota` = same version | = other version | removed (empty) |
+|---|---|---|---|
+| idle | accept: lock on it | accept: lock on it | nothing |
+| locked, waiting to install | ignore (already accepted) | **refuse**: remove it, `ota_status` "refused <w>: update <v> in progress" | cancel: unlock, "update <v> cancelled" |
+| installing | not read (control reads pause) | not read | not read |
+| failed | remove it, report; **unlock** once removed | same | unlock |
+| success | reboot; the new firmware removes its own version | | |
+
+- The lock lives in RAM: a restart always unlocks (the remote way back if the board ever stuck).
+- Unlock after a failure as soon as the board has removed the command (successful write-back), so
+  a later signal of the same version is a new attempt. Replaces `ota_done` (fixes the bug below).
+- Dashboard: while the board reports "update <v> accepted/downloading", Install for other versions
+  is disabled with the reason; Cancel stays available until the install starts.
+- **Time limits:**
+  - Accepted but not started within **5 min** (no WiFi, or RAM-ring readings still uploading):
+    drop it, `ota_status` "update <v> expired", remove the command, unlock, uploads resume. Replaces
+    the 30 min RAM-backlog wait: with >280 readings queued the update expires instead of installing
+    and losing the RAM ring; re-signal once the backlog is down.
+  - Download: **5 min** total from the start of the download (prep with BLE off has its own 3 min
+    guard), checked on each progress step; past it a clean restart (the update writes only to the
+    inactive slot, so the running firmware is untouched; `boots/` shows `restart_cause` stuck_script).
+    Report each download's duration in `ota_status` to tune the limit from real numbers.
+  - Read timeout (longest wait for the next chunk) stays **30 s**: a stall that long means a dead
+    link; failing early lets you re-signal instead of waiting out the 5 min.
+
 ## Re-signal after a failed update needs a restart (bug, since 1.2.28)
 
 After a failed download the board remembers the version in `ota_done` for the rest of the boot, and a
 new `control/ota` with the same version is only cleaned up, not tried again (seen with 1.2.29 on
 27 Oct: retry needed a remote restart first). Intended: "re-signal to try again". Fix: clear `ota_done`
 once the board has removed the command (successful write-back), so a later signal counts as new.
-Also worth trying: a 60 s read timeout for the OTA download (the failed 1.2.29 attempt stalled
-between the Cloudflare tunnel and the board after the server had sent the whole file).
+(The failed 1.2.29 attempt stalled between the Cloudflare tunnel and the board after the server had
+sent the whole file; covered by re-signalling, see the 1.2.30 time limits.)
 
 ## Remote charging / discharging switches (deferred)
 
