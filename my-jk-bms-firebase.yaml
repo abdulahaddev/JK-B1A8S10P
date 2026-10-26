@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.28"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.29"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -49,6 +49,13 @@ substitutions:
   control_default_s: "300"
   control_min_s: "30"
   control_max_s: "3600"
+  # WiFi and BLE share one radio. Remote settings in control (both apply at once while connected):
+  #   ble_scan_always  false (default): scan for the BMS only while not connected; true: scan all the time
+  #   ble_interval_ms  0 (default): keep the BMS link's interval; 30..200: ask for that connection interval
+  #                    (fewer BLE connection events leave the radio to WiFi). ESPHome does not pass on the
+  #                    result, so device/ble_interval_req reports the request, not what the BMS accepted.
+  ble_interval_min_ms: "30"
+  ble_interval_max_ms: "200"
   ota_verify_timeout_ms: "600000"  # New firmware must upload to Firebase within 10 min or it rolls back
   radio_reset_fallback_ms: "120000"  # Radio reset after a software reset even without a successful upload
   ota_text_long_ms: "600000"  # OTA text replaces BAL/DSG this long after a failure or rollback
@@ -628,6 +635,22 @@ globals:
     type: std::string
     restore_value: no
     initial_value: '""'
+  - id: ble_scan_always   # control/ble_scan_always: keep scanning while connected (old behaviour)
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: ble_interval_ms   # control/ble_interval_ms: connection interval to request, 0 = leave as is
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: ble_interval_req  # last request sent: "<ms> ms: ok" / "<ms> ms: error 0x.." (device/ble_interval_req)
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+  - id: radio_apply       # apply the BLE scan / interval settings at the next tick
+    type: bool
+    restore_value: no
+    initial_value: 'false'
   - id: check_ts          # unix time of check_result (device/ota_check_ts)
     type: uint32_t
     restore_value: no
@@ -849,6 +872,19 @@ interval:
                         if (s != id(control_s)) ESP_LOGI("control", "Read interval %u s", (unsigned) s);
                         id(control_s) = s;
 
+                        // Radio settings: BLE scan while connected, BLE connection interval (applied next tick)
+                        const bool scan_always = doc["ble_scan_always"] | false;
+                        JsonVariant bi = doc["ble_interval_ms"];
+                        long bl = bi.is<long>() ? bi.as<long>() : (bi.is<const char *>() ? atol(bi.as<const char *>()) : 0);
+                        const uint32_t ble_ms = bl <= 0 ? 0 : (uint32_t) std::clamp<long>(bl, ${ble_interval_min_ms}, ${ble_interval_max_ms});
+                        if (scan_always != id(ble_scan_always) || ble_ms != id(ble_interval_ms)) {
+                          ESP_LOGI("radio", "BLE scan %s, connection interval %s", scan_always ? "always" : "only while disconnected",
+                                   ble_ms ? (std::to_string(ble_ms) + " ms").c_str() : "unchanged");
+                          id(ble_scan_always) = scan_always;
+                          id(ble_interval_ms) = ble_ms;
+                          id(radio_apply) = true;
+                        }
+
                         // Restart request (never while a new firmware still has to confirm itself)
                         std::string restart_token;
                         JsonVariant restart = doc["restart"];
@@ -1027,6 +1063,39 @@ interval:
                       id(ota_show_until) = millis() + 5000;
                       id(oled_display).update();
                   - script.execute: radio_reset
+
+  # Radio settings (from control, or 5 s after a BMS connect) and the WiFi signal for drop reports.
+  # Stopping the scan while connected frees ~9% of the radio (30 ms every 320 ms) for WiFi; the BMS does
+  # not advertise while connected anyway. A longer BLE connection interval means fewer connection events.
+  - interval: 10s
+    then:
+      - lambda: |-
+          auto *wifi = esphome::wifi::global_wifi_component;
+          if (wifi != nullptr && wifi->is_connected()) otactl::last_rssi = (int8_t) wifi->wifi_rssi();
+          if (!id(radio_apply) || id(ota_install).is_running() || id(radio_reset).is_running()) return;
+          id(radio_apply) = false;
+          auto *t = id(ble_tracker);
+          const bool connected = id(client0)->connected();
+          if (connected && !id(ble_scan_always)) {
+            t->stop_scan();  // also switches continuous scanning off; on_disconnect turns it back on
+          } else {
+            t->set_scan_continuous(true);
+            if (t->get_scanner_state() == esp32_ble_tracker::ScannerState::IDLE) t->start_scan();
+          }
+          if (connected && id(ble_interval_ms) > 0) {
+            esp_ble_conn_update_params_t p = {};
+            memcpy(p.bda, id(client0)->get_remote_bda(), sizeof(esp_bd_addr_t));
+            const uint16_t max_int = (uint16_t) (id(ble_interval_ms) * 4 / 5);  // units of 1.25 ms
+            p.max_int = max_int;
+            p.min_int = std::max<uint16_t>(6, max_int * 4 / 5);
+            p.latency = 0;
+            p.timeout = 600;  // 6 s supervision timeout (units of 10 ms)
+            const esp_err_t err = esp_ble_gap_update_conn_params(&p);
+            char buf[64];
+            snprintf(buf, sizeof(buf), "%u ms: %s", (unsigned) id(ble_interval_ms), err == ESP_OK ? "requested" : esp_err_to_name(err));
+            id(ble_interval_req) = buf;
+            ESP_LOGI("radio", "BLE connection interval %s", buf);
+          }
 
   # Start an accepted update. Uploads are paused from acceptance; only readings in the RAM ring (lost to
   # the reboot) are uploaded first, for at most ota_backlog_wait_ms.
@@ -1239,7 +1308,14 @@ interval:
                   if (otactl::last_disc_ms != 0) {
                     d["wifi_disc_reason"] = (uint32_t) otactl::last_disc_reason;
                     d["wifi_disc_ts"] = now_ts - (now_ms - otactl::last_disc_ms) / 1000;
+                    if (otactl::disc_rssi != 0) d["wifi_disc_rssi"] = (int) otactl::disc_rssi;
+                    JsonObject dc = d["wifi_disc_counts"].to<JsonObject>();  // since boot, per reason code
+                    for (int rc = 0; rc < 256; rc++) {
+                      if (otactl::disc_counts[rc]) dc[std::to_string(rc)] = (unsigned) otactl::disc_counts[rc];
+                    }
                   }
+                  d["ble_scan"] = id(ble_scan_always) ? "always" : "while disconnected";
+                  if (!id(ble_interval_req).empty()) d["ble_interval_req"] = id(ble_interval_req);
                   if (!id(upload_fail).empty()) {
                     d["upload_fail"] = id(upload_fail);
                     d["upload_fail_ts"] = now_ts - (millis() - id(upload_fail_ms)) / 1000;
@@ -1441,7 +1517,9 @@ interval:
 
 # Short scan window (~9% duty) leaves radio time for the BMS connection and WiFi
 esp32_ble_tracker:
-  # Signal of the BMS as this board hears it (reported in device/bms_rssi, bms_adverts)
+  id: ble_tracker
+  # Signal of the BMS as this board hears it (reported in device/bms_rssi, bms_adverts). While connected the
+  # BMS stops advertising, so scanning only runs while disconnected unless control/ble_scan_always is set.
   on_ble_advertise:
     - mac_address: ${bms_mac_address}
       then:
@@ -1460,9 +1538,16 @@ ble_client:
       then:
         - lambda: 'id(ble_connect_ms) = millis();'
         - script.execute: redraw_display
+        # Radio settings after the link has settled (service discovery done)
+        - delay: 5s
+        - lambda: 'id(radio_apply) = true;'
     on_disconnect:
       then:
-        - lambda: 'id(ble_disconnects)++;'
+        - lambda: |-
+            id(ble_disconnects)++;
+            // Scan again to find the BMS (stop_scan also switched off continuous scanning)
+            id(ble_tracker)->set_scan_continuous(true);
+            if (id(ble_tracker)->get_scanner_state() == esp32_ble_tracker::ScannerState::IDLE) id(ble_tracker)->start_scan();
         - script.execute: redraw_display
 
 # Redraw the OLED when data or connection state changes instead of polling.

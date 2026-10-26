@@ -102,6 +102,18 @@ buffers) plus a 24 KB reserve, so at ~54 KB free heap it sends 1-2 readings per 
 takes ~15 min to clear. Recalibrate (TLS ~20 KB, reserve ~16 KB -> ~10 per batch), flash, and check
 min_free_heap stays above ~20 KB during the next catch-up.
 
+## Remote charging / discharging switches (deferred)
+
+The firmware already has the jk_bms_ble `charging`, `discharging` and `balancer` switches (they write
+the BMS setting register over BLE), but nothing triggers them: no api / web_server / mqtt, and no
+`control` command. Only their states are reported (`info/charging_switch` etc.).
+
+Safety: **the ESP32 is powered from the BMS output.** Discharging off cuts the board's own power, and
+nothing can switch it back on remotely. So a remote "discharging off" is not allowed (the firmware
+must refuse it) unless the board gets a separate supply. Charging off only with a confirmation and an
+automatic switch-back after a set time, so a forgotten switch cannot run the battery flat. Each
+change reported in `device/` and kept in a small history (who / when / what).
+
 ## Hourly summaries for a "Last month" graph range (waiting)
 
 The dashboard's range dropdown offers Last hour / day / week from raw readings (~2,880 a day, ~300 B

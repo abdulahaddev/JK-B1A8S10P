@@ -65,14 +65,21 @@ inline std::string clean_version(const char *s) {
   return v;
 }
 
-// Last WiFi disconnect, recorded from the ESP-IDF event (runs in the event task)
+// WiFi disconnects, recorded from the ESP-IDF event (runs in the event task): the last one, its signal
+// just before (last_rssi is sampled from the main loop every 30 s), and a count per reason code
 static volatile uint8_t last_disc_reason = 0;
 static volatile uint32_t last_disc_ms = 0;
+static volatile int8_t last_rssi = 0;
+static volatile int8_t disc_rssi = 0;
+static volatile uint16_t disc_counts[256] = {};
 
 inline void on_wifi_event(void *, esp_event_base_t, int32_t id, void *data) {
   if (id == WIFI_EVENT_STA_DISCONNECTED && data != nullptr) {
-    last_disc_reason = static_cast<wifi_event_sta_disconnected_t *>(data)->reason;
+    const uint8_t reason = static_cast<wifi_event_sta_disconnected_t *>(data)->reason;
+    last_disc_reason = reason;
     last_disc_ms = (uint32_t) (esp_timer_get_time() / 1000);
+    disc_rssi = last_rssi;
+    if (disc_counts[reason] < 0xFFFF) disc_counts[reason] = disc_counts[reason] + 1;
   }
 }
 

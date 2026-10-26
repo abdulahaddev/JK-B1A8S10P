@@ -132,5 +132,8 @@ export const requestOtaCheck = (version: string, host: string) => update(ref(db,
 export const clearOtaCheck = () => remove(ref(db, "control/ota_check"));
 export const setCheckInterval = (seconds: number) => set(ref(db, "control/check_s"), seconds);
 export const setOtaHost = (host: string) => set(ref(db, "control/ota_host"), host);
+// Radio settings (fw 1.2.29+): written together, applied by the board at its next control read
+export const setRadio = (scanAlways: boolean, intervalMs: number) =>
+  update(ref(db, "control"), { ble_scan_always: scanAlways, ble_interval_ms: intervalMs });
 export const requestRestart = () => set(ref(db, "control/restart"), String(Math.floor(Date.now() / 1000)));
 export const clearRestart = () => remove(ref(db, "control/restart"));

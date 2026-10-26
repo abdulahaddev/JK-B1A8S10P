@@ -53,6 +53,11 @@ export interface Device {
   upload_fail?: string; // why the last upload failed
   upload_fail_ts?: number;
   bms_link_rssi?: number; // signal of the connected BMS link
+  // fw 1.2.29+
+  wifi_disc_rssi?: number; // WiFi signal just before the last drop
+  wifi_disc_counts?: Record<string, number>; // drops since boot per reason code
+  ble_scan?: string; // "while disconnected" | "always"
+  ble_interval_req?: string; // last connection-interval request and its result
   control_errors?: number;
   firmware_version?: string;
   ota_status?: string;
@@ -101,6 +106,8 @@ export interface Control {
   ota_host?: string; // OTA base URL under an allowed domain (fw 1.2.28+), kept
   ota_check?: string; // version whose download the board checks once (fw 1.2.28+)
   check_s?: number; // control read interval in seconds, 30..3600 (fw 1.2.28+), kept
+  ble_scan_always?: boolean; // keep the BLE scan running while connected (fw 1.2.29+; default false)
+  ble_interval_ms?: number; // BLE connection interval to request, 0 = leave as is (fw 1.2.29+)
   restart?: string;
 }
 

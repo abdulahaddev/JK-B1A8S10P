@@ -78,9 +78,14 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
               ["BMS link", <StatusPill kind={d.ble_connected === 1 ? "good" : "critical"}>{d.ble_connected === 1 ? "Connected" : "Not connected"}</StatusPill>],
               ["WiFi drops", d.wifi_disconnects ?? 0],
               ...(d.wifi_disc_reason !== undefined
-                ? [["Last WiFi drop", <>{wifiReason(d.wifi_disc_reason)}{d.wifi_disc_ts ? <> · {when(d.wifi_disc_ts)}</> : null}</>] as [string, React.ReactNode]]
+                ? [["Last WiFi drop", <>{wifiReason(d.wifi_disc_reason)}{d.wifi_disc_ts ? <> · {when(d.wifi_disc_ts)}</> : null}{d.wifi_disc_rssi ? <> · {d.wifi_disc_rssi} dBm before</> : null}</>] as [string, React.ReactNode]]
+                : []),
+              ...(d.wifi_disc_counts && Object.keys(d.wifi_disc_counts).length
+                ? [["Drops by reason", Object.entries(d.wifi_disc_counts).sort((a, b) => b[1] - a[1]).map(([c, n]) => `${n}× ${wifiReason(Number(c))}`).join(", ")] as [string, React.ReactNode]]
                 : []),
               ["BMS drops", d.ble_disconnects ?? 0],
+              ...(d.ble_scan ? [["BLE scan", d.ble_scan] as [string, React.ReactNode]] : []),
+              ...(d.ble_interval_req ? [["BLE interval request", d.ble_interval_req] as [string, React.ReactNode]] : []),
               ...(d.upload_fail
                 ? [["Last upload failure", <>{d.upload_fail}{d.upload_fail_ts ? <> · {when(d.upload_fail_ts)}</> : null}</>] as [string, React.ReactNode]]
                 : []),
