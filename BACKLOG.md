@@ -102,6 +102,15 @@ buffers) plus a 24 KB reserve, so at ~54 KB free heap it sends 1-2 readings per 
 takes ~15 min to clear. Recalibrate (TLS ~20 KB, reserve ~16 KB -> ~10 per batch), flash, and check
 min_free_heap stays above ~20 KB during the next catch-up.
 
+## Re-signal after a failed update needs a restart (bug, since 1.2.28)
+
+After a failed download the board remembers the version in `ota_done` for the rest of the boot, and a
+new `control/ota` with the same version is only cleaned up, not tried again (seen with 1.2.29 on
+27 Oct: retry needed a remote restart first). Intended: "re-signal to try again". Fix: clear `ota_done`
+once the board has removed the command (successful write-back), so a later signal counts as new.
+Also worth trying: a 60 s read timeout for the OTA download (the failed 1.2.29 attempt stalled
+between the Cloudflare tunnel and the board after the server had sent the whole file).
+
 ## Remote charging / discharging switches (deferred)
 
 The firmware already has the jk_bms_ble `charging`, `discharging` and `balancer` switches (they write
