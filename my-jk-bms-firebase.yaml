@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.31"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.32"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -99,13 +99,17 @@ esphome:
     - <esphome/components/esp32/crash_handler.h>
   # Remember that the run ended through ESPHome (OTA reboot, safe_reboot) for the boots/ history
   on_shutdown:
-    - lambda: 'telemetry::note_shutdown();'
+    - lambda: |-
+        telemetry::note_shutdown();
+        telemetry::save_ram();  // OTA reboot, safe_reboot: keep the RAM part of the queue
   on_boot:
     - priority: 800
       then:
         # Restore buffered readings kept in RTC memory across a software reboot
         - lambda: |-
             telemetry::begin();
+            const size_t restored = telemetry::restore_ram();
+            if (restored) ESP_LOGI("telemetry", "%u older readings restored from NVS", (unsigned) restored);
             crash::begin();
             // ESPHome printed its crash report before on_message was listening; print it again to collect it
             if (esphome::esp32::crash_handler_has_data()) esphome::esp32::crash_handler_log();
@@ -235,6 +239,7 @@ ota:
                        (unsigned) (${ota_download_ms} / 1000), (int) x);
               telemetry::set_restart_cause(telemetry::CAUSE_OTA_TIME_LIMIT);
               global_preferences->sync();
+              telemetry::save_ram();  // the RAM part of the queue survives the restart (NVS)
               radio_sleep(1000000);  // stops BLE and WiFi first, then a 1 s deep sleep
             }
             id(ota_dl_pct) = (int) x;
@@ -1219,6 +1224,7 @@ interval:
                    (unsigned) ((millis() - id(maintenance_ms)) / 1000));
           telemetry::set_restart_cause(telemetry::CAUSE_STUCK_SCRIPT);
           global_preferences->sync();
+          telemetry::save_ram();  // the RAM part of the queue survives the restart (NVS)
           radio_sleep(1000000);  // stops BLE and WiFi first: sleeping with them on can deadlock the PHY
       - if:
           condition:
@@ -1227,7 +1233,9 @@ interval:
             - lambda: 'ESP_LOGE("ota", "${fw_version} not confirmed within timeout, rolling back");'
             - script.execute: ble_disconnect_clean
             - script.wait: ble_disconnect_clean
-            - lambda: 'esp_ota_mark_app_invalid_rollback_and_reboot();'
+            - lambda: |-
+                telemetry::save_ram();
+                esp_ota_mark_app_invalid_rollback_and_reboot();
       # Radio reset after a software reset, once the firmware is confirmed and the status was uploaded
       # (never while pending verify: rebooting then would roll the update back)
       - if:
@@ -1287,9 +1295,7 @@ interval:
               } else if (wifi_down >= ${wifi_watchdog_ms} * mult) {
                 ESP_LOGW("watchdog", "Router visible but not joined for %u s, radio reset %u", (unsigned) (wifi_down / 1000), (unsigned) resets + 1);
                 telemetry::set_restart_cause(telemetry::CAUSE_WIFI_WATCHDOG);
-              } else if (net_down >= ${net_watchdog_ms} * mult && telemetry::ram_size() == 0) {
-                // Not once the RAM ring holds readings (> ~2.3 h queued): a reset would lose them, and that long
-                // usually means the internet itself is down (ISP outage), which a radio reset cannot fix
+              } else if (net_down >= ${net_watchdog_ms} * mult) {
                 ESP_LOGW("watchdog", "WiFi joined but no upload or control read for %u s, radio reset %u", (unsigned) (net_down / 1000),
                          (unsigned) resets + 1);
                 telemetry::set_restart_cause(telemetry::CAUSE_NET_WATCHDOG);
@@ -1716,6 +1722,7 @@ script:
           // A boot that uploaded or read the BMS works; restarts without WiFi then never pile up into safe mode
           if ((id(uploaded_since_boot) || id(ble_rx_ms) != 0) && !id(ota_pending_verify)) id(safe_mode_component)->mark_successful();
           global_preferences->sync();
+          telemetry::save_ram();  // the RAM part of the queue survives the restart (NVS)
           radio_sleep(1000000);  // stops BLE and WiFi first: sleeping with them on can deadlock the PHY
 
   # Download and install id(ota_target). The download's TLS session does not fit next to the BLE

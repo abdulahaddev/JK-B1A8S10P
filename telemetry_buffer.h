@@ -3,7 +3,8 @@
 //
 // Newest readings live in RTC slow memory (RTC_NOINIT_ATTR), which survives software
 // reboots (watchdog, WiFi reboot_timeout, restart) but not power loss. When the RTC ring is
-// full its oldest reading moves to a larger RAM ring, which is lost on any reboot.
+// full its oldest reading moves to a larger RAM ring, which the board saves to NVS before its
+// own restarts (save_ram / restore_ram); a crash or power loss still loses it.
 // Uploads always take the oldest readings first (RAM, then RTC).
 //
 // Everything is called from ESPHome's main loop, so no locking is needed.
@@ -12,6 +13,7 @@
 #include <cstdint>
 #include "esp_attr.h"
 #include "esp_system.h"
+#include "nvs.h"
 
 namespace telemetry {
 
@@ -137,6 +139,40 @@ inline bool discard_newest(uint32_t ts) {
   if (rtc_state.ring.count > 0) rtc_state.ring.pop_back();  // pushes always land in the RTC ring
   else ram_ring.pop_back();
   return true;
+}
+
+// The RAM ring across the board's own restarts (radio reset, remote restart, OTA reboot): saved to NVS
+// right before, restored at the next boot and removed from NVS. Without this a watchdog radio reset after
+// a long outage lost every reading older than the RTC ring (27 Oct: 187 readings). Power loss still loses
+// it. Written only when the RAM ring holds readings (> 280 queued), so flash wear stays negligible.
+static const char *NVS_QUEUE_NS = "jkqueue";
+
+inline bool save_ram() {
+  if (ram_ring.count == 0) return true;
+  nvs_handle_t h;
+  if (nvs_open(NVS_QUEUE_NS, NVS_READWRITE, &h) != ESP_OK) return false;
+  const bool ok = nvs_set_blob(h, "ram", &ram_ring, sizeof(ram_ring)) == ESP_OK && nvs_commit(h) == ESP_OK;
+  nvs_close(h);
+  return ok;
+}
+
+// Call once at boot, after begin(). Returns the readings restored (the older part of the queue).
+inline size_t restore_ram() {
+  nvs_handle_t h;
+  if (nvs_open(NVS_QUEUE_NS, NVS_READWRITE, &h) != ESP_OK) return 0;
+  size_t len = sizeof(ram_ring);
+  const esp_err_t err = nvs_get_blob(h, "ram", &ram_ring, &len);
+  if (err != ESP_ERR_NVS_NOT_FOUND) {
+    // A saved ring from a firmware with another layout (size differs) or a damaged one is dropped
+    if (err != ESP_OK || len != sizeof(ram_ring) || !ram_ring.valid()) {
+      ram_ring.head = 0;
+      ram_ring.count = 0;
+    }
+    nvs_erase_key(h, "ram");  // restored once; a copy left by a failed erase would only upload duplicates
+    nvs_commit(h);
+  }
+  nvs_close(h);
+  return ram_ring.count;
 }
 
 inline uint32_t &watchdog_resets() { return rtc_state.watchdog_resets; }
