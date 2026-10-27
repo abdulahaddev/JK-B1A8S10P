@@ -59,7 +59,7 @@ template<size_t N> struct Ring {
 
 // Why the board restarted itself last (kept across deep sleep, reported in device/restart_cause)
 enum RestartCause : uint32_t { CAUSE_NONE = 0, CAUSE_REMOTE, CAUSE_SOFT_RESET, CAUSE_BLE_WATCHDOG, CAUSE_WIFI_WATCHDOG,
-                            CAUSE_STUCK_SCRIPT, CAUSE_OTA_TIME_LIMIT };  // append only: kept in RTC across updates
+                            CAUSE_STUCK_SCRIPT, CAUSE_OTA_TIME_LIMIT, CAUSE_NET_WATCHDOG };  // append only: kept in RTC across updates
 
 struct RtcState {
   uint32_t magic;
@@ -93,7 +93,7 @@ inline void begin() {
   }
   // Fields appended in 1.2.8 are garbage on the first boot after updating from an older firmware
   if (rtc_state.watchdog_resets > 16) rtc_state.watchdog_resets = 0;
-  if (rtc_state.restart_cause > CAUSE_OTA_TIME_LIMIT) rtc_state.restart_cause = CAUSE_NONE;
+  if (rtc_state.restart_cause > CAUSE_NET_WATCHDOG) rtc_state.restart_cause = CAUSE_NONE;
   if (rtc_state.run_uptime_s > 60u * 86400u) rtc_state.run_uptime_s = 0;
   if (rtc_state.shutdown_seen > 1) rtc_state.shutdown_seen = 0;
   prev_uptime_s = keep ? rtc_state.run_uptime_s : 0;
@@ -156,6 +156,7 @@ inline const char *restart_cause() {
     case CAUSE_WIFI_WATCHDOG: return "wifi_watchdog";
     case CAUSE_STUCK_SCRIPT: return "stuck_script";
     case CAUSE_OTA_TIME_LIMIT: return "ota_time_limit";
+    case CAUSE_NET_WATCHDOG: return "net_watchdog";
     default: return "none";
   }
 }

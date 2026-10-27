@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.30"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.31"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -70,8 +70,11 @@ substitutions:
   # Each reset in a row doubles the wait (x1, x2, x4, x8); it starts over once both work again.
   ble_watchdog_ms: "600000"   # no BMS frame for 10 min
   ble_stale_ms: "120000"      # ...or 2 min while the link claims to be connected (a lost disconnect event)
-  wifi_watchdog_ms: "1800000" # router visible in scans but no connection for 30 min (a stuck WiFi stack).
+  wifi_watchdog_ms: "300000"  # router visible in scans but no connection for 5 min (a stuck WiFi stack:
+                              # on 27 Oct the board never rejoined by itself, a radio reset fixed it at once).
                               # Router off/out of range: never, the buffer keeps ~7 h and reconnects later.
+  net_watchdog_ms: "300000"   # WiFi joined but no upload or control read succeeded for 5 min
+  ota_status_ms: "15000"      # while an accepted update waits, a status-only report at least this often
   bad_request_limit: "3"      # drop a batch Firebase rejects with 400 this many times in a row
   maintenance_limit_ms: "180000"  # an OTA install or restart script still running after this is stuck
 
@@ -203,8 +206,9 @@ ota:
             char err[8];
             snprintf(err, sizeof(err), "0x%02X", (unsigned) x);  // ota::OTAResponseTypes, e.g. 0x8B = MD5 mismatch, 0xFF = read error
             // One attempt per signal: report, then remove control/ota at once (forced control read)
-            id(ota_status) = "download failed " + id(ota_target) + " (error " + err + ", after " +
-                             std::to_string((millis() - id(ota_dl_start_ms)) / 1000) + " s)";
+            // How far it got: 0 % = the file request itself failed (DNS, TLS, HTTP status), more = the link broke mid-way
+            id(ota_status) = "download failed " + id(ota_target) + " (error " + err + " at " + std::to_string(id(ota_dl_pct)) +
+                             " %, after " + std::to_string((millis() - id(ota_dl_start_ms)) / 1000) + " s)";
             id(ota_attempt_hash) = 0;
             global_preferences->sync();
             ESP_LOGE("ota", "%s", id(ota_status).c_str());
@@ -233,6 +237,7 @@ ota:
               global_preferences->sync();
               radio_sleep(1000000);  // stops BLE and WiFi first, then a 1 s deep sleep
             }
+            id(ota_dl_pct) = (int) x;
             const int step = (int) x / 10;
             if (step == id(ota_progress_step)) return;
             id(ota_progress_step) = step;
@@ -602,10 +607,26 @@ globals:
     type: std::string
     restore_value: no
     initial_value: '""'
-  - id: ota_requested     # update accepted, install not started yet (uploads paused unless the RAM ring has readings)
+  - id: ota_requested     # update accepted, install not started yet (reading uploads paused unless the RAM ring has readings)
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: ota_status_sent   # a report carrying "update accepted" reached Firebase (the download waits for it, max 60 s)
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: status_only       # the upload in flight is a status-only report (no readings, info or energy)
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: net_ok_ms         # last successful upload or control read, 0 = none since boot (connected-but-failing watchdog)
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: ota_dl_pct        # download progress in %, reported when it fails
+    type: int
+    restore_value: no
+    initial_value: '0'
   - id: ota_request_ms
     type: uint32_t
     restore_value: no
@@ -889,6 +910,7 @@ interval:
                           ESP_LOGW("control", "control read failed with code %d", response->status_code);
                           return;
                         }
+                        id(net_ok_ms) = millis();
                         JsonDocument doc;
                         if (deserializeJson(doc, body)) {
                           id(control_errors)++;
@@ -979,6 +1001,7 @@ interval:
                               id(ota_base) = base;
                               id(ota_requested) = true;
                               id(ota_request_ms) = millis();
+                              id(ota_status_sent) = false;
                               id(ota_status) = "update accepted " + v;
                               ESP_LOGI("ota", "%s from %s", id(ota_status).c_str(), base.c_str());
                             }
@@ -1144,8 +1167,8 @@ interval:
             ESP_LOGI("radio", "BLE connection interval %s", buf);
           }
 
-  # Start an accepted update. Uploads are paused from acceptance; only readings in the RAM ring (lost to
-  # the reboot) are uploaded first. Not started within ota_accept_ms (no WiFi, RAM ring not empty): expired.
+  # Start an accepted update. Reading uploads are paused from acceptance (status-only reports go on); only
+  # readings in the RAM ring (lost to the reboot) are uploaded first. Not started within ota_accept_ms (no WiFi, RAM ring not empty): expired.
   - interval: 10s
     then:
       - if:
@@ -1167,6 +1190,8 @@ interval:
                 id(ota_status) = "update " + id(ota_target) + " waits for " + std::to_string(ram) + " older readings to upload";
                 return false;
               }
+              // Let the dashboard see "update accepted" before the download blocks everything (at most 60 s)
+              if (!id(ota_status_sent) && millis() - id(ota_request_ms) < 60000) return false;
               auto *wifi = esphome::wifi::global_wifi_component;
               return wifi != nullptr && wifi->is_connected();
           then:
@@ -1234,8 +1259,15 @@ interval:
               const uint32_t heard_ms = std::max(id(ble_rx_ms), id(ble_connect_ms));
               const bool stale = id(client0)->connected() && heard_ms != 0 && now - heard_ms >= ${ble_stale_ms};
               const bool ble_ok = id(ble_rx_ms) != 0 && now - id(ble_rx_ms) < ${ble_watchdog_ms} && !stale;
+              // Joined but nothing gets through (27 Oct: router dropping the board, reason 7/34): counts from the
+              // later of the last successful upload / control read and the current WiFi join
+              static bool was_up = false;
+              static uint32_t up_since = 0;
+              if (wifi_up && !was_up) up_since = now;
+              was_up = wifi_up;
+              const uint32_t net_down = wifi_up ? now - std::max(id(net_ok_ms), up_since) : 0;
               uint32_t &resets = telemetry::watchdog_resets();
-              if (wifi_up && ble_ok) {
+              if (wifi_up && ble_ok && net_down < ${net_watchdog_ms}) {
                 resets = 0;
                 return false;
               }
@@ -1255,6 +1287,12 @@ interval:
               } else if (wifi_down >= ${wifi_watchdog_ms} * mult) {
                 ESP_LOGW("watchdog", "Router visible but not joined for %u s, radio reset %u", (unsigned) (wifi_down / 1000), (unsigned) resets + 1);
                 telemetry::set_restart_cause(telemetry::CAUSE_WIFI_WATCHDOG);
+              } else if (net_down >= ${net_watchdog_ms} * mult && telemetry::ram_size() == 0) {
+                // Not once the RAM ring holds readings (> ~2.3 h queued): a reset would lose them, and that long
+                // usually means the internet itself is down (ISP outage), which a radio reset cannot fix
+                ESP_LOGW("watchdog", "WiFi joined but no upload or control read for %u s, radio reset %u", (unsigned) (net_down / 1000),
+                         (unsigned) resets + 1);
+                telemetry::set_restart_cause(telemetry::CAUSE_NET_WATCHDOG);
               } else {
                 return false;
               }
@@ -1274,12 +1312,14 @@ interval:
               - wifi.connected:
               - lambda: 'return id(sntp_time).now().is_valid();'
               - lambda: |-
-                  // Never next to an install or radio reset (memory and radio belong to them); paused from the
-                  // moment an update is accepted, unless RAM-ring readings must go up before the reboot
+                  // Never next to an install or radio reset (memory and radio belong to them)
                   if (id(ota_install).is_running() || id(radio_reset).is_running() || id(ota_active)) return false;
-                  if (id(ota_requested) && telemetry::ram_size() == 0) return false;
                   // Backoff only after a failure (a plain millis() compare would misfire after ~24.8 days idle)
                   if (id(upload_fails) > 0 && (int32_t) (millis() - id(upload_next_ms)) < 0) return false;
+                  // From the moment an update is accepted, readings stay queued (unless RAM-ring readings must go
+                  // up before the reboot); the status report goes on, so the dashboard follows the update
+                  id(status_only) = id(ota_requested) && telemetry::ram_size() == 0;
+                  if (id(status_only)) return !id(ota_status_sent) || millis() - id(last_upload_ms) >= ${ota_status_ms};
                   // First upload after boot (confirms a new firmware) and stale diagnostics go at once
                   if (id(ota_pending_verify) || !id(uploaded_since_boot) ||
                       millis() - id(last_upload_ms) >= ${upload_max_age_ms}) return true;
@@ -1306,8 +1346,9 @@ interval:
                   const int32_t room = (int32_t) free_now - (int32_t) id(upload_heap_base) - ${upload_heap_floor};
                   size_t fit = room > 0 ? (size_t) room / std::max<uint32_t>(id(upload_heap_per), 1) : 0;
                   if (heap_caps_get_largest_free_block(MALLOC_CAP_8BIT) < ${upload_min_block}) fit = 0;  // fragmented
-                  const size_t n = std::min({telemetry::size(), (size_t) id(upload_cap), (size_t) ${upload_batch_max},
-                                             std::max(fit, (size_t) 1)});
+                  // A status-only report (update accepted) carries no readings
+                  const size_t n = id(status_only) ? 0 : std::min({telemetry::size(), (size_t) id(upload_cap), (size_t) ${upload_batch_max},
+                                                                   std::max(fit, (size_t) 1)});
                   // Fresh snapshot first: a reading stored since the last upload always goes in this request;
                   // the rest of the batch is the oldest backlog (the RAM part, which a reboot would lose).
                   // Free-time uploads have no fresh reading and carry backlog only.
@@ -1316,8 +1357,10 @@ interval:
                   id(upload_fresh_ts) = fresh ? telemetry::peek(telemetry::size() - 1).ts : 0;
                   id(upload_old_n) = old_n;
                   id(upload_batch_n) = n;
-                  id(upload_batch_last) = n;
-                  id(upload_seq) = id(sample_seq);
+                  if (!id(status_only)) {
+                    id(upload_batch_last) = n;
+                    id(upload_seq) = id(sample_seq);
+                  }
                   id(upload_start_ms) = millis();
                   id(upload_heap_before) = free_now;
                   const size_t first = fresh ? 1 : 0;
@@ -1396,7 +1439,7 @@ interval:
                   d["firmware_version"] = "${fw_version}";
                   d["ota_status"] = id(ota_status);
 
-                  id(info_in_flight) = id(info_dirty);
+                  id(info_in_flight) = id(info_dirty) && !id(status_only);
                   if (id(info_dirty)) {
                     auto num = [](JsonObject obj, const char *key, float v) {
                       if (!std::isnan(v)) obj[key] = v;
@@ -1447,7 +1490,7 @@ interval:
                   }
 
                   const float energy = id(bms_total_charging_cycle_capacity).state;
-                  id(energy_in_flight) = !std::isnan(energy) &&
+                  id(energy_in_flight) = !std::isnan(energy) && !id(status_only) &&
                       (id(last_energy_ms) == 0 || millis() - id(last_energy_ms) >= ${energy_interval_ms});
                   if (id(energy_in_flight)) {
                     root[std::string("energy/") + std::to_string(now_ts)] = energy;
@@ -1466,6 +1509,8 @@ interval:
                         id(last_upload_ms) = millis();
                         if (ok) {
                           id(uploaded_since_boot) = true;
+                          id(net_ok_ms) = millis();
+                          if (id(ota_requested)) id(ota_status_sent) = true;
                           id(bad_requests) = 0;
                           if (id(upload_fresh_ts) != 0) telemetry::discard_newest(id(upload_fresh_ts));
                           telemetry::discard(id(upload_old_n));
@@ -1516,7 +1561,7 @@ interval:
                         heap_caps_monitor_local_minimum_free_size_stop();
                         id(upload_heap_low) = low;
                         const uint32_t n = std::max<uint32_t>(id(upload_batch_n), 1);
-                        if (id(upload_heap_before) > low) {
+                        if (!id(status_only) && id(upload_heap_before) > low) {  // a status-only report teaches nothing per reading
                           const uint32_t used = id(upload_heap_before) - low;
                           // Slope from two uploads whose batch sizes differ by 2 or more
                           if (id(upload_prev_n) != 0 && (n >= id(upload_prev_n) + 2 || id(upload_prev_n) >= n + 2)) {
@@ -1538,7 +1583,9 @@ interval:
                         const uint32_t took = millis() - id(upload_start_ms);
                         id(upload_ms_last) = took;
                         id(upload_ms_avg) = (id(upload_ms_avg) * 3 + took) / 4;
-                        if (ok && took <= ${upload_time_budget_ms} && !heap_low) {
+                        if (ok && id(status_only)) {
+                          // no readings: says nothing about the batch limit
+                        } else if (ok && took <= ${upload_time_budget_ms} && !heap_low) {
                           if (id(upload_batch_n) >= id(upload_cap)) id(upload_cap) = std::min<uint32_t>(id(upload_cap) + 1, ${upload_batch_max});
                         } else {
                           id(upload_cap) = std::max<uint32_t>(id(upload_cap) / 2, 1);
@@ -1687,6 +1734,18 @@ script:
               ble.enabled:
           timeout: 10s
       - delay: 1s
+      # Last status report before the download blocks the loop: the dashboard sees "downloading <v>"
+      # (8 s timeout; a failure here does not stop the install)
+      - http_request.send:
+          method: PATCH
+          url: "${firebase_db_url}/device.json?auth=${firebase_auth}"
+          request_headers:
+            Content-Type: application/json
+          json: |-
+            root["ota_status"] = id(ota_status);
+            root["last_seen"] = id(sntp_time).now().timestamp;
+            root["uptime_s"] = (uint32_t) (esp_timer_get_time() / 1000000);
+            root["ble_connected"] = 0;
       - lambda: |-
           ESP_LOGI("ota", "BLE stopped for download, free heap %u", (unsigned) esp_get_free_heap_size());
           // Full-power WiFi for the download: modem sleep costs throughput and beacons on a weak link.
@@ -1698,6 +1757,7 @@ script:
           id(http_client)->set_watchdog_timeout(60000);
           id(ota_display) = "OTA " + id(ota_target) + " 0%";
           id(ota_progress_step) = 0;
+          id(ota_dl_pct) = 0;
           id(ota_show_until) = millis() + ${ota_text_long_ms};
           crash::step(crash::STEP_OTA_FLASH);
           id(ota_dl_start_ms) = millis();  // download time limit, checked in ota_http on_progress
