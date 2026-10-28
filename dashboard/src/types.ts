@@ -46,8 +46,6 @@ export interface Device {
   upload_heap_per?: number; // learned heap cost per reading
   // fw 1.2.28+
   control_s?: number; // control read interval in use
-  ota_check?: string; // result of the last download check
-  ota_check_ts?: number;
   wifi_disc_reason?: number; // ESP-IDF wifi_err_reason_t of the last disconnect
   wifi_disc_ts?: number;
   upload_fail?: string; // why the last upload failed
@@ -56,8 +54,6 @@ export interface Device {
   // fw 1.2.29+
   wifi_disc_rssi?: number; // WiFi signal just before the last drop
   wifi_disc_counts?: Record<string, number>; // drops since boot per reason code
-  ble_scan?: string; // "while disconnected" | "always"
-  ble_interval_req?: string; // last connection-interval request and its result
   control_errors?: number;
   firmware_version?: string;
   ota_status?: string;
@@ -104,10 +100,7 @@ export interface Crash {
 export interface Control {
   ota?: string; // version to install (one attempt; the board removes it when done)
   ota_host?: string; // OTA base URL under an allowed domain (fw 1.2.28+), kept
-  ota_check?: string; // version whose download the board checks once (fw 1.2.28+)
   check_s?: number; // control read interval in seconds, 30..3600 (fw 1.2.28+), kept
-  ble_scan_always?: boolean; // keep the BLE scan running while connected (fw 1.2.29+; default false)
-  ble_interval_ms?: number; // BLE connection interval to request, 0 = leave as is (fw 1.2.29+)
   restart?: string;
 }
 

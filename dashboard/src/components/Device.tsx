@@ -85,8 +85,6 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
                 ? [["Drops by reason", Object.entries(d.wifi_disc_counts).sort((a, b) => b[1] - a[1]).map(([c, n]) => `${n}× ${wifiReason(Number(c))}`).join(", ")] as [string, React.ReactNode]]
                 : []),
               ["BMS drops", d.ble_disconnects ?? 0],
-              ...(d.ble_scan ? [["BLE scan", d.ble_scan] as [string, React.ReactNode]] : []),
-              ...(d.ble_interval_req ? [["BLE interval request", d.ble_interval_req] as [string, React.ReactNode]] : []),
               ...(d.upload_fail
                 ? [["Last upload failure", <>{d.upload_fail}{d.upload_fail_ts ? <> · {when(d.upload_fail_ts)}</> : null}</>] as [string, React.ReactNode]]
                 : []),

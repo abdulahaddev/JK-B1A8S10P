@@ -1,7 +1,7 @@
-import { AlertTriangle, Eraser, KeyRound, Lock, RefreshCw, Radio, RotateCcw, SearchCheck, Send, Server, Terminal, Timer, X } from "lucide-react";
+import { AlertTriangle, Eraser, KeyRound, Lock, RefreshCw, RotateCcw, Send, Server, Terminal, Timer, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { clearLog, log, markSent, sentTime, useLog, type Command } from "../controlLog";
-import { clearOta, clearRestart, requestOtaCheck, requestRestart, setCheckInterval, setOta, setOtaHost, setRadio, useControl } from "../data";
+import { clearOta, clearRestart, requestRestart, setCheckInterval, setOta, setOtaHost, useControl } from "../data";
 import { compareVersions, ensureReleases, loadDefaultBase, syncReleases, useReleases } from "../ota";
 import { ALLOWED_DOMAINS, allowedBase } from "../otaHost";
 import { sha256Hex } from "../sha256";
@@ -109,15 +109,7 @@ function Console() {
   );
 }
 
-const BLE_INTERVALS = [
-  { ms: 0, label: "BLE interval: as the BMS sets it" },
-  { ms: 50, label: "BLE interval: 50 ms" },
-  { ms: 100, label: "BLE interval: 100 ms" },
-  { ms: 200, label: "BLE interval: 200 ms" },
-] as const;
-
 const INTERVALS = [
-  { s: 60, label: "1 min (testing)" },
   { s: 300, label: "5 min" },
   { s: 900, label: "15 min" },
   { s: 3600, label: "1 h" },
@@ -193,16 +185,10 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
   const [version, setVersion] = useState("");
   const [confirm, setConfirm] = useState<Confirm | null>(null);
   const [intervalSel, setIntervalSel] = useState<number | null>(null); // null: show the value in control
-  const [scanAlwaysSel, setScanAlwaysSel] = useState<boolean | null>(null);
-  const [bleMsSel, setBleMsSel] = useState<number | null>(null);
   const current = d?.firmware_version;
   const fw128 = d?.control_s !== undefined; // 1.2.28+ reports its control interval
   const interval = d?.control_s ?? control?.check_s ?? 300;
   const chosen = intervalSel ?? control?.check_s ?? 300;
-  const fw129 = d?.ble_scan !== undefined; // 1.2.29+ reports its BLE scan mode
-  const scanAlways = scanAlwaysSel ?? control?.ble_scan_always ?? false;
-  const bleMs = bleMsSel ?? control?.ble_interval_ms ?? 0;
-  const radioChanged = scanAlways !== (control?.ble_scan_always ?? false) || bleMs !== (control?.ble_interval_ms ?? 0);
 
   // Host: the one in control, else the dev server's default (ota_base_url)
   const hostSet = useRef(false);
@@ -269,11 +255,6 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
           <span>
             Restart {control?.restart ? <Pending what="restart" interval={interval} /> : <StatusPill kind="muted">none</StatusPill>}
           </span>
-          {control?.ota_check && (
-            <span>
-              Check <Pending what="ota_check" interval={interval} />
-            </span>
-          )}
           {status && (
             <span>
               Status <b>{status}</b>
@@ -302,7 +283,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
                 onClick={() =>
                   setConfirm({
                     title: "Set OTA host",
-                    text: `Store ${base} as the OTA host? The board downloads updates and runs download checks from it (firmware 1.2.28+).`,
+                    text: `Store ${base} as the OTA host? The board downloads updates from it (firmware 1.2.28+).`,
                     label: "Set host",
                     run: () => send(`OTA host ${base}`, () => setOtaHost(base)),
                   })
@@ -362,24 +343,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
                 {installing ? `Installing ${locked}: other updates and Cancel are blocked until it is done.` : `Update ${locked} is accepted on the board: other versions are refused until it is installed, fails, expires (5 min) or is cancelled.`}
               </p>
             )}
-            {d?.ota_check && <p className="field-hint">Last check: {d.ota_check}{d.ota_check_ts ? <> · <Ago ts={d.ota_check_ts} /></> : null}</p>}
             <div className="control-row">
-              <button
-                className="secondary"
-                disabled={!sel || !base || !fw128}
-                title={fw128 ? "The board fetches this version's .md5 once and reports the result" : "Needs firmware 1.2.28 or newer"}
-                onClick={() =>
-                  sel &&
-                  setConfirm({
-                    title: "Check download",
-                    text: `Ask the board to fetch the .md5 of ${sel.version} from ${base} once and report the result?`,
-                    label: "Check",
-                    run: () => send(`Download check ${sel.version}`, () => requestOtaCheck(sel.version, base), "ota_check"),
-                  })
-                }
-              >
-                <SearchCheck size={14} aria-hidden /> Check download
-              </button>
               <button
                 className="primary"
                 disabled={!sel || !base || !!blockedBy || installing}
@@ -388,7 +352,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
                   sel &&
                   setConfirm({
                     title: `Install firmware ${sel.version}`,
-                    text: `Install ${sel.version} (now ${current ?? "unknown"}) from ${base}? One attempt: the board pauses uploads and Bluetooth during the download, then reboots into the new firmware.`,
+                    text: `Install ${sel.version} (now ${current ?? "unknown"}) from ${base}? One attempt: the board checks the file first (the BMS stays connected), then pauses uploads and Bluetooth for the download and reboots into the new firmware.`,
                     label: "Install",
                     run: () => send(`Update to ${sel.version}`, () => setOta(sel.version, base), "ota"),
                   })
@@ -450,41 +414,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
             <p className="field-hint">
               {fw128 ? `The board reads control every ${d?.control_s} s` : "Needs firmware 1.2.28 or newer (older boards read every 5 min)"}. Commands take effect within one interval.
             </p>
-            {(control?.check_s ?? 300) < 300 && <p className="field-warn">Under 5 min is for testing: each read blocks the board for seconds and can break the BMS link. Set it back when done.</p>}
 
-            <label className="field-label">Radio (WiFi and Bluetooth share one antenna)</label>
-            <label className="check-row">
-              <input type="checkbox" checked={!scanAlways} onChange={(e) => setScanAlwaysSel(!e.target.checked)} disabled={!fw129} />
-              Scan for the BMS only while disconnected (frees radio time for WiFi)
-            </label>
-            <div className="control-row">
-              <select className="select" value={String(bleMs)} onChange={(e) => setBleMsSel(Number(e.target.value))} disabled={!fw129} aria-label="BLE connection interval">
-                {BLE_INTERVALS.map((o) => (
-                  <option key={o.ms} value={o.ms}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <button
-                className="secondary"
-                disabled={!fw129 || !radioChanged}
-                onClick={() =>
-                  setConfirm({
-                    title: "Change radio settings",
-                    text: `BLE scan: ${scanAlways ? "all the time" : "only while disconnected"}; BLE connection interval: ${bleMs ? `ask the BMS for ${bleMs} ms` : "leave as the BMS sets it"}. Applied at the board's next control read. If the BMS link gets unstable, set the interval back here.`,
-                    label: "Apply",
-                    run: () => send("Radio settings", () => setRadio(scanAlways, bleMs)).then(() => (setScanAlwaysSel(null), setBleMsSel(null))),
-                  })
-                }
-              >
-                <Radio size={14} aria-hidden /> Apply
-              </button>
-            </div>
-            <p className="field-hint">
-              {fw129
-                ? `Board: scan ${d?.ble_scan}${d?.ble_interval_req ? `; interval request ${d.ble_interval_req}` : ""}. The BMS's answer to an interval request is not visible; judge it by WiFi and BMS drops.`
-                : "Needs firmware 1.2.29 or newer."}
-            </p>
           </section>
         </div>
 

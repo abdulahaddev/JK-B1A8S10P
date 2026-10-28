@@ -11,10 +11,7 @@ pinned to the commit this project was tested with (see `external_components` in 
 | File | What it does |
 |---|---|
 | `my-jk-bms-firebase.yaml` | Main firmware: BLE + OLED + WiFi + Firebase upload |
-| `my-jk-bms-display.yaml` | BLE + OLED + WiFi, no upload |
-| `my-jk-bms-wifi.yaml` | BLE + WiFi + status LEDs |
-| `my-jk-bms-led.yaml` | BLE + status LEDs, no WiFi |
-| `my-jk-bms.yaml` | Minimal BLE-only config |
+| `my-jk-bms-bridge.yaml` | Minimal OTA bridge (no BLE): only installs the next full firmware, falls back after 60 min |
 
 ## Setup
 
@@ -71,13 +68,17 @@ The board is meant to run unattended, so it recovers on its own and reports what
 |---|---|---|
 | Software reset (OTA, crash, watchdog) | One 1 s deep sleep after the first upload, so BLE can reach the BMS again | `device/restart_cause = after_soft_reset` |
 | No BMS frame for 10 min | Radio reset (1 s deep sleep); the wait doubles each time in a row (10/20/40/80 min) | `ble_watchdog`, `watchdog_resets` |
-| Router visible but not joinable for 30 min | Radio reset (a stuck WiFi stack). Router off or out of range: nothing, readings buffer (~7 h) and upload when it is back | `wifi_watchdog` |
+| Power-on, brownout or reset pin | 2 s deep sleep before WiFi and BLE start, so BLE reaches the BMS at once | `after_power_on`, `after_brownout` |
+| Router visible but not joinable for 2 min | Radio reset (a stuck WiFi stack); the wait doubles each time in a row. Router off or out of range: nothing, readings buffer (~7 h) and upload when it is back | `wifi_watchdog` |
+| WiFi joined but no upload or control read works for 5 min | Radio reset | `net_watchdog` |
 | OTA install or restart script stuck > 3 min | Deep sleep restart | `stuck_script` |
 | Crash | ESPHome's crash report (PC, backtraces of both cores) and the step the loop was in are uploaded once | `crashes/<ts>` |
 | Firebase rejects a batch with 400 three times | The batch is dropped so the buffer cannot block | `upload_errors` |
 
-A new firmware confirms itself on its first successful upload. It also checks once that the OTA site
-serves real files and reports it as `device/ota_source` (a hosting bot challenge shows as `blocked_or_unchecked`).
+A new firmware confirms itself on its first successful upload, then resets the radio once. An update runs
+step by step, each step reported in `device/ota_status`: check the file (.md5 and the image start; the BMS
+stays connected, a block page ends it here), BMS disconnect, Bluetooth off, download. A failed download
+is reported, then the radio is reset (`ota_failed`).
 
 Decode crash addresses with the ELF that `tools/publish_ota.py` keeps in `dist/`:
 
@@ -87,8 +88,7 @@ Decode crash addresses with the ELF that `tools/publish_ota.py` keeps in `dist/`
 
 `device` also reports `max_block` (largest free heap block), `control_errors` and `upload_errors`.
 `tools/control.py` shows them in `status`. `tools/ota_release.py --wait-healthy <min>` signals an update
-only once the board reports the BMS connected and no install in progress. `tools/rollback_test.py`
-checks the rollback path with a deliberately unconfirmable build.
+only once the board reports the BMS connected and no install in progress.
 
 ## Logs
 

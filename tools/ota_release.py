@@ -1,24 +1,24 @@
 """Unattended remote OTA release and test for my-jk-bms-firebase.yaml.
 
 Usage (from the repository root):
-    python tools/ota_release.py              # next patch version, e.g. 1.2.6 -> 1.2.7
+    python tools/ota_release.py              # next patch version, e.g. 1.2.34 -> 1.2.35
     python tools/ota_release.py 1.3.0        # explicit version
-    python tools/ota_release.py --dry-run    # build and check everything, but no upload and no signal
-    python tools/ota_release.py --wait-healthy 120   # wait up to 120 min for a healthy board before signalling
+    python tools/ota_release.py --dry-run    # build and check everything, but no signal
+    python tools/ota_release.py --ftp        # also upload over FTPS to an OTA site (ftp_* in secrets.yaml)
+    python tools/ota_release.py --wait-healthy 30   # wait up to 30 min for a healthy board after the restart
 
 Steps:
   1. Set fw_version in the config and build dist/jk-bms-<version>.ota.bin + .md5 (tools/publish_ota.py)
-  2. Upload both files over explicit FTPS (ftp_host / ftp_user / ftp_password in secrets.yaml)
-  3. Download them back through the OTA site login (ota_base_url / ota_username / ota_password)
-     and check size and MD5
-  4. Wait until the board is healthy (BMS connected, no install in progress), then set control/ota.
-     A busy or stuck board would count the version as attempted and later refuse it as rolled back.
+  2. Make the files available: by default tools/ota_server.py serves dist/ to the OTA host (the tunnel to
+     this PC; this PC must stay on with ota_server.py and the tunnel running), checked here on
+     127.0.0.1:8080. With --ftp: upload over FTPS and read them back through the site login.
+  3. Restart the board (control/restart): a fresh radio state is when downloads get through
+  4. As soon as it reports again with the BMS connected, set control/ota_host and control/ota.
+     The board (1.2.33+) checks the file itself first and refuses a block page without a BMS outage.
   5. Watch the Firebase device node every 30 s until the board runs the new version with the BMS
-     connected, or the timeout passes
-  6. Remove control/ota, so a leftover value cannot trigger another update later
+     connected, or the timeout passes; the new firmware removes control/ota itself
+  6. Remove control/ota and control/restart, so a leftover value cannot trigger anything later
   7. Write the timeline to logs/release-<version>.md
-
-Takes up to ~25 minutes; it does not need anyone to watch it.
 """
 
 import base64
@@ -125,13 +125,42 @@ def site_get(secrets: dict, name: str) -> bytes:
         return resp.read()
 
 
+def local_get(secrets: dict, name: str) -> bytes:
+    """A file as tools/ota_server.py serves it on this PC (the OTA host tunnels to it)."""
+    req = urllib.request.Request(f"http://127.0.0.1:8080/{name}")
+    token = base64.b64encode(f"{secrets['ota_username']}:{secrets['ota_password']}".encode()).decode()
+    req.add_header("Authorization", f"Basic {token}")
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return resp.read()
+
+
+def restart(secrets: dict, report: Report, minutes: int = 10) -> bool:
+    """Ask for a radio reset and wait until the board reports a new boot."""
+    before = (firebase(secrets, "GET", "device") or {}).get("uptime_s", 0)
+    token = str(int(time.time()))
+    firebase(secrets, "PUT", "control/restart", token)
+    report.log(f'control/restart = "{token}" (uptime before {before}s)')
+    end = time.time() + minutes * 60
+    try:
+        while time.time() < end:
+            time.sleep(10)
+            try:
+                d = firebase(secrets, "GET", "device") or {}
+            except Exception as e:
+                report.log(f"device read failed: {e}")
+                continue
+            if d.get("uptime_s", before) < before:
+                report.log(f"restarted: uptime={d.get('uptime_s')}s reset={d.get('reset_reason')}")
+                return True
+        return False
+    finally:
+        firebase(secrets, "DELETE", "control/restart")
+
+
 def healthy(d: dict) -> bool:
     fresh = time.time() - d.get("last_seen", 0) < 180
     busy = str(d.get("ota_status", "")).startswith(("downloading", "verifying"))
-    # Backlog cleared: more free heap for the download and no upload competing for the radio
-    # (firmware 1.2.27+ waits for this itself; older boards install as soon as they read the signal)
-    cleared = d.get("buffered", 0) <= 2
-    return fresh and d.get("ble_connected") == 1 and not busy and cleared
+    return fresh and d.get("ble_connected") == 1 and not busy
 
 
 def wait_healthy(secrets: dict, minutes: int, report: Report) -> bool:
@@ -203,14 +232,15 @@ def watch(secrets: dict, version: str, report: Report) -> bool:
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     dry_run = "--dry-run" in sys.argv
-    wait_min = 0
+    wait_min = 10
     if "--wait-healthy" in sys.argv:
         i = sys.argv.index("--wait-healthy")
         wait_min = int(sys.argv[i + 1])
         args = [a for a in args if a != sys.argv[i + 1]]
     secrets = read_secrets()
+    use_ftp = "--ftp" in sys.argv
     needed = ["firebase_db_url", "firebase_auth", "ota_base_url", "ota_username", "ota_password"]
-    if not dry_run:
+    if use_ftp:
         needed += ["ftp_host", "ftp_user", "ftp_password"]
     missing = [k for k in needed if not secrets.get(k)]
     if missing:
@@ -237,7 +267,7 @@ def main() -> int:
     report.log(f"board before: fw={d.get('firmware_version')} ble={d.get('ble_connected')} "
                f"last_seen={datetime.datetime.fromtimestamp(d.get('last_seen', 0)):%H:%M:%S}")
     if dry_run:
-        report.log("dry run: skipping upload, signal and watch; fw_version restored, build removed")
+        report.log("dry run: skipping publish, restart, signal and watch; fw_version restored, build removed")
         set_version(old)
         for f in files:
             f.unlink()
@@ -245,32 +275,47 @@ def main() -> int:
         return 0
 
     try:
-        # 2. upload, 3. verify through the site login
-        ftp_upload(secrets, files, report)
-        body = site_get(secrets, files[0].name)
-        site_md5 = site_get(secrets, files[1].name).decode().strip()
-        if hashlib.md5(body).hexdigest() != md5 or site_md5 != md5:
-            raise RuntimeError("site copy does not match the build")
-        report.log(f"site serves {files[0].name} ({len(body)} bytes), md5 matches")
+        # 2. make the files available and check them as the board will get them
+        if use_ftp:
+            ftp_upload(secrets, files, report)
+            body = site_get(secrets, files[0].name)
+            served_md5 = site_get(secrets, files[1].name).decode().strip()
+            where = "site"
+        else:
+            body = local_get(secrets, files[0].name)
+            served_md5 = local_get(secrets, files[1].name).decode().strip()
+            where = "ota_server.py (127.0.0.1:8080)"
+        if hashlib.md5(body).hexdigest() != md5 or served_md5 != md5 or body[:1] != b"\xe9":
+            raise RuntimeError(f"{where} does not serve the build")
+        report.log(f"{where} serves {files[0].name} ({len(body)} bytes), md5 matches, image starts with 0xE9")
 
-        # 4. signal once the board is healthy, 5. watch
+        # 3. restart first, 4. signal as soon as the board is back with the BMS, 5. watch
+        if not restart(secrets, report):
+            raise RuntimeError("board did not restart within 10 min; not signalled")
         if not wait_healthy(secrets, wait_min, report):
-            raise RuntimeError(f"board not healthy after {wait_min} min; not signalled")
+            raise RuntimeError(f"board not healthy {wait_min} min after the restart; not signalled")
         # 1.2.28+ downloads from control/ota_host (allowed domains only); older boards ignore it
         firebase(secrets, "PUT", "control/ota_host", secrets["ota_base_url"])
         firebase(secrets, "PUT", "control/ota", version)
         report.log(f'control/ota = "{version}"; watching device every {POLL_S}s for up to {TIMEOUT_S // 60} min')
         ok = watch(secrets, version, report)
+        if ok:
+            for _ in range(12):  # the new firmware removes control/ota itself
+                if not (firebase(secrets, "GET", "control") or {}).get("ota"):
+                    report.log("control/ota removed by the board itself")
+                    break
+                time.sleep(10)
     except Exception as e:
         report.log(f"ERROR: {e}")
         ok = False
     finally:
         # 6. never leave a pending signal behind
-        try:
-            firebase(secrets, "DELETE", "control/ota")
-            report.log("control/ota removed")
-        except Exception as e:
-            report.log(f"could not remove control/ota: {e}")
+        for path in ("control/ota", "control/restart"):
+            try:
+                firebase(secrets, "DELETE", path)
+            except Exception as e:
+                report.log(f"could not remove {path}: {e}")
+        report.log("control/ota and control/restart removed")
 
     result = (f"OK: board runs {version} with the BMS connected" if ok
               else f"FAILED: board did not reach {version} with the BMS connected in time")

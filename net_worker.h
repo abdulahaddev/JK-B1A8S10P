@@ -27,7 +27,7 @@
 namespace net {
 
 // JOB_STATUS and JOB_OTA_FILE are read by the script that sent them (ota_report, ota_install), not by a handler
-enum Job : uint8_t { JOB_NONE = 0, JOB_UPLOAD, JOB_CONTROL, JOB_CHECK, JOB_PUT, JOB_STATUS, JOB_OTA_FILE };
+enum Job : uint8_t { JOB_NONE = 0, JOB_UPLOAD, JOB_CONTROL, JOB_PUT, JOB_STATUS, JOB_OTA_FILE };
 
 struct Request {
   Job job = JOB_NONE;
