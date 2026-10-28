@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.38"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.39"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -194,7 +194,9 @@ esphome:
         # After setup, so the WiFi component has created the default event loop
         - lambda: |-
             otactl::begin();  // records the reason of each WiFi disconnect (device/wifi_disc_reason)
-            net::begin("Mozilla/5.0 (compatible; jk-bms-esp/${fw_version}; ESPHome)");  // background requests
+            // background requests; the ones to Firebase share one kept connection
+            net::begin("Mozilla/5.0 (compatible; jk-bms-esp/${fw_version}; ESPHome)", "${firebase_db_url}");
+            net::set_keep(id(net_keepalive));
         - script.execute: redraw_display
         # Raise BLE TX power from the default to the max (+9 dBm) so the BMS reliably hears our
         # connection request. Wait until the BLE controller is enabled (it starts in loop()).
@@ -219,6 +221,10 @@ esp32:
       # handshake: lowers the heap peak of every HTTPS request next to the BLE stack
       CONFIG_MBEDTLS_DYNAMIC_BUFFER: y
       CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA: y
+      # TLS session tickets: a new connection to Firebase resumes the session (short handshake, no
+      # certificate download and check); see net_worker.h
+      CONFIG_MBEDTLS_CLIENT_SSL_SESSION_TICKETS: y
+      CONFIG_ESP_TLS_CLIENT_SESSION_TICKETS: y
       # Default 300 ms is tight with BLE + WiFi coexistence and flash writes (NVS, OTA state)
       CONFIG_ESP_INT_WDT_TIMEOUT_MS: "800"
 
@@ -287,7 +293,9 @@ wifi:
       - script.execute: redraw_display
   on_disconnect:
     then:
-      - lambda: 'id(wifi_disconnects)++;'
+      - lambda: |-
+          id(wifi_disconnects)++;
+          net::reset_connection();  // the kept socket is dead; the session ticket stays
       - script.execute: redraw_display
 
 time:
@@ -644,6 +652,10 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: net_keepalive     # control/keepalive: one kept connection to Firebase (false = one per request)
+    type: bool
+    restore_value: yes
+    initial_value: 'true'
   - id: net_ok_ms         # last successful upload or control read, 0 = none since boot (connected-but-failing watchdog)
     type: uint32_t
     restore_value: no
@@ -881,6 +893,7 @@ interval:
   #   control/ota        version to install from control/ota_host, one attempt per signal
   #   control/ota_host   OTA base URL under an allowed domain (ota_control.h); a setting, kept
   #   control/check_s    read interval in seconds; a setting, kept
+  #   control/keepalive  false = a new connection per request (as before 1.2.39); missing = true; a setting, kept
   - interval: 10s
     then:
       - if:
@@ -1178,6 +1191,13 @@ interval:
                 d["upload_heap_low"] = id(upload_heap_low);
                 d["upload_heap_base"] = id(upload_heap_base);
                 d["upload_heap_per"] = id(upload_heap_per);
+                d["net_keepalive"] = id(net_keepalive) ? 1 : 0;
+                d["net_reused"] = net::n_reused.load();
+                d["net_new"] = net::n_new.load();
+                d["net_stale"] = net::n_stale.load();
+                d["net_first_ms"] = net::first_ms.load();
+                d["net_new_ms"] = net::new_ms.load();
+                d["net_stack_free"] = net::stack_free();
                 d["firmware_version"] = "${fw_version}";
                 d["ota_status"] = id(ota_status);
 
@@ -1453,6 +1473,13 @@ script:
           if (s != id(control_s)) ESP_LOGI("control", "Read interval %u s", (unsigned) s);
           id(control_s) = s;
 
+          // Kept connection to Firebase: on unless control/keepalive is false
+          JsonVariant ka = doc["keepalive"];
+          const bool keep = !(ka.is<bool>() && !ka.as<bool>()) && !(ka.is<const char *>() && strcmp(ka.as<const char *>(), "false") == 0);
+          if (keep != id(net_keepalive)) ESP_LOGI("control", "Kept connection %s", keep ? "on" : "off");
+          id(net_keepalive) = keep;
+          net::set_keep(keep);
+
           // Restart request (never while a new firmware still has to confirm itself)
           std::string restart_token;
           JsonVariant restart = doc["restart"];
@@ -1638,6 +1665,11 @@ script:
           condition:
             lambda: 'return !net::busy();'
           timeout: 20s
+      - lambda: 'net::release();  // close the kept connection cleanly'
+      - wait_until:
+          condition:
+            lambda: 'return !net::held();'
+          timeout: 3s
       - script.execute: ble_disconnect_clean
       - script.wait: ble_disconnect_clean
       # restore_value globals (restart_hash) are saved by the globals loop; give it a few passes,
@@ -1814,7 +1846,13 @@ script:
             - script.execute: ota_report
             - script.wait: ota_report
             - delay: 300ms
-            - lambda: 'global_preferences->sync();  // the attempt marker, stored by the globals loop meanwhile'
+            - lambda: |-
+                global_preferences->sync();  // the attempt marker, stored by the globals loop meanwhile
+                net::release();  // the kept Firebase connection: its memory goes to the download
+            - wait_until:
+                condition:
+                  lambda: 'return !net::held();'
+                timeout: 3s
             # 4. Download
             - lambda: |-
                 id(ota_display) = "OTA " + id(ota_target) + " 0%";
