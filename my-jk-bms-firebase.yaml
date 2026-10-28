@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.33"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.34"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -823,6 +823,10 @@ interval:
     then:
       - lambda: |-
           if (!net::take(net::last)) return;
+          // No clock yet (SNTP slow on this network: 2.5 min after a power-on, 28 Oct): take it from the reply's
+          // Date header, so readings and uploads start at once; SNTP corrects it once it syncs
+          if (!id(sntp_time).now().is_valid() && net::set_clock_from(net::last))
+            ESP_LOGI("time", "Clock set from the server reply (%s), SNTP corrects it later", net::last.date.c_str());
           switch (net::last.job) {
             case net::JOB_UPLOAD: id(net_upload_done).execute(); break;
             case net::JOB_CONTROL: id(net_control_done).execute(); break;
@@ -918,7 +922,8 @@ interval:
                   // After a failed read wait 2 min (each failed connect still takes 8-11 s of radio time)
                   if ((int32_t) (millis() - id(control_next_ms)) < 0) return false;
                   if (id(control_force)) return true;
-                  if (id(control_last_ms) == 0) return millis() >= 30000;
+                  // First read ~30 s after boot, ~10 s without a clock (its reply sets the clock)
+                  if (id(control_last_ms) == 0) return millis() >= (id(sntp_time).now().is_valid() ? 30000u : 10000u);
                   return millis() - id(control_last_ms) >= id(control_s) * 1000u;
           then:
             - lambda: |-

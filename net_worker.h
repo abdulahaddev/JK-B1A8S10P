@@ -13,7 +13,9 @@
 #include <algorithm>
 #include <atomic>
 #include <cctype>
+#include <cstdio>
 #include <cstring>
+#include <sys/time.h>
 #include <string>
 #include <utility>
 #include <vector>
@@ -46,6 +48,7 @@ struct Result {
   std::vector<std::pair<std::string, std::string>> headers;
   int content_length = 0;
   uint32_t took_ms = 0;
+  std::string date;  // the server's Date header (sets the clock before SNTP has synced)
 
   std::string header(const char *name) const {
     for (const auto &h : headers)
@@ -69,6 +72,7 @@ inline esp_err_t on_event(esp_http_client_event_t *e) {
   if (e->event_id != HTTP_EVENT_ON_HEADER || e->header_key == nullptr || e->header_value == nullptr) return ESP_OK;
   std::string key(e->header_key);
   for (auto &c : key) c = (char) tolower((unsigned char) c);
+  if (key == "date") res.date = e->header_value;
   for (const auto &want : req.collect) {
     if (key == want) res.headers.emplace_back(key, e->header_value);
   }
@@ -140,6 +144,33 @@ inline void begin(const char *ua) {
 }
 
 inline bool busy() { return state.load() != IDLE; }
+
+// "Wed, 28 Oct 2026 15:34:39 GMT" -> unix seconds, 0 when it does not parse
+inline int64_t parse_http_date(const std::string &s) {
+  static const char *MONTHS = "JanFebMarAprMayJunJulAugSepOctNovDec";
+  char mon[4] = {0};
+  int d, y, h, mi, sec;
+  if (sscanf(s.c_str(), "%*3s, %d %3s %d %d:%d:%d", &d, mon, &y, &h, &mi, &sec) != 6) return 0;
+  const char *p = strstr(MONTHS, mon);
+  if (p == nullptr || (p - MONTHS) % 3 != 0) return 0;
+  const int m = (int) (p - MONTHS) / 3 + 1;
+  // days since 1970-01-01 of a civil date (H. Hinnant's days_from_civil)
+  y -= m <= 2;
+  const int era = (y >= 0 ? y : y - 399) / 400;
+  const unsigned yoe = (unsigned) (y - era * 400);
+  const unsigned doy = (153u * (unsigned) (m + (m > 2 ? -3 : 9)) + 2) / 5 + (unsigned) d - 1;
+  const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+  const int64_t days = (int64_t) era * 146097 + doe - 719468;
+  return days * 86400 + h * 3600 + mi * 60 + sec;
+}
+
+// Set the system clock from a reply's Date header (to the second); SNTP corrects it once it syncs
+inline bool set_clock_from(const Result &r) {
+  const int64_t t = r.date.empty() ? 0 : parse_http_date(r.date);
+  if (t < 1700000000) return false;
+  struct timeval tv = {(time_t) t, 0};
+  return settimeofday(&tv, nullptr) == 0;
+}
 
 // Main loop only, while !busy()
 inline bool submit(Request r) {
