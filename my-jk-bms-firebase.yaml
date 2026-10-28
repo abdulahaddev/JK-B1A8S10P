@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.40"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.41"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -59,8 +59,6 @@ substitutions:
   radio_reset_fallback_ms: "120000"  # Radio reset after a software reset even without a successful upload
   ota_text_long_ms: "600000"  # OTA text replaces BAL/DSG this long after a failure or rollback
   ota_text_short_ms: "120000" # ...and this long after a confirmed update
-  ble_dot_ms: "300"           # Dot at the BT icon after each BMS frame (~every 2.4 s)
-  upload_dot_ms: "1000"       # Dot at the WiFi icon after each successful upload (~once a minute)
   # Self-healing: radio reset (1 s deep sleep) when the BMS link or WiFi stays down this long.
   # Each reset in a row doubles the wait (x1, x2, x4, x8); it starts over once both work again.
   ble_watchdog_ms: "600000"   # no BMS frame for 10 min
@@ -194,10 +192,9 @@ esphome:
         # After setup, so the WiFi component has created the default event loop
         - lambda: |-
             otactl::begin();  // records the reason of each WiFi disconnect (device/wifi_disc_reason)
-            // background requests; the ones to Firebase use one long-lived client (net_worker.h modes)
+            // background requests; the ones to Firebase can share one kept connection (net_worker.h)
             net::begin("Mozilla/5.0 (compatible; jk-bms-esp/${fw_version}; ESPHome)", "${firebase_db_url}");
-            net::set_mode((net::Mode) id(net_mode));
-        - script.execute: redraw_display
+            net::set_mode(id(net_keep) ? net::MODE_KEEP : net::MODE_OFF);
         # Raise BLE TX power from the default to the max (+9 dBm) so the BMS reliably hears our
         # connection request. Wait until the BLE controller is enabled (it starts in loop()).
         - wait_until:
@@ -221,13 +218,10 @@ esp32:
       # handshake: lowers the heap peak of every HTTPS request next to the BLE stack
       CONFIG_MBEDTLS_DYNAMIC_BUFFER: y
       CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA: y
-      # TLS session tickets: a new connection to Firebase resumes the session (short handshake, no
-      # certificate download and check); see net_worker.h
-      CONFIG_MBEDTLS_CLIENT_SSL_SESSION_TICKETS: y
-      CONFIG_ESP_TLS_CLIENT_SESSION_TICKETS: y
-      # Debug (1.2.40): guard bytes around every heap block and a fill pattern in freed ones, so a write past
-      # a block or into freed memory is caught at the next malloc/free instead of later in another task
-      CONFIG_HEAP_POISONING_COMPREHENSIVE: y
+      # No TLS session tickets: resumed handshakes overflow the dynamic RX buffer in IDF 5.5.4
+      # (logs/debug-1.2.40-heap.md). Default y in IDF, so switched off explicitly.
+      CONFIG_MBEDTLS_CLIENT_SSL_SESSION_TICKETS: n
+      CONFIG_ESP_TLS_CLIENT_SESSION_TICKETS: n
       # Default 300 ms is tight with BLE + WiFi coexistence and flash writes (NVS, OTA state)
       CONFIG_ESP_INT_WDT_TIMEOUT_MS: "800"
 
@@ -260,8 +254,6 @@ ota:
             id(ota_display) = "OTA failed";
             id(ota_show_until) = millis() + ${ota_text_long_ms};
             // ota_install goes on after the flash action: it reports this status, then resets the radio
-        - script.execute: redraw_display
-    # The download blocks the main loop, so redraw directly every 10%
     on_progress:
       then:
         - lambda: |-
@@ -275,12 +267,7 @@ ota:
               telemetry::save_ram();  // the RAM part of the queue survives the restart (NVS)
               radio_sleep(1000000);  // stops BLE and WiFi first, then a 1 s deep sleep
             }
-            id(ota_dl_pct) = (int) x;
-            const int step = (int) x / 10;
-            if (step == id(ota_progress_step)) return;
-            id(ota_progress_step) = step;
-            id(ota_display) = "OTA " + id(ota_target) + " " + std::to_string(step * 10) + "%";
-            id(oled_display).update();
+            id(ota_dl_pct) = (int) x;  // reported in the status when the download fails
 
 wifi:
   ssid: !secret wifi_ssid
@@ -291,15 +278,11 @@ wifi:
   # ESPHome would esp_restart after 15 min without WiFi; a soft reset leaves BLE unable to reach
   # the BMS, so the WiFi watchdog in the 30s interval does a radio reset instead.
   reboot_timeout: 0s
-  on_connect:
-    then:
-      - script.execute: redraw_display
   on_disconnect:
     then:
       - lambda: |-
           id(wifi_disconnects)++;
-          net::reset_connection();  // the kept socket is dead; the session ticket stays
-      - script.execute: redraw_display
+          net::reset_connection();  // a kept socket is dead
 
 time:
   - platform: sntp
@@ -339,12 +322,10 @@ display:
     address: 0x3C
     i2c_id: bus_a
     id: oled_display
-    update_interval: never  # redrawn by the redraw_display script on new data
+    update_interval: 30s  # rarely watched: one redraw per reading, nothing in between
     lambda: |-
       using CS = esphome::esp32_ble_tracker::ClientState;
       const uint32_t now = millis();
-      const bool fast_on = (now / 500) % 2 == 0;
-      const bool slow_on = (now / 1000) % 2 == 0;
 
       // 1. Header (y=0..11): title (or queued readings), BT icon, WiFi bars, SOC
       const size_t queued = telemetry::size();
@@ -354,16 +335,9 @@ display:
         it.print(2, 0, id(font_small), "JK-BMS");
       }
 
-      // BT: solid when connected, fast blink while connecting, slow blink when disconnected.
-      // "!" when the BMS reports an error.
+      // BT icon; "x" next to it while the BMS is not connected, "!" when the BMS reports an error
       const auto bt = id(client0)->state();
-      bool bt_show = slow_on;
-      if (bt == CS::ESTABLISHED) {
-        bt_show = true;
-      } else if (bt == CS::CONNECTING || bt == CS::DISCOVERED || bt == CS::CONNECTED) {
-        bt_show = fast_on;
-      }
-      if (bt_show) {
+      {
         const int x = 44, y = 1;
         it.line(x + 0, y + 2, x + 6, y + 6);
         it.line(x + 6, y + 6, x + 3, y + 9);
@@ -371,16 +345,14 @@ display:
         it.line(x + 3, y + 0, x + 6, y + 3);
         it.line(x + 6, y + 3, x + 0, y + 7);
       }
-      // Activity dot: flashes when a BMS frame arrives
-      if (id(ble_rx_ms) != 0 && now - id(ble_rx_ms) < ${ble_dot_ms}) {
-        it.filled_rectangle(51, 0, 2, 2);  // upper right of the BT icon
-      }
       const std::string &errors = id(bms_errors).state;
-      if (bt == CS::ESTABLISHED && !errors.empty() && errors != "None" && errors != "Offline") {
+      if (bt != CS::ESTABLISHED) {
+        it.print(52, 0, id(font_small), "x");
+      } else if (!errors.empty() && errors != "None" && errors != "Offline") {
         it.print(55, 0, id(font_small), "!");
       }
 
-      // WiFi: signal bars when connected, all bars slow blinking when disconnected.
+      // WiFi: signal bars when connected, empty bars and "x" when not.
       // "!" when the last Firebase upload failed.
       auto *wifi = esphome::wifi::global_wifi_component;
       const bool wifi_ok = wifi != nullptr && wifi->is_connected();
@@ -389,21 +361,17 @@ display:
         const int rssi = wifi->wifi_rssi();
         bars = rssi > -60 ? 4 : rssi > -70 ? 3 : rssi > -80 ? 2 : 1;
       }
-      if (wifi_ok || slow_on) {
-        for (int i = 0; i < 4; i++) {
-          const int x = 62 + i * 3, h = 2 + i * 2;
-          if (!wifi_ok || i < bars) {
-            it.filled_rectangle(x, 10 - h, 2, h);
-          } else {
-            it.horizontal_line(x, 9, 2);
-          }
+      for (int i = 0; i < 4; i++) {
+        const int x = 62 + i * 3, h = 2 + i * 2;
+        if (i < bars) {
+          it.filled_rectangle(x, 10 - h, 2, h);
+        } else {
+          it.horizontal_line(x, 9, 2);
         }
       }
-      // Activity dot: flashes when an upload to Firebase succeeds
-      if (id(fb_tx_ms) != 0 && now - id(fb_tx_ms) < ${upload_dot_ms}) {
-        it.filled_rectangle(73, 0, 2, 2);  // upper right of the WiFi bars
-      }
-      if (wifi_ok && id(firebase_error)) {
+      if (!wifi_ok) {
+        it.print(75, 0, id(font_small), "x");
+      } else if (id(firebase_error)) {
         it.print(77, 0, id(font_small), "!");
       }
 
@@ -655,10 +623,10 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: net_mode          # control/keepalive: 0 off, 1 resume (default), 2 keep (net_worker.h)
-    type: uint8_t
+  - id: net_keep          # control/keepalive: one kept connection to Firebase (net_worker.h); off by default
+    type: bool
     restore_value: yes
-    initial_value: '1'
+    initial_value: 'false'
   - id: net_ok_ms         # last successful upload or control read, 0 = none since boot (connected-but-failing watchdog)
     type: uint32_t
     restore_value: no
@@ -740,10 +708,6 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: '0'
-  - id: ota_progress_step
-    type: int
-    restore_value: no
-    initial_value: '-1'
   - id: ble_connect_ms    # last BMS connect (stale-link check)
     type: uint32_t
     restore_value: no
@@ -800,10 +764,6 @@ globals:
     type: std::string
     restore_value: no
     initial_value: '""'
-  - id: fb_tx_ms          # last successful upload, for the WiFi activity dot
-    type: uint32_t
-    restore_value: no
-    initial_value: '0'
 
 interval:
   # Background requests (net_worker.h): hand each finished one to its handler script
@@ -821,19 +781,6 @@ interval:
             case net::JOB_PUT: id(net_put_done).execute(); break;
             default: break;  // JOB_STATUS: nothing to do with the answer
           }
-
-  # Redraw twice a second only while a status icon is blinking, or until the OTA text times out
-  - interval: 500ms
-    then:
-      - if:
-          condition:
-            lambda: |-
-              auto *wifi = esphome::wifi::global_wifi_component;
-              const bool ota_text = id(ota_show_until) != 0 && (int32_t) (id(ota_show_until) - millis()) > -1000;
-              return id(client0)->state() != esphome::esp32_ble_tracker::ClientState::ESTABLISHED ||
-                     wifi == nullptr || !wifi->is_connected() || ota_text;
-          then:
-            - script.execute: redraw_display
 
   # Store one reading every sample_interval, and notice changes in the slow-moving info values
   - interval: ${sample_interval}
@@ -896,8 +843,8 @@ interval:
   #   control/ota        version to install from control/ota_host, one attempt per signal
   #   control/ota_host   OTA base URL under an allowed domain (ota_control.h); a setting, kept
   #   control/check_s    read interval in seconds; a setting, kept
-  #   control/keepalive  "off" (or false) = new connection per request as before 1.2.39; "resume" (or missing) =
-  #                      new connection per request, TLS session resumed; "keep" (or true) = connection kept open
+  #   control/keepalive  "keep" (or true) = one connection kept open for all requests; anything else = a new
+  #                      connection per request (as before 1.2.39); a setting, kept
   - interval: 10s
     then:
       - if:
@@ -935,7 +882,6 @@ interval:
   # ~9% of the radio from WiFi), and the WiFi signal for drop reports.
   - interval: 10s
     then:
-      - lambda: 'net::check_idle();  // debug: heap damage done between requests (net_worker.h)'
       - lambda: |-
           auto *wifi = esphome::wifi::global_wifi_component;
           if (wifi != nullptr && wifi->is_connected()) otactl::last_rssi = (int8_t) wifi->wifi_rssi();
@@ -1196,17 +1142,10 @@ interval:
                 d["upload_heap_low"] = id(upload_heap_low);
                 d["upload_heap_base"] = id(upload_heap_base);
                 d["upload_heap_per"] = id(upload_heap_per);
-                d["net_mode"] = id(net_mode);                 // asked: 0 off, 1 resume, 2 keep
-                d["net_mode_used"] = (int) net::cur_mode();   // 0 after a heap fault or a crash in this or the last run
-                d["net_prev"] = net::prev_report;             // where the previous run ended, if it crashed
-                d["net_heap_bad"] = net::heap_bad.load() ? std::string(net::crumb.fail) : std::string("");
-                d["net_checks"] = net::n_checks.load();
-                d["net_check_max_us"] = net::check_max_us.load();
+                d["net_keepalive"] = id(net_keep) ? 1 : 0;
                 d["net_reused"] = net::n_reused.load();
                 d["net_new"] = net::n_new.load();
                 d["net_stale"] = net::n_stale.load();
-                d["net_first_ms"] = net::first_ms.load();
-                d["net_new_ms"] = net::new_ms.load();
                 d["net_stack_free"] = net::stack_free();
                 d["firmware_version"] = "${fw_version}";
                 d["ota_status"] = id(ota_status);
@@ -1304,7 +1243,6 @@ ble_client:
     on_connect:
       then:
         - lambda: 'id(ble_connect_ms) = millis();'
-        - script.execute: redraw_display
         # Stop the scan once the link has settled (service discovery done)
         - delay: 5s
         - lambda: 'id(radio_apply) = true;'
@@ -1319,7 +1257,6 @@ ble_client:
             // Scan again to find the BMS (stop_scan also switched off continuous scanning)
             id(ble_tracker)->set_scan_continuous(true);
             if (id(ble_tracker)->get_scanner_state() == esp32_ble_tracker::ScannerState::IDLE) id(ble_tracker)->start_scan();
-        - script.execute: redraw_display
 
 # Redraw the OLED when data or connection state changes instead of polling.
 # The 0s delay runs the redraw on the next loop pass, after the whole BMS frame has been
@@ -1374,8 +1311,6 @@ script:
               // Report "updated", then the radio reset that follows every software reset, at once
               if (id(needs_radio_reset)) id(post_update_reset).execute();
             }
-            id(fb_tx_ms) = millis();
-            id(activity_pulse).execute();
             if (id(info_in_flight)) {
               id(info_dirty) = false;
               id(info_sent_ms) = millis();
@@ -1483,19 +1418,13 @@ script:
           if (s != id(control_s)) ESP_LOGI("control", "Read interval %u s", (unsigned) s);
           id(control_s) = s;
 
-          // Firebase connection mode (net_worker.h): off, resume (default) or keep
+          // Kept Firebase connection (net_worker.h): on with "keep" or true, else off
           JsonVariant ka = doc["keepalive"];
-          uint8_t nm = net::MODE_RESUME;
-          if (ka.is<bool>()) nm = ka.as<bool>() ? net::MODE_KEEP : net::MODE_OFF;
-          else if (ka.is<const char *>()) {
-            const char *v = ka.as<const char *>();
-            nm = (!strcmp(v, "off") || !strcmp(v, "false")) ? net::MODE_OFF
-                 : (!strcmp(v, "keep") || !strcmp(v, "true")) ? net::MODE_KEEP : net::MODE_RESUME;
-          }
-          static const char *const MODE_NAMES[] = {"off", "resume", "keep"};
-          if (nm != id(net_mode)) ESP_LOGI("control", "Connection mode %s", MODE_NAMES[nm]);
-          id(net_mode) = nm;
-          net::set_mode((net::Mode) nm);
+          const bool keep = (ka.is<bool>() && ka.as<bool>()) ||
+                            (ka.is<const char *>() && (!strcmp(ka.as<const char *>(), "keep") || !strcmp(ka.as<const char *>(), "true")));
+          if (keep != id(net_keep)) ESP_LOGI("control", "Kept connection %s", keep ? "on" : "off");
+          id(net_keep) = keep;
+          net::set_mode(keep ? net::MODE_KEEP : net::MODE_OFF);
 
           // Restart request (never while a new firmware still has to confirm itself)
           std::string restart_token;
@@ -1625,27 +1554,8 @@ script:
           }
           if (id(restart_go)) {
             id(restart_go) = false;
-            id(ota_display) = "Restarting";
-            id(ota_show_until) = millis() + 5000;
-            id(oled_display).update();
             id(radio_reset).execute();
           }
-
-  - id: redraw_display
-    mode: single
-    then:
-      - delay: 0s
-      - component.update: oled_display
-
-  # Show the activity dots now and redraw when each one should disappear
-  - id: activity_pulse
-    mode: restart
-    then:
-      - script.execute: redraw_display
-      - delay: ${ble_dot_ms}ms
-      - script.execute: redraw_display
-      - delay: !lambda 'return ${upload_dot_ms} - ${ble_dot_ms};'
-      - script.execute: redraw_display
 
   # Close the BMS link cleanly (terminate sent, client idle) before anything that reboots or stops BLE.
   # Auto-connect stays off so it cannot reconnect in between; a reboot or ble re-enable turns it back on.
@@ -1674,9 +1584,6 @@ script:
       - lambda: |-
           crash::step(crash::STEP_RADIO_RESET);
           id(maintenance_ms) = millis();
-          id(ota_display) = "Restarting";
-          id(ota_show_until) = millis() + 5000;
-          id(oled_display).update();
       # A request in flight (net_worker.h) finishes first (each has an 8 s timeout)
       - wait_until:
           condition:
@@ -1872,14 +1779,10 @@ script:
                 timeout: 3s
             # 4. Download
             - lambda: |-
-                id(ota_display) = "OTA " + id(ota_target) + " 0%";
-                id(ota_progress_step) = 0;
                 id(ota_dl_pct) = 0;
-                id(ota_show_until) = millis() + ${ota_text_long_ms};
                 crash::step(crash::STEP_OTA_FLASH);
                 id(maintenance_ms) = millis();
                 id(ota_dl_start_ms) = millis();  // download time limit, checked in ota_http on_progress
-            - component.update: oled_display
             - ota.http_request.flash:
                 id: ota_http
                 url: !lambda 'return id(ota_base) + "/jk-bms-" + id(ota_target) + ".ota.bin";'
@@ -1929,7 +1832,6 @@ sensor:
           - lambda: |-
               id(bms_fresh_frame) = true;
               id(ble_rx_ms) = millis();
-          - script.execute: activity_pulse
     current:
       name: "Current"
       id: bms_current
@@ -2041,12 +1943,6 @@ switch:
     discharging:
       name: "Discharging Switch"
       id: bms_discharging_switch
-      on_state:
-        then:
-          - script.execute: redraw_display
     balancer:
       name: "Balancer Switch"
       id: bms_balancer_switch
-      on_state:
-        then:
-          - script.execute: redraw_display
