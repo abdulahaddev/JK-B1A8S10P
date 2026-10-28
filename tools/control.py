@@ -29,6 +29,8 @@ import time
 import urllib.error
 import urllib.request
 
+from telemetry_format import decode
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SECRETS = ROOT / "secrets.yaml"
 CONFIG = ROOT / "my-jk-bms-firebase.yaml"
@@ -221,7 +223,7 @@ def cmd_readings(args):
         return
     print(dim(f"  {'time':<9} {'volt':>7} {'curr':>7} {'soc':>4}  cells"))
     for k in sorted(data, key=int):
-        r = data[k]
+        r = decode(data[k])
         cells = " ".join(f"{r.get(f'cell_voltage_{i}', 0):.3f}" for i in range(1, 5))
         print(f"  {hhmm(int(k)):<9} {r.get('total_voltage', 0):>7.3f} {r.get('current', 0):>+7.2f} "
               f"{r.get('state_of_charge', 0):>3}%  {cells}")

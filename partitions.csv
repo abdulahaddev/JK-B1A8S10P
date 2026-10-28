@@ -1,0 +1,11 @@
+# Flash layout since 1.2.42 (4 MB). Changing it needs a USB flash of the factory image.
+#   app0/app1  1.625 MB each: firmware 1.32 MB, ~380 KB room to grow
+#   nvs        64 KB: ESPHome settings, WiFi and PHY data (the reading queue no longer goes here)
+#   jklog      640 KB: reading queue (576 KB, ~6.3 days at 30 s) and event log (64 KB), see flash_log.h
+# Name,   Type, SubType, Offset,   Size
+otadata,  data, ota,     0x9000,   0x2000,
+phy_init, data, phy,     0xb000,   0x1000,
+app0,     app,  ota_0,   0x10000,  0x1A0000,
+app1,     app,  ota_1,   0x1B0000, 0x1A0000,
+nvs,      data, nvs,     0x350000, 0x10000,
+jklog,    data, 0x40,    0x360000, 0xA0000,

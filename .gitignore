@@ -37,3 +37,6 @@ npm-debug.log*
 
 # --- Serial logs from the board (ESPHome prints failed request URLs, which can carry the Firebase key) ---
 logs/ESP Device-logs*.txt
+
+# --- Firebase backups from tools/migrate_telemetry.py (readings, no keys) ---
+/backups/

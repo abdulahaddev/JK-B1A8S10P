@@ -52,6 +52,52 @@ export function useLatest<T>(path: string, n: number): (T & { ts: number })[] {
   return rows;
 }
 
+/**
+ * telemetry/<ts> as the board writes it since 1.2.42: integers as stored on the board, null = no value
+ *   [mV, 10 mA, cell 1..4 mV, 10 mAh, SOC %, balancing mA, MOSFET, sensor 1, sensor 2 in 0.1 °C, flags]
+ * flags: 1 charging, 2 discharging, 4 balancing. Objects (before the migration) pass through unchanged.
+ */
+function toReading(ts: number, v: unknown): Reading {
+  if (!Array.isArray(v)) return { ...(v as object), ts } as Reading;
+  const n = (i: number, scale: number) => (typeof v[i] === "number" ? v[i] / scale : undefined);
+  const flags = typeof v[12] === "number" ? v[12] : 0;
+  return {
+    ts,
+    total_voltage: n(0, 1000) ?? 0,
+    current: n(1, 100),
+    cell_voltage_1: n(2, 1000) ?? 0,
+    cell_voltage_2: n(3, 1000) ?? 0,
+    cell_voltage_3: n(4, 1000) ?? 0,
+    cell_voltage_4: n(5, 1000) ?? 0,
+    capacity_remaining: n(6, 100) ?? 0,
+    state_of_charge: n(7, 1) ?? 0,
+    balancing_current: n(8, 1000),
+    mosfet_temperature: n(9, 10),
+    temperature_sensor_1: n(10, 10),
+    temperature_sensor_2: n(11, 10),
+    charging: flags & 1 ? 1 : 0,
+    discharging: flags & 2 ? 1 : 0,
+    balancing: flags & 4 ? 1 : 0,
+  };
+}
+
+function readings(obj: Record<string, unknown> | null): Reading[] {
+  if (!obj) return [];
+  return Object.entries(obj)
+    .map(([k, v]) => toReading(Number(k), v))
+    .sort((a, b) => a.ts - b.ts);
+}
+
+/** The newest reading, live. */
+export function useLatestReading(): Reading | undefined {
+  const [row, setRow] = useState<Reading | undefined>(undefined);
+  useEffect(
+    () => onValue(query(ref(db, "telemetry"), orderByKey(), limitToLast(1)), (s) => setRow(readings(s.val())[0])),
+    [],
+  );
+  return row;
+}
+
 export const useBoots = () => useLatest<Boot>("boots", 50);
 export const useCrashes = () => useLatest<Crash>("crashes", 20);
 
@@ -64,7 +110,7 @@ export function fetchReadings(from: number, to: number): Promise<Reading[]> {
   const hit = cache.get(k);
   if (hit && Date.now() - hit.at < 30_000) return hit.rows;
   const q = query(ref(db, "telemetry"), orderByKey(), startAt(String(from)), endAt(String(to)));
-  const rows = get(q).then((s) => keyed<Reading>(s.val()));
+  const rows = get(q).then((s) => readings(s.val()));
   rows.catch(() => cache.delete(k));
   cache.set(k, { at: Date.now(), rows });
   for (const [key, v] of cache) if (Date.now() - v.at > 300_000) cache.delete(key);

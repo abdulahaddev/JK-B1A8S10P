@@ -9,7 +9,7 @@ import { Overview } from "./components/Overview";
 import { RemoteControl } from "./components/RemoteControl";
 import { Ago, StatusPill } from "./components/ui";
 import { useControlWatcher } from "./controlLog";
-import { useControl, useDevice, useInfo, useLatest, useReadings } from "./data";
+import { useControl, useDevice, useInfo, useLatestReading, useReadings } from "./data";
 import { useTheme, type Tokens } from "./theme";
 import type { Reading } from "./types";
 
@@ -123,7 +123,7 @@ export default function App() {
   const control = useControl();
   useControlWatcher(device, control);
   const info = useInfo();
-  const latest = useLatest<Reading>("telemetry", 1)[0];
+  const latest = useLatestReading();
   const clock = useNow(5); // for "x s ago"
 
   const current = PAGES.find((p) => p.id === page)!;

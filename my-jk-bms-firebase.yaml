@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.41"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.42"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -9,7 +9,7 @@ substitutions:
   sample_interval: "30s"      # One telemetry reading into the buffer
   sample_interval_ms: "30000" # Same, in ms (upload timing); keep both in sync
   upload_check_interval: "10s"
-  upload_batch_max: "8"       # Hard ceiling, never crossed; the learned limits normally stay below it
+  upload_batch_max: "16"      # Hard ceiling, never crossed; the learned limits normally stay below it
   # The batch is the smallest of the memory fit, the adaptive limit (grows while uploads are quick and
   # succeed, halves when one is slow or fails) and upload_batch_max.
   # Memory fit is measured, not assumed: every upload records its own heap low point
@@ -17,7 +17,7 @@ substitutions:
   # body) and the cost per reading, and the next batch keeps the low point above upload_heap_floor.
   # A low point below the floor halves the adaptive limit at once.
   upload_heap_base_init: "24000"  # First estimate of the fixed cost; replaced by measurements
-  upload_heap_per_reading: "1000" # First estimate per reading; replaced by measurements
+  upload_heap_per_reading: "400"  # First estimate per reading (integer array); replaced by measurements
   upload_heap_floor: "22000"      # Free heap that must remain at the low point of an upload
   upload_min_block: "16000"   # Largest free block below this: send 1 reading only
   # Free time: with a backlog, extra uploads run later in the 30 s cycle while the learned upload time
@@ -87,6 +87,7 @@ esphome:
     - <esp_heap_caps.h>
     - <esp_timer.h>
     - <esp_wifi.h>
+    - flash_log.h
     - telemetry_buffer.h
     - crash_capture.h
     - radio_sleep.h
@@ -95,24 +96,24 @@ esphome:
     - <esphome/components/esp32/crash_handler.h>
   # Remember that the run ended through ESPHome (OTA reboot, safe_reboot) for the boots/ history
   on_shutdown:
-    - lambda: |-
-        telemetry::note_shutdown();
-        telemetry::save_ram();  // OTA reboot, safe_reboot: keep the RAM part of the queue
+    - lambda: 'telemetry::note_shutdown();'
   on_boot:
     - priority: 800
       then:
-        # Restore buffered readings kept in RTC memory across a software reboot
+        # Restart bookkeeping (RTC) and the flash rings: readings still to upload, events
         - lambda: |-
             telemetry::begin();
-            const size_t restored = telemetry::restore_ram();
-            if (restored) ESP_LOGI("telemetry", "%u older readings restored from NVS", (unsigned) restored);
             crash::begin();
             // ESPHome printed its crash report before on_message was listening; print it again to collect it
             if (esphome::esp32::crash_handler_has_data()) esphome::esp32::crash_handler_log();
-            if (crash::crashed()) ESP_LOGE("crash", "Previous run crashed in step %s", crash::last_step_name());
-            ESP_LOGI("telemetry", "Boot %u (%s, cause %s), %u readings restored from RTC",
+            if (crash::crashed()) {
+              ESP_LOGE("crash", "Previous run crashed in step %s", crash::last_step_name());
+              telemetry::event(flog::EV_CRASH, 0, 0, crash::last_step_name());
+            }
+            ESP_LOGI("telemetry", "Boot %u (%s, cause %s), %u readings and %u events queued in flash",
                      (unsigned) telemetry::boot_count(), telemetry::reset_reason(), telemetry::restart_cause(),
-                     (unsigned) telemetry::size());
+                     (unsigned) telemetry::size(), (unsigned) flog::events.size());
+            telemetry::event(flog::EV_BOOT, (int32_t) esp_reset_reason(), (int32_t) telemetry::restart_cause_code(), "${fw_version}");
             const std::string cred = std::string("${ota_username}:") + "${ota_password}";
             id(ota_auth_header) = "Basic " + base64_encode((const uint8_t *) cred.data(), cred.size());
             // Every boot that did not come from a deep sleep powers the radio down for 2 s first, before WiFi and
@@ -134,7 +135,6 @@ esphome:
               if (cause != telemetry::CAUSE_NONE) {
                 ESP_LOGW("radio", "Boot after %s: deep sleep 2 s to power the radio down", telemetry::reset_reason());
                 telemetry::set_restart_cause(cause);
-                telemetry::save_ram();  // readings restored from NVS above go back there for the next boot
                 radio_sleep(2000000);
               }
             }
@@ -208,6 +208,9 @@ esphome:
 
 esp32:
   board: esp32dev
+  # Smaller app slots and NVS, a 640 KB jklog partition for the reading queue and event log (flash_log.h).
+  # A new table needs a USB flash of the factory image.
+  partitions: partitions.csv
   framework:
     type: esp-idf
     advanced:
@@ -264,7 +267,6 @@ ota:
                        (unsigned) (${ota_download_ms} / 1000), (int) x);
               telemetry::set_restart_cause(telemetry::CAUSE_OTA_TIME_LIMIT);
               global_preferences->sync();
-              telemetry::save_ram();  // the RAM part of the queue survives the restart (NVS)
               radio_sleep(1000000);  // stops BLE and WiFi first, then a 1 s deep sleep
             }
             id(ota_dl_pct) = (int) x;  // reported in the status when the download fails
@@ -283,6 +285,7 @@ wifi:
       - lambda: |-
           id(wifi_disconnects)++;
           net::reset_connection();  // a kept socket is dead
+          telemetry::event(flog::EV_WIFI_DROP, otactl::last_disc_reason, otactl::disc_rssi);
 
 time:
   - platform: sntp
@@ -523,6 +526,10 @@ globals:
     restore_value: no
     initial_value: '2'
   - id: upload_fresh_ts   # timestamp of the fresh reading in the request in flight, 0 = none
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+  - id: events_in_flight  # flash log events (oldest first) in the request in flight
     type: uint32_t
     restore_value: no
     initial_value: '0'
@@ -933,7 +940,6 @@ interval:
                    (unsigned) ((millis() - id(maintenance_ms)) / 1000));
           telemetry::set_restart_cause(telemetry::CAUSE_STUCK_SCRIPT);
           global_preferences->sync();
-          telemetry::save_ram();  // the RAM part of the queue survives the restart (NVS)
           radio_sleep(1000000);  // stops BLE and WiFi first: sleeping with them on can deadlock the PHY
       - if:
           condition:
@@ -942,9 +948,7 @@ interval:
             - lambda: 'ESP_LOGE("ota", "${fw_version} not confirmed within timeout, rolling back");'
             - script.execute: ble_disconnect_clean
             - script.wait: ble_disconnect_clean
-            - lambda: |-
-                telemetry::save_ram();
-                esp_ota_mark_app_invalid_rollback_and_reboot();
+            - lambda: 'esp_ota_mark_app_invalid_rollback_and_reboot();'
       # Radio reset after a software reset, once the firmware is confirmed and the status was uploaded
       # (never while pending verify: rebooting then would roll the update back)
       - if:
@@ -1036,7 +1040,7 @@ interval:
                   // Backoff only after a failure (a plain millis() compare would misfire after ~24.8 days idle)
                   if (id(upload_fails) > 0 && (int32_t) (millis() - id(upload_next_ms)) < 0) return false;
                   // An accepted update starts within 10 s and reports each of its steps itself (ota_report);
-                  // readings stay queued until it is over (the RAM part survives its reboot in NVS)
+                  // readings stay queued until it is over (in flash)
                   if (id(ota_requested)) return false;
                   // First upload after boot (confirms a new firmware) and stale diagnostics go at once
                   if (id(ota_pending_verify) || !id(uploaded_since_boot) ||
@@ -1068,7 +1072,8 @@ interval:
                 // Free-time uploads have no fresh reading and carry backlog only.
                 const bool fresh = n > 0 && id(sample_seq) != id(upload_seq);
                 const size_t old_n = fresh ? std::min(n - 1, telemetry::size() - 1) : n;
-                id(upload_fresh_ts) = fresh ? telemetry::peek(telemetry::size() - 1).ts : 0;
+                const telemetry::Record fresh_r = fresh ? telemetry::newest() : telemetry::Record{};
+                id(upload_fresh_ts) = fresh_r.ts;
                 id(upload_old_n) = old_n;
                 id(upload_batch_n) = n;
                 id(upload_batch_last) = n;
@@ -1076,22 +1081,44 @@ interval:
                 id(upload_start_ms) = millis();
                 id(upload_heap_before) = free_now;
                 const size_t first = fresh ? 1 : 0;
+                // telemetry/<ts>: [mV, 10 mA, cell1..4 mV, 10 mAh, SOC %, balancing mA, MOSFET, T1, T2 in 0.1 degC, flags]
+                // integers as stored; null = no value (the dashboard and tools/telemetry_format.py decode it)
                 for (size_t i = 0; i < first + old_n; i++) {
-                  const telemetry::Record &r = i < first ? telemetry::peek(telemetry::size() - 1) : telemetry::peek(i - first);
-                  JsonObject o = root[std::string("telemetry/") + std::to_string(r.ts)].to<JsonObject>();
-                  o["total_voltage"] = r.total_mv / 1000.0;
-                  if (r.current_10ma != telemetry::NO_VALUE) o["current"] = r.current_10ma / 100.0;
-                  for (int c = 0; c < 4; c++) o["cell_voltage_" + std::to_string(c + 1)] = r.cell_mv[c] / 1000.0;
-                  o["capacity_remaining"] = r.capacity_10mah / 100.0;
-                  o["state_of_charge"] = r.soc;
-                  if (r.balancing_ma != telemetry::NO_VALUE) o["balancing_current"] = r.balancing_ma / 1000.0;
-                  const char *temp_keys[] = {"mosfet_temperature", "temperature_sensor_1", "temperature_sensor_2"};
-                  for (int t = 0; t < 3; t++) {
-                    if (r.temp_dc[t] != telemetry::NO_VALUE) o[temp_keys[t]] = r.temp_dc[t] / 10.0;
-                  }
-                  o["charging"] = (r.flags & telemetry::CHARGING) ? 1 : 0;
-                  o["discharging"] = (r.flags & telemetry::DISCHARGING) ? 1 : 0;
-                  o["balancing"] = (r.flags & telemetry::BALANCING) ? 1 : 0;
+                  const telemetry::Record r = i < first ? fresh_r : telemetry::peek(i - first);
+                  if (r.ts == 0) continue;  // unreadable slot
+                  JsonArray a = root[std::string("telemetry/") + std::to_string(r.ts)].to<JsonArray>();
+                  auto val = [&a](int16_t v) {
+                    if (v == telemetry::NO_VALUE) a.add(nullptr);
+                    else a.add(v);
+                  };
+                  a.add(r.total_mv);
+                  val(r.current_10ma);
+                  for (int c = 0; c < 4; c++) a.add(r.cell_mv[c]);
+                  a.add(r.capacity_10mah);
+                  a.add(r.soc);
+                  val(r.balancing_ma);
+                  for (int t = 0; t < 3; t++) val(r.temp_dc[t]);
+                  a.add(r.flags);
+                }
+
+                // events/<ts>-<boot>-<uptime>: up to 4 of the oldest unsent events of the flash log
+                const uint32_t up_now = (uint32_t) (esp_timer_get_time() / 1000000);
+                id(events_in_flight) = std::min<uint32_t>(flog::events.size(), 4);
+                for (uint32_t i = 0; i < id(events_in_flight); i++) {
+                  uint8_t buf[flog::PAYLOAD];
+                  if (!flog::events.peek(i, buf)) continue;
+                  flog::Event e;
+                  memcpy(&e, buf, sizeof(e));
+                  // Time of an event logged before the clock was set: from its uptime, if it is from this boot
+                  uint32_t ts = e.ts;
+                  if (ts == 0 && e.boot == (uint16_t) telemetry::boot_count() && e.up <= up_now) ts = now_ts - (up_now - e.up);
+                  JsonObject o = root[std::string("events/") + std::to_string(ts) + "-" + std::to_string(e.boot) + "-" +
+                                      std::to_string(e.up)].to<JsonObject>();
+                  o["code"] = flog::code_name(e.code);
+                  if (e.a != 0) o["a"] = e.a;
+                  if (e.b != 0) o["b"] = e.b;
+                  const std::string text(e.text, strnlen(e.text, sizeof(e.text)));
+                  if (!text.empty()) o["text"] = text;
                 }
 
                 auto *wifi = esphome::wifi::global_wifi_component;
@@ -1134,7 +1161,9 @@ interval:
                 d["control_errors"] = id(control_errors);
                 d["upload_errors"] = id(upload_errors);
                 d["buffered"] = telemetry::size();
-                d["dropped"] = telemetry::dropped;
+                d["dropped"] = telemetry::dropped();
+                d["queue_capacity"] = telemetry::capacity();
+                d["events_queued"] = flog::events.size();
                 d["upload_batch"] = id(upload_batch_last);
                 d["upload_cap"] = id(upload_cap);
                 d["upload_ms"] = id(upload_ms_last);
@@ -1242,7 +1271,9 @@ ble_client:
     id: client0
     on_connect:
       then:
-        - lambda: 'id(ble_connect_ms) = millis();'
+        - lambda: |-
+            id(ble_connect_ms) = millis();
+            telemetry::event(flog::EV_BMS_CONNECT, (int32_t) (millis() / 1000));
         # Stop the scan once the link has settled (service discovery done)
         - delay: 5s
         - lambda: 'id(radio_apply) = true;'
@@ -1250,6 +1281,7 @@ ble_client:
       then:
         - lambda: |-
             id(ble_disconnects)++;
+            telemetry::event(flog::EV_BMS_DISCONNECT, id(ble_connect_ms) ? (int32_t) ((millis() - id(ble_connect_ms)) / 1000) : -1);
             // Our own disconnect before an update or radio reset: no scan. Starting one right before ble.disable
             // left the tracker stuck in STARTING after a failed download, and the BMS never reconnected
             // (27-28 Oct: "Cannot stop scan: STARTING", then "Unexpected state: STARTING on start scan").
@@ -1285,6 +1317,7 @@ script:
             id(upload_fail) = "no response (" + rsp.error + ")";
             id(upload_fail_ms) = millis();
             ESP_LOGE("firebase", "HTTP request error (%s, %u ms), %u readings buffered", rsp.error.c_str(), (unsigned) rsp.took_ms, (unsigned) telemetry::size());
+            telemetry::event(flog::EV_UPLOAD_FAIL, -1, (int32_t) rsp.took_ms, rsp.error.c_str());
             return;
           }
           crash::step(crash::STEP_IDLE);
@@ -1317,6 +1350,7 @@ script:
             }
             if (id(energy_in_flight)) id(last_energy_ms) = millis();
             if (id(boot_in_flight)) id(boot_sent) = true;
+            flog::events.discard(id(events_in_flight));
             if (id(crash_in_flight)) {
               id(crash_sent) = true;
               esphome::esp32::crash_handler_clear();
@@ -1324,6 +1358,7 @@ script:
           } else {
             id(upload_errors)++;
             ESP_LOGW("firebase", "Upload failed with code %d", rsp.status);
+            telemetry::event(flog::EV_UPLOAD_FAIL, rsp.status);
             id(upload_fail) = "HTTP " + std::to_string(rsp.status);
             id(upload_fail_ms) = millis();
             // A batch Firebase keeps rejecting as malformed would block the buffer forever
@@ -1350,7 +1385,7 @@ script:
             if (id(upload_prev_n) != 0 && (n >= id(upload_prev_n) + 2 || id(upload_prev_n) >= n + 2)) {
               const int32_t slope = ((int32_t) used - (int32_t) id(upload_prev_used)) /
                                     ((int32_t) n - (int32_t) id(upload_prev_n));
-              const uint32_t per = (uint32_t) std::clamp<int32_t>(slope, 300, 4000);
+              const uint32_t per = (uint32_t) std::clamp<int32_t>(slope, 100, 4000);
               id(upload_heap_per) = per > id(upload_heap_per) ? per : (id(upload_heap_per) * 3 + per) / 4;
             }
             const uint32_t base = (uint32_t) std::max<int32_t>((int32_t) used - (int32_t) (n * id(upload_heap_per)), 8000);
@@ -1422,7 +1457,10 @@ script:
           JsonVariant ka = doc["keepalive"];
           const bool keep = (ka.is<bool>() && ka.as<bool>()) ||
                             (ka.is<const char *>() && (!strcmp(ka.as<const char *>(), "keep") || !strcmp(ka.as<const char *>(), "true")));
-          if (keep != id(net_keep)) ESP_LOGI("control", "Kept connection %s", keep ? "on" : "off");
+          if (keep != id(net_keep)) {
+            ESP_LOGI("control", "Kept connection %s", keep ? "on" : "off");
+            telemetry::event(flog::EV_CONTROL, keep ? 1 : 0, 0, "keepalive");
+          }
           id(net_keep) = keep;
           net::set_mode(keep ? net::MODE_KEEP : net::MODE_OFF);
 
@@ -1606,7 +1644,6 @@ script:
           // A boot that uploaded or read the BMS works; restarts without WiFi then never pile up into safe mode
           if ((id(uploaded_since_boot) || id(ble_rx_ms) != 0) && !id(ota_pending_verify)) id(safe_mode_component)->mark_successful();
           global_preferences->sync();
-          telemetry::save_ram();  // the RAM part of the queue survives the restart (NVS)
           radio_sleep(1000000);  // stops BLE and WiFi first: sleeping with them on can deadlock the PHY
 
   # After a confirmed update: report it, then the radio reset a software reset needs (BLE), without
@@ -1631,6 +1668,12 @@ script:
           timeout: 10s
       - lambda: |-
           ESP_LOGI("ota", "%s", id(ota_status).c_str());
+          {
+            // "update 1.2.42: file ok" -> "file ok"; "downloading 1.2.42" -> "downloadin" (10 characters kept)
+            const std::string &st = id(ota_status);
+            const size_t colon = st.find(": ");
+            telemetry::event(flog::EV_OTA, 0, 0, (colon == std::string::npos ? st : st.substr(colon + 2)).c_str());
+          }
           JsonDocument doc;
           doc["ota_status"] = id(ota_status);
           if (id(sntp_time).now().is_valid()) doc["last_seen"] = id(sntp_time).now().timestamp;
