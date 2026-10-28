@@ -1,6 +1,6 @@
 # OTA release 1.2.39
 
-**Result:** FAILED: download failed 1.2.39 (error 0x12 at 1 %, after 158 s); board back on 1.2.38 with the BMS connected
+**Result:** OTA FAILED: download failed 1.2.39 (error 0x12 at 1 %, after 158 s). Installed by USB (factory image) afterwards: runs 1.2.39, BMS connected, kept connection active (first handshake 2351 ms, 3 requests reused at 101 s uptime)
 
 ```
 01:57:01  ota_server.py serves jk-bms-1.2.39.ota.bin (1322000 bytes), md5 e730c54f0160d99c0f1c177b480ea917, image starts with 0xE9
