@@ -25,3 +25,26 @@ Config at the time: ESP-IDF 5.5.4, CONFIG_MBEDTLS_DYNAMIC_BUFFER, CONFIG_MBEDTLS
 CONFIG_MBEDTLS_CLIENT_SSL_SESSION_TICKETS, CONFIG_ESP_TLS_CLIENT_SESSION_TICKETS, TLS 1.2,
 CONFIG_HEAP_POISONING_COMPREHENSIVE (1.2.40). After each crash the board ran with the mode off for that
 boot, and control/keepalive was set to "off".
+
+## Root cause in the ESP-IDF source (components/mbedtls/port/dynamic, IDF 5.5.4)
+
+The dynamic buffer port allocates the RX buffer per TLS record, sized to that record
+(`esp_mbedtls_add_rx_buffer`: `tx_buffer_len(ssl, in_msglen)`), and frees it after each handshake step in
+`manage_resource(ssl, false)` (esp_ssl_cli.c), which looks up the step that just ran as `state - 1`.
+
+A resumed TLS 1.2 handshake does not move one state at a time:
+- ServerHello: state jumps 2 -> 12 (SERVER_CHANGE_CIPHER_SPEC); the free looks at 11 (CLIENT_FINISHED): nothing freed
+- ServerFinished: state goes back 13 -> 10 (CLIENT_CHANGE_CIPHER_SPEC); the free looks at 9 (CERTIFICATE_VERIFY):
+  frees key/cert data, **not the RX buffer**
+
+So after a resumed handshake the RX buffer allocated for the server's Finished record (a few hundred bytes)
+stays in place with state CACHED. The first application read (`__wrap_mbedtls_ssl_read` ->
+`esp_mbedtls_add_rx_buffer`) sees a CACHED buffer, logs "in buffer is not empty" and keeps it.
+`mbedtls_ssl_fetch_input` bounds the read by the compile-time `MBEDTLS_SSL_IN_BUFFER_LEN` (16 KB), not by
+the allocated length, so the HTTP response record is written past the end of that small buffer: a heap
+overflow into the neighbouring blocks (TLSF headers, lwIP pbufs). That is exactly what the board showed:
+heap intact before `fetch_headers`, corrupt during it, only on resumed connections; full handshakes free the
+Finished buffer (13 -> 14 -> free 13) and are not affected.
+
+Fix here: no session tickets (no resumed handshakes). Not needed upstream-side for us, but worth reporting
+to Espressif with this analysis.
