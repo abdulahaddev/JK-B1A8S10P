@@ -67,6 +67,7 @@ The board is meant to run unattended, so it recovers on its own and reports what
 | Situation | What the board does | Where it shows |
 |---|---|---|
 | Software reset (OTA, crash, watchdog) | One 1 s deep sleep after the first upload, so BLE can reach the BMS again | `device/restart_cause = after_soft_reset` |
+| BMS not connected within 2 min of boot | Radio reset (the wait doubles each time in a row) | `ble_watchdog` |
 | No BMS frame for 10 min | Radio reset (1 s deep sleep); the wait doubles each time in a row (10/20/40/80 min) | `ble_watchdog`, `watchdog_resets` |
 | Power-on, brownout or reset pin | 2 s deep sleep before WiFi and BLE start, so BLE reaches the BMS at once | `after_power_on`, `after_brownout` |
 | Router visible but not joinable for 2 min | Radio reset (a stuck WiFi stack); the wait doubles each time in a row. Router off or out of range: nothing, readings buffer (~7 h) and upload when it is back | `wifi_watchdog` |

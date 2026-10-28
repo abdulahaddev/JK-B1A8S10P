@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.36"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.37"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -65,6 +65,8 @@ substitutions:
   # Each reset in a row doubles the wait (x1, x2, x4, x8); it starts over once both work again.
   ble_watchdog_ms: "600000"   # no BMS frame for 10 min
   ble_stale_ms: "120000"      # ...or 2 min while the link claims to be connected (a lost disconnect event)
+  ble_boot_ms: "120000"       # ...or no BMS connect at all within 2 min of boot (29 Oct: after a USB flash the
+                              # BMS never connected until a manual restart, which connected it at once)
   wifi_watchdog_ms: "120000"  # router visible in scans but no connection for 2 min (a stuck WiFi stack: on
                               # 27 and 28 Oct it never rejoined by itself, 28x "Restarting adapter" in 5.5 min;
                               # a radio reset rejoined within 2 s every time). Backoff x1..x8 per reset in a row.
@@ -1028,7 +1030,10 @@ interval:
               const uint32_t wifi_down = id(wifi_stuck_ms) == 0 ? 0 : now - id(wifi_stuck_ms);
               // A long blocking request can overflow the BLE event queue and lose the disconnect event:
               // the client then stays "connected" with a dead link and never reconnects
-              if (stale) {
+              if (id(ble_connect_ms) == 0 && now >= ${ble_boot_ms} * mult) {
+                ESP_LOGW("watchdog", "BMS not connected %u s after boot, radio reset %u", (unsigned) (now / 1000), (unsigned) resets + 1);
+                telemetry::set_restart_cause(telemetry::CAUSE_BLE_WATCHDOG);
+              } else if (stale) {
                 ESP_LOGW("watchdog", "BMS link connected but silent for %u s, radio reset %u", (unsigned) ((now - heard_ms) / 1000),
                          (unsigned) resets + 1);
                 telemetry::set_restart_cause(telemetry::CAUSE_BLE_WATCHDOG);
