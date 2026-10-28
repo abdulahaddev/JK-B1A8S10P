@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.39"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.40"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -194,9 +194,9 @@ esphome:
         # After setup, so the WiFi component has created the default event loop
         - lambda: |-
             otactl::begin();  // records the reason of each WiFi disconnect (device/wifi_disc_reason)
-            // background requests; the ones to Firebase share one kept connection
+            // background requests; the ones to Firebase use one long-lived client (net_worker.h modes)
             net::begin("Mozilla/5.0 (compatible; jk-bms-esp/${fw_version}; ESPHome)", "${firebase_db_url}");
-            net::set_keep(id(net_keepalive));
+            net::set_mode((net::Mode) id(net_mode));
         - script.execute: redraw_display
         # Raise BLE TX power from the default to the max (+9 dBm) so the BMS reliably hears our
         # connection request. Wait until the BLE controller is enabled (it starts in loop()).
@@ -225,6 +225,9 @@ esp32:
       # certificate download and check); see net_worker.h
       CONFIG_MBEDTLS_CLIENT_SSL_SESSION_TICKETS: y
       CONFIG_ESP_TLS_CLIENT_SESSION_TICKETS: y
+      # Debug (1.2.40): guard bytes around every heap block and a fill pattern in freed ones, so a write past
+      # a block or into freed memory is caught at the next malloc/free instead of later in another task
+      CONFIG_HEAP_POISONING_COMPREHENSIVE: y
       # Default 300 ms is tight with BLE + WiFi coexistence and flash writes (NVS, OTA state)
       CONFIG_ESP_INT_WDT_TIMEOUT_MS: "800"
 
@@ -652,10 +655,10 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: net_keepalive     # control/keepalive: one kept connection to Firebase (false = one per request)
-    type: bool
+  - id: net_mode          # control/keepalive: 0 off, 1 resume (default), 2 keep (net_worker.h)
+    type: uint8_t
     restore_value: yes
-    initial_value: 'true'
+    initial_value: '1'
   - id: net_ok_ms         # last successful upload or control read, 0 = none since boot (connected-but-failing watchdog)
     type: uint32_t
     restore_value: no
@@ -893,7 +896,8 @@ interval:
   #   control/ota        version to install from control/ota_host, one attempt per signal
   #   control/ota_host   OTA base URL under an allowed domain (ota_control.h); a setting, kept
   #   control/check_s    read interval in seconds; a setting, kept
-  #   control/keepalive  false = a new connection per request (as before 1.2.39); missing = true; a setting, kept
+  #   control/keepalive  "off" (or false) = new connection per request as before 1.2.39; "resume" (or missing) =
+  #                      new connection per request, TLS session resumed; "keep" (or true) = connection kept open
   - interval: 10s
     then:
       - if:
@@ -931,6 +935,7 @@ interval:
   # ~9% of the radio from WiFi), and the WiFi signal for drop reports.
   - interval: 10s
     then:
+      - lambda: 'net::check_idle();  // debug: heap damage done between requests (net_worker.h)'
       - lambda: |-
           auto *wifi = esphome::wifi::global_wifi_component;
           if (wifi != nullptr && wifi->is_connected()) otactl::last_rssi = (int8_t) wifi->wifi_rssi();
@@ -1191,7 +1196,12 @@ interval:
                 d["upload_heap_low"] = id(upload_heap_low);
                 d["upload_heap_base"] = id(upload_heap_base);
                 d["upload_heap_per"] = id(upload_heap_per);
-                d["net_keepalive"] = id(net_keepalive) ? 1 : 0;
+                d["net_mode"] = id(net_mode);                 // asked: 0 off, 1 resume, 2 keep
+                d["net_mode_used"] = (int) net::cur_mode();   // 0 after a heap fault or a crash in this or the last run
+                d["net_prev"] = net::prev_report;             // where the previous run ended, if it crashed
+                d["net_heap_bad"] = net::heap_bad.load() ? std::string(net::crumb.fail) : std::string("");
+                d["net_checks"] = net::n_checks.load();
+                d["net_check_max_us"] = net::check_max_us.load();
                 d["net_reused"] = net::n_reused.load();
                 d["net_new"] = net::n_new.load();
                 d["net_stale"] = net::n_stale.load();
@@ -1473,12 +1483,19 @@ script:
           if (s != id(control_s)) ESP_LOGI("control", "Read interval %u s", (unsigned) s);
           id(control_s) = s;
 
-          // Kept connection to Firebase: on unless control/keepalive is false
+          // Firebase connection mode (net_worker.h): off, resume (default) or keep
           JsonVariant ka = doc["keepalive"];
-          const bool keep = !(ka.is<bool>() && !ka.as<bool>()) && !(ka.is<const char *>() && strcmp(ka.as<const char *>(), "false") == 0);
-          if (keep != id(net_keepalive)) ESP_LOGI("control", "Kept connection %s", keep ? "on" : "off");
-          id(net_keepalive) = keep;
-          net::set_keep(keep);
+          uint8_t nm = net::MODE_RESUME;
+          if (ka.is<bool>()) nm = ka.as<bool>() ? net::MODE_KEEP : net::MODE_OFF;
+          else if (ka.is<const char *>()) {
+            const char *v = ka.as<const char *>();
+            nm = (!strcmp(v, "off") || !strcmp(v, "false")) ? net::MODE_OFF
+                 : (!strcmp(v, "keep") || !strcmp(v, "true")) ? net::MODE_KEEP : net::MODE_RESUME;
+          }
+          static const char *const MODE_NAMES[] = {"off", "resume", "keep"};
+          if (nm != id(net_mode)) ESP_LOGI("control", "Connection mode %s", MODE_NAMES[nm]);
+          id(net_mode) = nm;
+          net::set_mode((net::Mode) nm);
 
           // Restart request (never while a new firmware still has to confirm itself)
           std::string restart_token;
