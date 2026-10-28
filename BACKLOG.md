@@ -12,6 +12,14 @@ must refuse it) unless the board gets a separate supply. Charging off only with 
 automatic switch-back after a set time, so a forgotten switch cannot run the battery flat. Each
 change reported in `device/` and kept in a small history (who / when / what).
 
+## Throttle the display redraw (next)
+
+Every BMS frame (~every 2 s) and every activity dot triggers `redraw_display`, and a full redraw of the
+SSD1306 blocks the main loop 50-240 ms (28 Oct USB logs: `redraw_display took a long time`, 30x in 25 min;
+I2C already runs at 400 kHz). Redraw at most once every 2 s: if the last redraw was less than 2 s ago, skip
+this one, and remember that a change is pending so the next allowed slot draws it (no stale screen). Status
+changes that matter at once (OTA steps, "Restarting") may bypass the limit.
+
 ## Hourly summaries for a "Last month" graph range (waiting)
 
 The dashboard's range dropdown offers Last hour / day / week from raw readings (~2,880 a day, ~300 B

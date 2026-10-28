@@ -1,6 +1,6 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.35"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  fw_version: "1.2.36"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
   device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
@@ -159,7 +159,12 @@ esphome:
               if (id(ota_attempt_hash) != fnv1_hash("${fw_version}")) {
                 // Not installed: the first control read removes control/ota if it still names that version
                 id(ota_failed_hash) = id(ota_attempt_hash);
-                if (strcmp(telemetry::restart_cause(), "ota_time_limit") == 0) {
+                if (crash::crashed() && strcmp(crash::last_step_name(), "ota_flash") == 0) {
+                  // ESPHome's download hung after a transport timeout until the task watchdog reset the board
+                  // (28 Oct, 1.2.34: errno 11 at 76 s, watchdog 80 s later); the running firmware is untouched
+                  id(ota_status) = "update stopped: the download hung (watchdog reset), running ${fw_version}";
+                  id(ota_display) = "OTA hung";
+                } else if (strcmp(telemetry::restart_cause(), "ota_time_limit") == 0) {
                   id(ota_status) = "update stopped: download took over " + std::to_string(${ota_download_ms} / 60000) +
                                    " min, running ${fw_version}";
                   id(ota_display) = "OTA too slow";
@@ -1705,6 +1710,7 @@ script:
           r.headers = {{"Authorization", id(ota_auth_header)}};
           r.collect = {"content-type"};
           r.max_body = 64;
+          r.retries = 1;  // a second try after 2 s when the first gets no or an empty answer
           net::submit(std::move(r));
       - wait_until:
           condition:
@@ -1729,6 +1735,7 @@ script:
           r.headers = {{"Authorization", id(ota_auth_header)}, {"Range", "bytes=0-15"}};
           r.collect = {"content-type"};
           r.max_body = 16;
+          r.retries = 1;
           net::submit(std::move(r));
           id(ota_step_ok) = true;
       - if:
@@ -1794,11 +1801,15 @@ script:
                 // Long read timeout only for the download (ESPHome's own client; it blocks the loop)
                 id(http_client)->set_timeout(30000);
                 id(http_client)->set_watchdog_timeout(60000);
-                id(ota_attempt_hash) = fnv1_hash(id(ota_target));  // a reboot from here on counts as an attempt
-                global_preferences->sync();
+                // A reboot from here on counts as an attempt. ESPHome stores a restore_value global in its own
+                // loop pass, so a sync() in this lambda would write the old value: sync after the report below
+                // (28 Oct: the marker never reached flash, and after a watchdog reset the board tried again)
+                id(ota_attempt_hash) = fnv1_hash(id(ota_target));
                 id(ota_status) = "downloading " + id(ota_target);
             - script.execute: ota_report
             - script.wait: ota_report
+            - delay: 300ms
+            - lambda: 'global_preferences->sync();  // the attempt marker, stored by the globals loop meanwhile'
             # 4. Download
             - lambda: |-
                 id(ota_display) = "OTA " + id(ota_target) + " 0%";

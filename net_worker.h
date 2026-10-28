@@ -38,6 +38,7 @@ struct Request {
   std::vector<std::string> collect;  // response headers to keep, lower case
   size_t max_body = 0;               // response bytes to keep
   int timeout_ms = 8000;
+  int retries = 0;                   // tries again (after 2 s) when there is no answer or an empty body
 };
 
 struct Result {
@@ -130,6 +131,12 @@ inline void run(void *) {
     res.job = req.job;
     const int64_t t0 = esp_timer_get_time();
     perform();
+    for (int i = 0; i < req.retries && (res.status < 0 || res.body.empty()); i++) {
+      vTaskDelay(pdMS_TO_TICKS(2000));
+      res = Result{};
+      res.job = req.job;
+      perform();
+    }
     res.took_ms = (uint32_t) ((esp_timer_get_time() - t0) / 1000);
     state.store(DONE);
   }
