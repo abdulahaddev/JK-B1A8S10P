@@ -117,7 +117,7 @@ const BLE_INTERVALS = [
 ] as const;
 
 const INTERVALS = [
-  { s: 30, label: "30 s (testing)" },
+  { s: 60, label: "1 min (testing)" },
   { s: 300, label: "5 min" },
   { s: 900, label: "15 min" },
   { s: 3600, label: "1 h" },
@@ -246,8 +246,12 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
   const older = sel && current ? compareVersions(sel.version, current) < 0 : false;
   const status = d?.ota_status ?? "";
   // Strict lock (fw 1.2.30+): an accepted or running update blocks other versions until it is done
-  const locked = /^(update accepted|downloading) (\S+)/.exec(status)?.[2] ?? /^update (\S+) waits for/.exec(status)?.[1] ?? "";
-  const installing = status.startsWith("downloading ");
+  // 1.2.33 reports each step: "update <v>: checking file / file ok / BMS disconnected", then "downloading <v>"
+  const locked =
+    /^(update accepted|downloading) (\S+)/.exec(status)?.[2] ??
+    /^update (\S+?):? (waits for|checking file|file ok|BMS disconnected)/.exec(status)?.[1] ??
+    "";
+  const installing = status.startsWith("downloading ") || /^update \S+: (checking file|file ok|BMS disconnected)/.test(status);
   const blockedBy = locked && sel && sel.version !== locked ? locked : "";
   const failedThis = !!sel && (status.startsWith("download failed " + sel.version) || status.startsWith("update refused")) && status.includes(sel.version);
 
@@ -446,7 +450,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
             <p className="field-hint">
               {fw128 ? `The board reads control every ${d?.control_s} s` : "Needs firmware 1.2.28 or newer (older boards read every 5 min)"}. Commands take effect within one interval.
             </p>
-            {(control?.check_s ?? 300) < 300 && <p className="field-warn">30 s is for testing: each read is an HTTPS request. Set it back when done.</p>}
+            {(control?.check_s ?? 300) < 300 && <p className="field-warn">Under 5 min is for testing: each read blocks the board for seconds and can break the BMS link. Set it back when done.</p>}
 
             <label className="field-label">Radio (WiFi and Bluetooth share one antenna)</label>
             <label className="check-row">

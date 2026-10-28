@@ -11,6 +11,8 @@
 
 #include <cmath>
 #include <cstdint>
+#include <cstring>
+#include <string>
 #include "esp_attr.h"
 #include "esp_system.h"
 #include "nvs.h"
@@ -33,7 +35,7 @@ struct __attribute__((packed)) Record {  // 28 bytes
   uint8_t flags;             // Flags
 };
 
-static const size_t RTC_CAPACITY = 280;  // 7.9 KB of the 8 KB RTC slow memory (8168 B usable, 7860 B used)
+static const size_t RTC_CAPACITY = 280;  // 7.9 KB of the 8 KB RTC slow memory (8168 B usable, 7956 B used with note)
 static const size_t RAM_CAPACITY = 580;  // 16.2 KB
 static const uint32_t RTC_MAGIC = 0x4A4B4231;  // "JKB1"
 
@@ -61,7 +63,8 @@ template<size_t N> struct Ring {
 
 // Why the board restarted itself last (kept across deep sleep, reported in device/restart_cause)
 enum RestartCause : uint32_t { CAUSE_NONE = 0, CAUSE_REMOTE, CAUSE_SOFT_RESET, CAUSE_BLE_WATCHDOG, CAUSE_WIFI_WATCHDOG,
-                            CAUSE_STUCK_SCRIPT, CAUSE_OTA_TIME_LIMIT, CAUSE_NET_WATCHDOG };  // append only: kept in RTC across updates
+                            CAUSE_STUCK_SCRIPT, CAUSE_OTA_TIME_LIMIT, CAUSE_NET_WATCHDOG,
+                            CAUSE_AFTER_POWER_ON, CAUSE_AFTER_BROWNOUT, CAUSE_OTA_FAILED };  // append only: kept in RTC
 
 struct RtcState {
   uint32_t magic;
@@ -71,6 +74,7 @@ struct RtcState {
   uint32_t restart_cause;    // RestartCause of the last self-initiated restart; appended
   uint32_t run_uptime_s;     // uptime of the running firmware, updated every 30 s; appended in 1.2.23
   uint32_t shutdown_seen;    // 1 = ESPHome ran its shutdown hooks (OTA reboot, safe_reboot); appended in 1.2.23
+  char note[96];             // status to show again after our own restart (failed update); appended in 1.2.33
 };
 
 RTC_NOINIT_ATTR static RtcState rtc_state;
@@ -95,7 +99,8 @@ inline void begin() {
   }
   // Fields appended in 1.2.8 are garbage on the first boot after updating from an older firmware
   if (rtc_state.watchdog_resets > 16) rtc_state.watchdog_resets = 0;
-  if (rtc_state.restart_cause > CAUSE_NET_WATCHDOG) rtc_state.restart_cause = CAUSE_NONE;
+  if (rtc_state.restart_cause > CAUSE_OTA_FAILED) rtc_state.restart_cause = CAUSE_NONE;
+  if (!keep || memchr(rtc_state.note, 0, sizeof(rtc_state.note)) == nullptr) rtc_state.note[0] = 0;  // garbage before 1.2.33
   if (rtc_state.run_uptime_s > 60u * 86400u) rtc_state.run_uptime_s = 0;
   if (rtc_state.shutdown_seen > 1) rtc_state.shutdown_seen = 0;
   prev_uptime_s = keep ? rtc_state.run_uptime_s : 0;
@@ -182,6 +187,17 @@ inline void note_shutdown() { rtc_state.shutdown_seen = 1; }
 // Record why we restart; read back after the next boot
 inline void set_restart_cause(RestartCause c) { rtc_state.restart_cause = c; }
 
+// A status line kept across our own restart, read once after the next boot ("" = none)
+inline void set_note(const std::string &s) {
+  strncpy(rtc_state.note, s.c_str(), sizeof(rtc_state.note) - 1);
+  rtc_state.note[sizeof(rtc_state.note) - 1] = 0;
+}
+inline std::string take_note() {
+  std::string s(rtc_state.note);
+  rtc_state.note[0] = 0;
+  return s;
+}
+
 inline const char *restart_cause() {
   // Only meaningful after a deep sleep wake; any other reset was not one of ours
   if (esp_reset_reason() != ESP_RST_DEEPSLEEP) return "none";
@@ -193,6 +209,9 @@ inline const char *restart_cause() {
     case CAUSE_STUCK_SCRIPT: return "stuck_script";
     case CAUSE_OTA_TIME_LIMIT: return "ota_time_limit";
     case CAUSE_NET_WATCHDOG: return "net_watchdog";
+    case CAUSE_AFTER_POWER_ON: return "after_power_on";
+    case CAUSE_AFTER_BROWNOUT: return "after_brownout";
+    case CAUSE_OTA_FAILED: return "ota_failed";
     default: return "none";
   }
 }

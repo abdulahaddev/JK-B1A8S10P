@@ -34,3 +34,6 @@ desktop.ini
 # --- Logs from tools (serial captures in logs/ are kept on purpose) ---
 npm-debug.log*
 *.log.tmp
+
+# --- Serial logs from the board (ESPHome prints failed request URLs, which can carry the Firebase key) ---
+logs/ESP Device-logs*.txt
