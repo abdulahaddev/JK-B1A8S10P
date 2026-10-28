@@ -1101,7 +1101,7 @@ interval:
                   a.add(r.flags);
                 }
 
-                // events/<ts>-<boot>-<uptime>: up to 4 of the oldest unsent events of the flash log
+                // events/<ts>-<boot>-<uptime>-<seq>: up to 4 of the oldest unsent events of the flash log
                 const uint32_t up_now = (uint32_t) (esp_timer_get_time() / 1000000);
                 id(events_in_flight) = std::min<uint32_t>(flog::events.size(), 4);
                 for (uint32_t i = 0; i < id(events_in_flight); i++) {
@@ -1113,7 +1113,7 @@ interval:
                   uint32_t ts = e.ts;
                   if (ts == 0 && e.boot == (uint16_t) telemetry::boot_count() && e.up <= up_now) ts = now_ts - (up_now - e.up);
                   JsonObject o = root[std::string("events/") + std::to_string(ts) + "-" + std::to_string(e.boot) + "-" +
-                                      std::to_string(e.up)].to<JsonObject>();
+                                      std::to_string(e.up) + "-" + std::to_string(e.seq)].to<JsonObject>();
                   o["code"] = flog::code_name(e.code);
                   if (e.a != 0) o["a"] = e.a;
                   if (e.b != 0) o["b"] = e.b;
@@ -1163,6 +1163,7 @@ interval:
                 d["buffered"] = telemetry::size();
                 d["dropped"] = telemetry::dropped();
                 d["queue_capacity"] = telemetry::capacity();
+                d["flash_log"] = flog::present ? 1 : 0;  // 0: no jklog partition (installed without the factory image)
                 d["events_queued"] = flog::events.size();
                 d["upload_batch"] = id(upload_batch_last);
                 d["upload_cap"] = id(upload_cap);

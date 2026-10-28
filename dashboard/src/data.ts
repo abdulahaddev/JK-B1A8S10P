@@ -14,6 +14,7 @@ import {
   update,
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
+import { readings } from "./telemetry";
 import type { Boot, Control, Crash, Device, Info, Reading } from "./types";
 
 const app = initializeApp({
@@ -50,42 +51,6 @@ export function useLatest<T>(path: string, n: number): (T & { ts: number })[] {
     [path, n],
   );
   return rows;
-}
-
-/**
- * telemetry/<ts> as the board writes it since 1.2.42: integers as stored on the board, null = no value
- *   [mV, 10 mA, cell 1..4 mV, 10 mAh, SOC %, balancing mA, MOSFET, sensor 1, sensor 2 in 0.1 °C, flags]
- * flags: 1 charging, 2 discharging, 4 balancing. Objects (before the migration) pass through unchanged.
- */
-function toReading(ts: number, v: unknown): Reading {
-  if (!Array.isArray(v)) return { ...(v as object), ts } as Reading;
-  const n = (i: number, scale: number) => (typeof v[i] === "number" ? v[i] / scale : undefined);
-  const flags = typeof v[12] === "number" ? v[12] : 0;
-  return {
-    ts,
-    total_voltage: n(0, 1000) ?? 0,
-    current: n(1, 100),
-    cell_voltage_1: n(2, 1000) ?? 0,
-    cell_voltage_2: n(3, 1000) ?? 0,
-    cell_voltage_3: n(4, 1000) ?? 0,
-    cell_voltage_4: n(5, 1000) ?? 0,
-    capacity_remaining: n(6, 100) ?? 0,
-    state_of_charge: n(7, 1) ?? 0,
-    balancing_current: n(8, 1000),
-    mosfet_temperature: n(9, 10),
-    temperature_sensor_1: n(10, 10),
-    temperature_sensor_2: n(11, 10),
-    charging: flags & 1 ? 1 : 0,
-    discharging: flags & 2 ? 1 : 0,
-    balancing: flags & 4 ? 1 : 0,
-  };
-}
-
-function readings(obj: Record<string, unknown> | null): Reading[] {
-  if (!obj) return [];
-  return Object.entries(obj)
-    .map(([k, v]) => toReading(Number(k), v))
-    .sort((a, b) => a.ts - b.ts);
 }
 
 /** The newest reading, live. */

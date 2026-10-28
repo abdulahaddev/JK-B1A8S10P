@@ -25,7 +25,7 @@ static const uint32_t SLOTS = SECTOR / SLOT;  // slot 0 is the sector header
 static const uint32_t ITEMS = SLOTS - 1;      // items per sector
 static const uint32_t PAYLOAD = 30;
 static const uint32_t MAGIC = 0x4A4B4C31;     // "JKL1"
-static const uint8_t ST_EMPTY = 0xFF, ST_STORED = 0x7F, ST_SENT = 0x3F;
+static const uint8_t ST_EMPTY = 0xFF, ST_STORED = 0x7F, ST_SENT = 0x3F, ST_BAD = 0x00;
 
 inline uint8_t crc8(const uint8_t *p, size_t n) {
   uint8_t c = 0;
@@ -68,10 +68,11 @@ class Ring {
       }
     }
     if (newest < 0) return;  // empty or foreign data: start at sector 0 (erased on the first write)
-    // Head (next write): the first empty slot of the newest sector, else the start of the next sector
+    // Head (next write): the first fully erased slot of the newest sector, else the start of the next sector.
+    // All 32 bytes must be 0xFF: a write cut by power loss can leave payload bytes with the state still 0xFF.
     head_ = (uint32_t) newest * ITEMS + ITEMS;
     for (uint32_t i = 0; i < ITEMS; i++) {
-      if (state_at((uint32_t) newest * ITEMS + i) == ST_EMPTY) {
+      if (erased((uint32_t) newest * ITEMS + i)) {
         head_ = (uint32_t) newest * ITEMS + i;
         break;
       }
@@ -104,17 +105,27 @@ class Ring {
 
   bool push(const uint8_t *payload) {
     if (!ok_) return false;
-    if (!head_open_ && !open_sector(head_ / ITEMS)) return false;
     uint8_t buf[SLOT];
     memcpy(buf, payload, PAYLOAD);
     buf[30] = ST_STORED;
     buf[31] = crc8(payload, PAYLOAD);
-    if (esp_partition_write(part_, addr(head_), buf, SLOT) != ESP_OK) return false;
-    if (count_ == 0) tail_ = head_;
-    count_++;
-    head_ = (head_ + 1) % cap();
-    if (head_ % ITEMS == 0) head_open_ = false;  // the next write opens (erases) the next sector
-    return true;
+    // A slot that does not read back what was written (worn or not erased) is marked bad and skipped
+    for (int attempt = 0; attempt < 3; attempt++) {
+      if (!head_open_ && !open_sector(head_ / ITEMS)) return false;
+      const uint32_t x = head_;
+      head_ = (head_ + 1) % cap();
+      if (head_ % ITEMS == 0) head_open_ = false;  // the next write opens (erases) the next sector
+      uint8_t back[SLOT];
+      if (esp_partition_write(part_, addr(x), buf, SLOT) == ESP_OK &&
+          esp_partition_read(part_, addr(x), back, SLOT) == ESP_OK && memcmp(buf, back, SLOT) == 0) {
+        if (count_ == 0) tail_ = x;
+        count_++;
+        return true;
+      }
+      const uint8_t bad = ST_BAD;
+      esp_partition_write(part_, addr(x) + 30, &bad, 1);
+    }
+    return false;
   }
 
   // i-th oldest stored item (i < size())
@@ -191,10 +202,13 @@ class Ring {
     return header_seq(s, &q);
   }
 
-  uint8_t state_at(uint32_t x) const {
-    uint8_t st = 0;
-    esp_partition_read(part_, addr(x) + 30, &st, 1);
-    return st;
+  bool erased(uint32_t x) const {
+    uint8_t buf[SLOT];
+    if (esp_partition_read(part_, addr(x), buf, SLOT) != ESP_OK) return false;
+    for (uint32_t i = 0; i < SLOT; i++) {
+      if (buf[i] != 0xFF) return false;
+    }
+    return true;
   }
   bool read_payload(uint32_t x, uint8_t *payload) const {
     uint8_t buf[SLOT];
@@ -255,6 +269,8 @@ static const uint32_t EVENT_SECTORS = 16;
 static Ring readings;
 static Ring events;
 
+static bool present = false;  // the jklog partition exists (1.2.42+ factory image)
+
 inline bool begin() {
   const esp_partition_t *p = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, (esp_partition_subtype_t) 0x40, "jklog");
   if (p == nullptr) {
@@ -263,7 +279,8 @@ inline bool begin() {
   }
   readings.begin(p, 0, READING_SECTORS, 1);
   events.begin(p, READING_SECTORS, EVENT_SECTORS, 2);
-  return readings.ok() && events.ok();
+  present = readings.ok() && events.ok();
+  return present;
 }
 
 // ---- Events ----
@@ -284,7 +301,7 @@ struct __attribute__((packed)) Event {  // 30 bytes
   uint32_t up;      // seconds since boot (gives the time of a ts = 0 event from the same boot)
   uint16_t boot;    // boot counter
   uint8_t code;     // Code
-  uint8_t pad;
+  uint8_t seq;      // counts events within a boot (unique Firebase key with ts, boot, up)
   int32_t a;
   int32_t b;
   char text[10];    // not 0-terminated when full

@@ -123,7 +123,9 @@ inline void event(flog::Code code, int32_t a = 0, int32_t b = 0, const char *tex
   e.ts = now > 1700000000 ? (uint32_t) now : 0;
   e.up = (uint32_t) (esp_timer_get_time() / 1000000);
   e.boot = (uint16_t) rtc_state.boot_count;
+  static uint8_t seq = 0;
   e.code = code;
+  e.seq = seq++;
   e.a = a;
   e.b = b;
   if (text != nullptr) strncpy(e.text, text, sizeof(e.text));
