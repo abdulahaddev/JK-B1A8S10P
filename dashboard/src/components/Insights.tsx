@@ -1,6 +1,6 @@
 // Overview infographics: power flow, temperature gauges, usage by hour, month calendar.
 import ReactECharts from "echarts-for-react";
-import { CalendarRange, Clock3, Thermometer, Waypoints } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, CalendarRange, Clock3, Pause, Thermometer, Waypoints } from "lucide-react";
 import { useMemo } from "react";
 import { byDay, hourProfile, integrate, powerW, stats, todayStart } from "../analytics";
 import type { Tokens } from "../theme";
@@ -11,15 +11,23 @@ import { Card } from "./ui";
 const fmtH = (h: number) => (!Number.isFinite(h) ? "–" : h < 1 ? `${Math.round(h * 60)} min` : h < 48 ? `${h.toFixed(1)} h` : h < 24 * 14 ? `${(h / 24).toFixed(1)} days` : "2+ weeks");
 const fmtWh = (wh: number) => (Math.abs(wh) >= 1000 ? `${(wh / 1000).toFixed(2)} kWh` : `${wh.toFixed(0)} Wh`);
 
-// Scene layout (viewBox 900 x 350): charger, BMS and loads on one line, the battery under the BMS
-const WIRES = {
-  charger: "M 205 95 H 395", // charger → BMS
-  loads: "M 505 95 H 712", // BMS → loads
-  battery: "M 450 125 V 190", // BMS → battery (reversed when discharging)
+// Scene layout (viewBox 0 15 900 170): charger, battery and loads on one row, centred at x 150, 450 and 750,
+// i.e. 1/6, 1/2 and 5/6 of the width, so the HTML labels in the three-column grid below sit exactly under them.
+// The drawing has no text: it scales with the card, the labels must not.
+type Wire = [x1: number, y1: number, x2: number, y2: number];
+const WIRES: Record<"charger" | "loads", Wire> = {
+  charger: [208, 120, 408, 120], // charger → battery
+  loads: [492, 120, 702, 120], // battery → loads
 };
 
-/** One cable: a dashed stream and glowing dots moving in the flow direction, faster with more power. */
-function Cable({ d, live, reverse, watts, kind }: { d: string; live: boolean; reverse?: boolean; watts: number; kind: "charge" | "use" }) {
+/**
+ * One cable: a dashed stream and glowing dots moving in the flow direction, faster with more power.
+ * The dots run on CSS keyframes, not SMIL animateMotion: SMIL elements remounted after the SVG's
+ * timeline started could stay frozen in Chrome.
+ */
+function Cable({ wire, live, watts, kind }: { wire: Wire; live: boolean; watts: number; kind: "charge" | "use" }) {
+  const [x1, y1, x2, y2] = wire;
+  const d = `M ${x1} ${y1} L ${x2} ${y2}`;
   const dur = Math.max(0.6, Math.min(2.6, 2.6 - Math.log10(Math.max(1, watts)) * 0.75));
   const n = 4;
   return (
@@ -27,19 +35,23 @@ function Cable({ d, live, reverse, watts, kind }: { d: string; live: boolean; re
       <path d={d} className="cable-track" />
       {live && (
         <>
-          <path d={d} className={`cable-stream ${reverse ? "rev" : ""}`} style={{ animationDuration: `${dur / 2}s` }} />
+          <path d={d} className="cable-stream" style={{ animationDuration: `${dur / 2}s` }} />
           {Array.from({ length: n }, (_, i) => (
-            <circle key={`${i}-${dur.toFixed(1)}-${reverse}`} r="5.5" className="cable-dot">
-              <animateMotion
-                dur={`${dur}s`}
-                begin={`${(-i * dur) / n}s`}
-                repeatCount="indefinite"
-                path={d}
-                keyPoints={reverse ? "1;0" : "0;1"}
-                keyTimes="0;1"
-                calcMode="linear"
-              />
-            </circle>
+            <circle
+              key={i}
+              r="5.5"
+              className="cable-dot"
+              style={
+                {
+                  "--x0": `${x1}px`,
+                  "--y0": `${y1}px`,
+                  "--x1": `${x2}px`,
+                  "--y1": `${y2}px`,
+                  animationDuration: `${dur}s`,
+                  animationDelay: `${(-i * dur) / n}s`,
+                } as React.CSSProperties
+              }
+            />
           ))}
         </>
       )}
@@ -47,153 +59,148 @@ function Cable({ d, live, reverse, watts, kind }: { d: string; live: boolean; re
   );
 }
 
-/** Charger → BMS → battery / loads, drawn like an inverter app: every live cable streams in the direction the energy moves. */
+/** Charger → battery → loads, drawn like an inverter app: the live cable streams in the direction the energy moves. */
 export function PowerFlow({ r, info, todayRows, bmsOnline }: { r: Reading; info?: Info | null; todayRows: Reading[]; bmsOnline: boolean }) {
   const p = powerW(r);
   const i = r.current ?? 0;
   const charging = p > 2, using = p < -2;
   const w = Math.abs(p);
+  const StateIcon = charging ? ArrowUpRight : using ? ArrowDownRight : Pause;
   const storedWh = r.capacity_remaining * r.total_voltage;
   const full = info?.full_charge_capacity;
-  const fullWh = full ? full * r.total_voltage : null;
   const today = integrate(todayRows.filter((x) => x.ts >= todayStart()));
   const soc = Math.max(0, Math.min(100, r.state_of_charge));
   const level = soc < 20 ? "low" : soc < 50 ? "mid" : "high";
   const hours = charging ? (full ? (full - r.capacity_remaining) / i : null) : using ? r.capacity_remaining / -i : null;
-  // Battery inside: x 391..509, y 206..334
-  const fillH = (128 * soc) / 100;
-  const top = 334 - fillH;
+  // Battery inside: x 415..485, y 47..169
+  const fillH = (122 * soc) / 100;
+  const nodes = [
+    { label: "Charger", value: charging ? `${w.toFixed(0)} W` : "0 W", sub: `${fmtWh(today.chargeWh)} today`, tone: charging ? "charge" : "" },
+    { label: "Battery", value: `${soc}%`, sub: `${fmtWh(storedWh)} stored`, tone: `soc-${level}` },
+    { label: "Loads", value: using ? `${w.toFixed(0)} W` : "0 W", sub: `${fmtWh(today.dischargeWh)} today`, tone: using ? "use" : "" },
+  ];
   const facts: [string, string][] = [
     ["Voltage", `${r.total_voltage.toFixed(2)} V`],
     ["Current", `${i > 0 ? "+" : ""}${i.toFixed(2)} A`],
-    ["Net power", `${p > 0 ? "+" : ""}${p.toFixed(0)} W`],
+    ["Remaining", `${r.capacity_remaining.toFixed(1)}${full ? ` / ${full.toFixed(0)}` : ""} Ah`],
     [charging ? "Full in" : using ? "Empty in" : "Time left", hours !== null && Number.isFinite(hours) ? fmtH(hours) : "–"],
-    ["Charged today", fmtWh(today.chargeWh)],
-    ["Used today", fmtWh(today.dischargeWh)],
+    ["Health", info?.state_of_health !== undefined ? `${info.state_of_health}%` : "–"],
+    ["Cycles", info?.charging_cycles !== undefined ? String(info.charging_cycles) : "–"],
+  ];
+  // Current over the middle of the live cable (HTML, so it keeps its size); idle cables get none
+  const amps = `${Math.abs(i).toFixed(1)} A`;
+  const wireTags = [
+    { key: "charger", wire: WIRES.charger, live: charging, kind: "charge" },
+    { key: "loads", wire: WIRES.loads, live: using, kind: "use" },
   ];
   return (
-    <Card title="Power flow" icon={Waypoints} subtitle="Live, from the latest reading · net of charger and loads" className="flow-card">
-      <svg
-        className={`scene ${charging ? "is-charging" : ""} ${using ? "is-using" : ""}`}
-        viewBox="0 0 900 350"
-        role="img"
-        aria-label={`${charging ? `Charging the battery at ${w.toFixed(0)} W` : using ? `Battery supplying ${w.toFixed(0)} W to the loads` : "Idle"}, battery ${soc} percent`}
-      >
-        <defs>
-          <clipPath id="batt-in">
-            <rect x="391" y="206" width="118" height="128" rx="10" />
-          </clipPath>
-          <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#3b6fd1" />
-            <stop offset="1" stopColor="#1e3f8a" />
-          </linearGradient>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="b" />
-            <feMerge>
-              <feMergeNode in="b" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
+    <Card
+      title="Power flow"
+      icon={Waypoints}
+      subtitle="Live · net of charger and loads"
+      className="flow-card"
+      actions={
+        <span className={`state ${charging ? "state-charging" : using ? "state-discharging" : "state-idle"}`}>
+          <StateIcon size={15} aria-hidden /> {charging ? "Charging" : using ? "Discharging" : "Idle"}
+        </span>
+      }
+    >
+      <div className="flow-stage">
+        <div className="scene-wrap">
+        <svg
+          className={`scene ${charging ? "is-charging" : ""} ${using ? "is-using" : ""}`}
+          viewBox="0 15 900 170"
+          role="img"
+          aria-label={`${charging ? `Charging the battery at ${w.toFixed(0)} W` : using ? `Battery supplying ${w.toFixed(0)} W to the loads` : "Idle"}, battery ${soc} percent`}
+        >
+          <defs>
+            <clipPath id="batt-in">
+              <rect x="415" y="47" width="70" height="122" rx="5" />
+            </clipPath>
+            <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#3b6fd1" />
+              <stop offset="1" stopColor="#1e3f8a" />
+            </linearGradient>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-        {/* cables first, so the devices sit on top of their ends */}
-        <Cable d={WIRES.charger} live={charging} watts={w} kind="charge" />
-        <Cable d={WIRES.battery} live={charging || using} reverse={using} watts={w} kind={charging ? "charge" : "use"} />
-        <Cable d={WIRES.loads} live={using} watts={w} kind="use" />
-        {charging && (
-          <text x="300" y="80" className="t-wire charge">
-            {w.toFixed(0)} W
-          </text>
-        )}
-        {using && (
-          <text x="608" y="80" className="t-wire use">
-            {w.toFixed(0)} W
-          </text>
-        )}
-        {(charging || using) && (
-          <text x="462" y="162" className={`t-wire start ${charging ? "charge" : "use"}`}>
-            {Math.abs(i).toFixed(1)} A {charging ? "in" : "out"}
-          </text>
-        )}
+          {/* cables first, so the devices sit on top of their ends */}
+          <Cable wire={WIRES.charger} live={charging} watts={w} kind="charge" />
+          <Cable wire={WIRES.loads} live={using} watts={w} kind="use" />
 
-        {/* charger: sun over a solar panel */}
-        <g className={`sun ${charging ? "on" : ""}`} transform="translate(178 34)">
-          <g className="rays">
-            {Array.from({ length: 8 }, (_, k) => (
-              <line key={k} x1="0" y1="-24" x2="0" y2="-17" transform={`rotate(${k * 45})`} />
+          {/* charger: sun over a solar panel, centred on x 150 */}
+          <g transform="translate(20 24)">
+            <g className={`sun ${charging ? "on" : ""}`} transform="translate(130 38)">
+              <g className="rays">
+                {Array.from({ length: 8 }, (_, k) => (
+                  <line key={k} x1="0" y1="-24" x2="0" y2="-17" transform={`rotate(${k * 45})`} />
+                ))}
+              </g>
+              <circle r="12" />
+            </g>
+            <g className="panel">
+              <polygon points="80,68 180,68 196,124 64,124" fill="url(#panel)" />
+              {[0.25, 0.5, 0.75].map((f) => (
+                <line key={`v${f}`} x1={80 + 100 * f} y1="68" x2={64 + 132 * f} y2="124" />
+              ))}
+              {[1 / 3, 2 / 3].map((f) => (
+                <line key={`h${f}`} x1={80 - 16 * f} y1={68 + 56 * f} x2={180 + 16 * f} y2={68 + 56 * f} />
+              ))}
+              <polygon points="80,68 180,68 196,124 64,124" className="panel-edge" />
+              <line x1="130" y1="124" x2="130" y2="142" className="stand" />
+              <line x1="108" y1="142" x2="152" y2="142" className="stand" />
+            </g>
+          </g>
+
+          {/* battery: an upright cell with a terminal, filled from the bottom and split into five bars;
+              centred on x 450; the LED on the terminal is the BMS Bluetooth link */}
+          <rect x="433" y="27" width="34" height="14" rx="3" className="batt-cap" />
+          <rect x="408" y="40" width="84" height="136" rx="12" className="batt-body" />
+          <g clipPath="url(#batt-in)">
+            <rect x="415" y={169 - fillH} width="70" height={fillH} className={`liquid liquid-${level}`} />
+            {[1, 2, 3, 4].map((k) => (
+              <line key={k} x1="415" x2="485" y1={47 + (122 * k) / 5} y2={47 + (122 * k) / 5} className="batt-gap" />
             ))}
           </g>
-          <circle r="12" />
-        </g>
-        <g className="panel">
-          <polygon points="80,68 180,68 196,124 64,124" fill="url(#panel)" />
-          {[0.25, 0.5, 0.75].map((f) => (
-            <line key={`v${f}`} x1={80 + 100 * f} y1="68" x2={64 + 132 * f} y2="124" />
+          {charging && <path d="M 456 82 L 434 114 H 448 L 443 138 L 466 104 H 452 Z" className="bolt" />}
+          <circle cx="450" cy="34" r="3.5" className={`hub-led ${bmsOnline ? "on" : ""}`}>
+            <title>{bmsOnline ? "BMS connected" : "BMS not connected"}</title>
+          </circle>
+
+          {/* loads: a house whose windows light up, centred on x 750 */}
+          <g className={`house ${using ? "on" : ""}`} transform="translate(-22 0)">
+            <polygon points="712,96 772,46 832,96" className="roof" />
+            <rect x="724" y="94" width="96" height="60" className="walls" />
+            <rect x="736" y="106" width="20" height="18" rx="2" className="win" />
+            <rect x="788" y="106" width="20" height="18" rx="2" className="win" />
+            <rect x="763" y="120" width="18" height="34" rx="2" className="door" />
+            <rect x="800" y="54" width="11" height="24" className="chimney" />
+          </g>
+        </svg>
+          {wireTags
+            .filter((x) => x.live)
+            .map(({ key, wire: [x1, y1, x2], kind }) => (
+              <span key={key} className={`wire-tag ${kind}`} style={{ left: `${((x1 + x2) / 2 / 900) * 100}%`, top: `${((y1 - 15) / 170) * 100}%` }}>
+                {amps}
+              </span>
+            ))}
+        </div>
+        <div className="flow-nodes">
+          {nodes.map((n) => (
+            <div key={n.label} className={`flow-node ${n.tone}`}>
+              <span>{n.label}</span>
+              <b>{n.value}</b>
+              <small>{n.sub}</small>
+            </div>
           ))}
-          {[1 / 3, 2 / 3].map((f) => (
-            <line key={`h${f}`} x1={80 - 16 * f} y1={68 + 56 * f} x2={180 + 16 * f} y2={68 + 56 * f} />
-          ))}
-          <polygon points="80,68 180,68 196,124 64,124" className="panel-edge" />
-          <line x1="130" y1="124" x2="130" y2="142" className="stand" />
-          <line x1="108" y1="142" x2="152" y2="142" className="stand" />
-        </g>
-        <text x="130" y="178" className="t-label">CHARGER</text>
-        <text x="130" y="204" className="t-value">{charging ? `${w.toFixed(0)} W` : "0 W"}</text>
-        <text x="130" y="224" className="t-sub">{fmtWh(today.chargeWh)} today</text>
-
-        {/* the BMS in the middle */}
-        <g className="hub">
-          <rect x="395" y="65" width="110" height="60" rx="12" className="hub-box" />
-          <text x="450" y="93" className="hub-name">JK BMS</text>
-          <text x="450" y="111" className="hub-sub">
-            {charging ? "charging" : using ? "discharging" : "standby"}
-          </text>
-          <circle cx="492" cy="77" r="4" className={`hub-led ${bmsOnline ? "on" : ""}`} />
-        </g>
-
-        {/* battery */}
-        <rect x="425" y="186" width="50" height="14" rx="4" className="batt-cap" />
-        <rect x="385" y="200" width="130" height="140" rx="16" className="batt-body" />
-        <g clipPath="url(#batt-in)">
-          <rect x="391" y={top} width="118" height={fillH + 2} className={`liquid liquid-${level}`} />
-          {fillH > 4 && <path className={`wave liquid-${level}`} d={`M 370 ${top} q 14 -6 28 0 t 28 0 t 28 0 t 28 0 t 28 0 t 28 0 t 28 0 v 10 h -196 z`} />}
-          {charging &&
-            [0, 1, 2, 3].map((k) => <circle key={k} className="bubble" cx={410 + k * 26} cy="334" r={2 + (k % 2)} style={{ animationDelay: `${k * 0.55}s` }} />)}
-        </g>
-        <text x="450" y="274" className="t-soc">
-          {soc}
-          <tspan className="t-soc-unit">%</tspan>
-        </text>
-        <text x="450" y="296" className="t-in">
-          {fmtWh(storedWh)}
-        </text>
-        {using && <path d="M 450 312 l -8 -10 h 16 z" className="arrow-out" />}
-        {charging && <path d="M 450 302 l -8 10 h 16 z" className="arrow-in" />}
-        <text x="540" y="240" className="t-label start">BATTERY</text>
-        <text x="540" y="264" className="t-value start">{r.total_voltage.toFixed(2)} V</text>
-        <text x="540" y="284" className="t-sub start">
-          {r.capacity_remaining.toFixed(1)}
-          {full ? ` of ${full.toFixed(0)}` : ""} Ah
-        </text>
-        {fullWh && (
-          <text x="540" y="302" className="t-sub start">
-            {fmtWh(fullWh)} when full
-          </text>
-        )}
-
-        {/* loads: a house whose windows light up */}
-        <g className={`house ${using ? "on" : ""}`}>
-          <polygon points="712,96 772,46 832,96" className="roof" />
-          <rect x="724" y="94" width="96" height="60" className="walls" />
-          <rect x="736" y="106" width="20" height="18" rx="2" className="win" />
-          <rect x="788" y="106" width="20" height="18" rx="2" className="win" />
-          <rect x="763" y="120" width="18" height="34" rx="2" className="door" />
-          <rect x="800" y="54" width="11" height="24" className="chimney" />
-        </g>
-        <text x="772" y="178" className="t-label">LOADS</text>
-        <text x="772" y="204" className="t-value">{using ? `${w.toFixed(0)} W` : "0 W"}</text>
-        <text x="772" y="224" className="t-sub">{fmtWh(today.dischargeWh)} today</text>
-      </svg>
+        </div>
+      </div>
       <div className="flow-facts">
         {facts.map(([k, v]) => (
           <div key={k}>

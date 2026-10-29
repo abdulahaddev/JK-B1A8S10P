@@ -1,8 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
-  ArrowDownRight,
-  ArrowUpRight,
   BatteryCharging,
   Bluetooth,
   BluetoothOff,
@@ -11,7 +9,6 @@ import {
   Cpu,
   Gauge,
   Grid2x2,
-  Pause,
   Thermometer,
   TrendingUp,
   Wifi,
@@ -25,9 +22,7 @@ import type { Device, Info, Reading } from "../types";
 import { CELLS, cellKey } from "../types";
 import { CategoryChart, TimeChart, type Metric } from "./Chart";
 import { MonthCalendar, PowerFlow, TempGauges, UsageByHour } from "./Insights";
-import { Ago, ago, Card, HEALTH_LABEL, healthKind, linkHealth, rssiKind, rssiLabel, Segmented, Sparkline, StatusPill, type Kind } from "./ui";
-
-const fmtHours = (h: number) => (h < 1 ? `${Math.round(h * 60)} min` : h < 48 ? `${h.toFixed(1)} h` : `${(h / 24).toFixed(1)} days`);
+import { Ago, Card, HEALTH_LABEL, healthKind, linkHealth, rssiKind, rssiLabel, Segmented, Sparkline, StatusPill, type Kind } from "./ui";
 
 /** Pack state from the latest reading (±0.15 A dead band). */
 function packState(r: Reading) {
@@ -35,34 +30,7 @@ function packState(r: Reading) {
   return i > 0.15 ? "Charging" : i < -0.15 ? "Discharging" : "Idle";
 }
 
-function SocRing({ soc, color, track }: { soc: number; color: string; track: string }) {
-  const r = 52, c = 2 * Math.PI * r;
-  return (
-    <svg className="ring" viewBox="0 0 128 128" role="img" aria-label={`${soc} percent charged`}>
-      <circle cx="64" cy="64" r={r} fill="none" stroke={track} strokeWidth="12" />
-      <circle
-        cx="64"
-        cy="64"
-        r={r}
-        fill="none"
-        stroke={color}
-        strokeWidth="12"
-        strokeLinecap="round"
-        strokeDasharray={`${(Math.max(0, Math.min(100, soc)) / 100) * c} ${c}`}
-        transform="rotate(-90 64 64)"
-      />
-      <text x="64" y="62" textAnchor="middle" className="ring-value">
-        {soc}
-        <tspan className="ring-unit">%</tspan>
-      </text>
-      <text x="64" y="84" textAnchor="middle" className="ring-label">
-        charged
-      </text>
-    </svg>
-  );
-}
-
-function Link({ icon: Icon, label, value, detail, kind }: { icon: LucideIcon; label: string; value: string; detail: React.ReactNode; kind: Kind }) {
+function Link({ icon: Icon, label, value, detail, kind, dot = true }: { icon: LucideIcon; label: string; value: string; detail: React.ReactNode; kind: Kind; dot?: boolean }) {
   return (
     <div className={`link link-${kind}`}>
       <span className="link-icon" aria-hidden>
@@ -71,8 +39,8 @@ function Link({ icon: Icon, label, value, detail, kind }: { icon: LucideIcon; la
       <div className="link-body">
         <span className="link-label">{label}</span>
         <b>
-          <span className={`dot dot-${kind}`} aria-hidden />
-          {value}
+          {dot && <span className={`dot dot-${kind}`} aria-hidden />}
+          <span className="link-value">{value}</span>
           {detail && <small>{detail}</small>}
         </b>
       </div>
@@ -103,6 +71,7 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
         value={d?.firmware_version ?? "–"}
         detail={ota ? <span title={ota}>{ota}</span> : d?.flash_log === 0 ? "flash log missing" : ""}
         kind={!d?.firmware_version ? "muted" : otaBad || d?.flash_log === 0 ? "warning" : "good"}
+        dot={false}
       />
       <Link icon={Cpu} label="Board" value={HEALTH_LABEL[h]} detail={boardDetail} kind={queued > 2 && h === "online" ? "warning" : healthKind(h)} />
       <Link
@@ -123,54 +92,11 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
   );
 }
 
-function Hero({ r, info, d, nowS, tokens: t }: { r: Reading; info?: Info | null; d: Device | null | undefined; nowS: number; tokens: Tokens }) {
-  const i = r.current ?? 0;
-  const state = packState(r);
-  const full = info?.full_charge_capacity;
-  const hours = state === "Idle" ? null : i > 0 ? (full ? (full - r.capacity_remaining) / i : null) : r.capacity_remaining / -i;
-  const p = powerW(r);
-  const StateIcon = state === "Charging" ? ArrowUpRight : state === "Discharging" ? ArrowDownRight : Pause;
-  const low = r.state_of_charge < 20;
-  const stale = nowS - r.ts > 900;
+/** Firmware, board, WiFi and Bluetooth in one slim row at the top of the page. */
+function StatusStrip({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
   return (
-    <section className="card hero">
-      <div className="hero-main">
-        <SocRing soc={r.state_of_charge} color={low ? t.critical : t.series[0]} track={t.grid} />
-        <div className="hero-body">
-          <div className="hero-top">
-            <span className={`state state-${state.toLowerCase()}`}>
-              <StateIcon size={15} aria-hidden /> {state}
-            </span>
-            {low && <StatusPill kind="critical">Low charge</StatusPill>}
-            {stale && <StatusPill kind="warning">Reading {ago(nowS - r.ts)} old</StatusPill>}
-          </div>
-          <div className="hero-power">
-            {state === "Idle" ? "0" : `${p > 0 ? "+" : "−"}${Math.abs(p).toFixed(0)}`}
-            <span>W</span>
-          </div>
-          <p className="hero-note">
-            {hours !== null && Number.isFinite(hours) ? `${state === "Charging" ? "Full" : "Empty"} in about ${fmtHours(hours)}` : state === "Idle" ? "No load right now" : "Estimating…"}
-          </p>
-          <div className="hero-facts">
-            <div>
-              <span>Remaining</span>
-              <b>
-                {r.capacity_remaining.toFixed(1)}
-                {full ? ` / ${full.toFixed(0)}` : ""} Ah
-              </b>
-            </div>
-            <div>
-              <span>Health</span>
-              <b>{info?.state_of_health !== undefined ? `${info.state_of_health}%` : "–"}</b>
-            </div>
-            <div>
-              <span>Cycles</span>
-              <b>{info?.charging_cycles ?? "–"}</b>
-            </div>
-          </div>
-        </div>
-        <Links d={d} nowS={nowS} />
-      </div>
+    <section className="card status-strip" aria-label="Connection status">
+      <Links d={d} nowS={nowS} />
     </section>
   );
 }
@@ -399,8 +325,10 @@ export function Overview({
 
   return (
     <div className="page">
+      <StatusStrip d={device} nowS={clock} />
+
       <div className="overview-top">
-        <Hero r={r} info={info} d={device} nowS={clock} tokens={t} />
+        <PowerFlow r={r} info={info} todayRows={todayRows ?? []} bmsOnline={device?.ble_connected === 1} />
         <div className="kpis">
           <Kpi icon={BatteryCharging} label="Pack voltage" value={r.total_voltage.toFixed(2)} unit="V" note={`${(r.total_voltage / 4).toFixed(3)} V per cell`} spark={sparks.voltage} color={t.series[0]} />
           <Kpi icon={Zap} label="Current" value={`${i > 0 ? "+" : ""}${i.toFixed(2)}`} unit="A" note={packState(r)} spark={sparks.current} color={t.series[2]} />
@@ -425,7 +353,7 @@ export function Overview({
         </div>
       </div>
 
-      <PowerFlow r={r} info={info} todayRows={todayRows ?? []} bmsOnline={device?.ble_connected === 1} />
+      <MonthEnergy rows={monthRows} loading={monthLoading} tokens={t} />
 
       <TimeChart
         title={rangeLabel}
@@ -463,7 +391,6 @@ export function Overview({
           height={260}
         />
         <TempGauges r={r} rows={rows} rangeLabel={rangeLabel} tokens={t} />
-        <MonthEnergy rows={monthRows} loading={monthLoading} tokens={t} />
         <UsageByHour rows={monthRows} tokens={t} />
         <MonthCalendar rows={monthRows} tokens={t} />
       </div>

@@ -160,27 +160,24 @@ input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px 
 
 /* ---------- overview ---------- */
 .overview-top { display: grid; grid-template-columns: minmax(420px, 1.2fr) minmax(0, 1.4fr); gap: 16px; }
-.hero { position: relative; overflow: hidden; display: flex; align-items: center; }
-.hero-main { display: flex; align-items: center; gap: 24px; position: relative; width: 100%; }
-.hero::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(500px 220px at 0% 0%, var(--accent-soft), transparent 70%);
+/* Firmware / Board / WiFi / Bluetooth in one slim row above everything else */
+.status-strip { padding: 12px 20px; }
+.status-strip .links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; width: auto; padding: 0; border: 0; }
+.status-strip .link { padding: 0 16px; border-left: 1px solid var(--border); }
+.status-strip .link:first-child { padding-left: 0; border-left: 0; }
+@media (max-width: 860px) {
+  .status-strip .links { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; padding: 0; border: 0; }
+  .status-strip .link:nth-child(odd) { padding-left: 0; border-left: 0; }
 }
-.ring { width: 150px; height: 150px; flex: none; position: relative; }
-.ring-value { font-size: 32px; font-weight: 700; fill: var(--ink); letter-spacing: -0.03em; }
-.ring-unit { font-size: 16px; font-weight: 600; fill: var(--ink2); }
-.ring-label { font-size: 11px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.hero-body { position: relative; min-width: 0; flex: 1; }
-.hero-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 520px) {
+  .status-strip .link { padding: 0 10px; gap: 8px; }
+  .status-strip .link-icon { width: 26px; height: 26px; }
+}
 .state { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
 .state-charging { background: rgba(27, 175, 122, 0.14); color: var(--good-text); }
 .state-discharging { background: rgba(235, 104, 52, 0.13); color: #c4501f; }
 :root[data-theme="dark"] .state-discharging { color: #f08a5d; }
 .state-idle { background: var(--surface-2); color: var(--ink2); }
-.hero-power { font-size: 40px; font-weight: 700; letter-spacing: -0.03em; margin-top: 8px; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.hero-power span { font-size: 18px; color: var(--ink2); font-weight: 600; margin-left: 4px; }
-.hero-note { margin: 4px 0 0; color: var(--ink2); font-size: 13px; }
-.hero-facts { display: flex; gap: 22px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
 .links { position: relative; display: grid; gap: 14px; align-self: flex-start; flex: none; width: 190px; padding-left: 20px; border-left: 1px solid var(--border); }
 .link { display: flex; gap: 10px; align-items: center; min-width: 0; }
 .link-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; flex: none; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); }
@@ -190,11 +187,11 @@ input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px 
 .link-critical .link-icon { color: var(--critical); }
 .link-body { display: grid; min-width: 0; line-height: 1.3; }
 .link-label { font-size: 11.5px; color: var(--muted); }
-.link-body b { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; white-space: nowrap; }
-.link-body b .dot { margin-top: 0; width: 7px; height: 7px; }
-.link-body small { font-size: 11.5px; font-weight: 500; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
-.hero-facts span { display: block; font-size: 11.5px; color: var(--muted); }
-.hero-facts b { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+/* value and detail share a baseline; when the column is too narrow the detail wraps under the value instead of overflowing */
+.link-body b { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; row-gap: 0; min-width: 0; font-size: 13px; font-weight: 600; }
+.link-body b .dot { margin-top: 0; width: 7px; height: 7px; align-self: center; flex: none; }
+.link-value { white-space: nowrap; }
+.link-body small { min-width: 0; max-width: 100%; font-size: 11.5px; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .kpis-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -294,11 +291,8 @@ tbody tr:last-child td { border-bottom: 0; }
   }
   .bottom-nav a { display: grid; justify-items: center; gap: 2px; padding: 6px 0; font-size: 11px; color: var(--muted); font-weight: 500; }
   .bottom-nav a.on { color: var(--accent-ink); }
-  .hero-main { flex-direction: column; align-items: stretch; }
-  .ring { align-self: center; }
   .cell { grid-template-columns: 56px minmax(0, 1fr) 64px; }
   .cell-off, .cell-tagcol, .cell-res { display: none; }
-  .links { width: auto; align-self: stretch; padding: 14px 0 0; border-left: 0; border-top: 1px solid var(--border); }
 }
 @media (max-width: 520px) {
   .kpis, .kpis-4, .today { grid-template-columns: minmax(0, 1fr); }
@@ -399,31 +393,54 @@ tbody tr:last-child td { border-bottom: 0; }
 .check-row input { width: 16px; height: 16px; flex: none; accent-color: var(--accent); cursor: pointer; }
 
 /* ---------- overview infographics ---------- */
+/* Power flow: a text-free drawing on top, its labels as HTML in three equal columns that match the
+   drawing's device centres (1/6, 1/2, 5/6), then four fact tiles pinned to the bottom of the card. */
 .flow-card { display: flex; flex-direction: column; }
-.scene { display: block; width: 100%; height: auto; max-height: 400px; font-family: Inter, system-ui, sans-serif; }
-.scene text { text-anchor: middle; }
-.scene text.start { text-anchor: start; }
-.t-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; fill: var(--muted); }
-.t-value { font-size: 22px; font-weight: 700; fill: var(--ink); }
-.t-sub { font-size: 12px; fill: var(--muted); }
-.t-soc { font-size: 32px; font-weight: 800; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-opacity: 0.6; }
-.t-soc-unit { font-size: 17px; font-weight: 700; }
-.t-in { font-size: 12px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-opacity: 0.6; }
-.t-wire { font-size: 13px; font-weight: 700; }
-.t-wire.charge { fill: #129266; }
-.t-wire.use { fill: #d0561f; }
+.flow-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 4px 0 18px; }
+.scene { display: block; width: 100%; height: auto; }
+/* current, centred on each cable and sitting just above it; positioned in % of the scene so it tracks the drawing */
+.scene-wrap { position: relative; }
+.wire-tag {
+  position: absolute; transform: translate(-50%, calc(-100% - 9px)); padding: 1px 8px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 600; line-height: 18px; white-space: nowrap; font-variant-numeric: tabular-nums;
+  background: var(--surface-2); border: 1px solid var(--border); color: var(--muted);
+}
+.wire-tag.charge { background: rgba(27, 175, 122, 0.14); border-color: transparent; color: var(--good-text); }
+.wire-tag.use { background: rgba(235, 104, 52, 0.13); border-color: transparent; color: #c4501f; }
+:root[data-theme="dark"] .wire-tag.use { color: #f08a5d; }
 
-/* cables: a grey track; live ones get a coloured stream and dots moving with the energy */
+.flow-nodes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.flow-node { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; padding: 0 8px; text-align: center; }
+.flow-node span { font-size: 12px; font-weight: 500; color: var(--muted); }
+.flow-node b { font-size: 24px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.flow-node small { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.flow-node.charge b { color: var(--good-text); }
+.flow-node.use b { color: #c4501f; }
+:root[data-theme="dark"] .flow-node.use b { color: #f08a5d; }
+.flow-node.soc-low b { color: var(--critical); }
+
+.flow-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 1680px) and (min-width: 1101px) { .flow-facts { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.flow-facts > div { min-width: 0; padding: 8px 12px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); }
+.flow-facts span { display: block; font-size: 11.5px; color: var(--muted); }
+.flow-facts b { display: block; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 520px) {
+  .flow-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flow-node { padding: 0 4px; }
+  .flow-node b { font-size: 19px; }
+  .flow-node small { font-size: 11px; }
+}
+
+/* cables: a grey track; the live one gets a coloured stream and dots moving with the energy */
 .cable-track { fill: none; stroke: var(--grid); stroke-width: 10; stroke-linecap: round; }
-.cable.live .cable-track { stroke-opacity: 1; }
 .cable.charge .cable-track { stroke: rgba(27, 175, 122, 0.22); }
 .cable.use .cable-track { stroke: rgba(235, 104, 52, 0.22); }
 .cable-stream { fill: none; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 2 14; animation: stream 0.6s linear infinite; }
-.cable-stream.rev { animation-direction: reverse; }
 .cable.charge .cable-stream { stroke: #1baf7a; }
 .cable.use .cable-stream { stroke: #eb6834; }
 @keyframes stream { to { stroke-dashoffset: -16; } }
-.cable-dot { filter: url(#glow); }
+.cable-dot { filter: url(#glow); animation: dot 1s linear infinite; }
+@keyframes dot { from { transform: translate(var(--x0), var(--y0)); } to { transform: translate(var(--x1), var(--y1)); } }
 .cable.charge .cable-dot { fill: #22c58b; }
 .cable.use .cable-dot { fill: #f07a45; }
 
@@ -437,26 +454,21 @@ tbody tr:last-child td { border-bottom: 0; }
 .stand { stroke: var(--muted); stroke-width: 4; stroke-linecap: round; }
 .scene:not(.is-charging) .panel { opacity: 0.55; }
 
-.hub-box { fill: var(--surface); stroke: var(--axis); stroke-width: 2.5; }
-.is-charging .hub-box { stroke: #1baf7a; }
-.is-using .hub-box { stroke: #eb6834; }
-.hub-name { font-size: 15px; font-weight: 800; fill: var(--ink); letter-spacing: 0.02em; }
-.hub-sub { font-size: 11px; fill: var(--muted); }
-.hub-led { fill: var(--axis); }
+.hub-led { fill: var(--surface-2); }
 .hub-led.on { fill: #22c55e; animation: blink 1.6s ease-in-out infinite; }
 
 .batt-cap { fill: var(--axis); }
-.batt-body { fill: var(--surface-2); stroke: var(--axis); stroke-width: 5; }
+.batt-body { fill: var(--surface); stroke: var(--axis); stroke-width: 5; }
+.is-charging .batt-body, .is-charging .batt-cap { stroke: #1baf7a; }
+.is-using .batt-body { stroke: #eb6834; }
 .liquid { transition: y 0.8s, height 0.8s; }
 .liquid-high { fill: #1baf7a; }
 .liquid-mid { fill: #eda100; }
 .liquid-low { fill: #d03b3b; }
-.wave { animation: wave 2.6s linear infinite; }
-.scene:not(.is-charging):not(.is-using) .wave { animation-duration: 7s; }
-@keyframes wave { to { transform: translateX(-56px); } }
-.bubble { fill: rgba(255, 255, 255, 0.7); animation: bubble 2.2s ease-in infinite; }
-@keyframes bubble { from { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateY(-110px); opacity: 0; } }
-.arrow-in, .arrow-out { fill: #fff; opacity: 0.9; animation: blink 1.4s ease-in-out infinite; }
+.is-charging .liquid { animation: charge-glow 1.8s ease-in-out infinite; }
+@keyframes charge-glow { 50% { opacity: 0.7; } }
+.batt-gap { stroke: var(--surface); stroke-width: 4; }
+.bolt { fill: #ffd25e; stroke: #b07800; stroke-width: 2; stroke-linejoin: round; animation: blink 1.4s ease-in-out infinite; }
 @keyframes blink { 50% { opacity: 0.3; } }
 
 .house .roof { fill: var(--muted); }
@@ -467,15 +479,8 @@ tbody tr:last-child td { border-bottom: 0; }
 .house.on .roof, .house.on .chimney { fill: #c4501f; }
 .house.on .win { fill: #ffd25e; stroke: #eda100; animation: flicker 3s ease-in-out infinite; }
 @keyframes flicker { 50% { fill: #ffe7a0; } }
-
-.flow-facts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
-.flow-facts span { display: block; font-size: 11.5px; color: var(--muted); }
-.flow-facts b { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-@media (max-width: 760px) { .flow-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (prefers-reduced-motion: reduce) {
-  .cable-dot, .bubble { display: none; }
-  .cable-stream, .wave, .sun.on .rays, .hub-led.on, .arrow-in, .arrow-out, .house.on .win { animation: none; }
-}
+/* The flow animation ignores prefers-reduced-motion on purpose: it is the point of this card, and
+   Windows reports "reduce" whenever Animation effects are off, which froze the whole scene. */
 
 .gauges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .gauge { display: grid; justify-items: center; text-align: center; }
