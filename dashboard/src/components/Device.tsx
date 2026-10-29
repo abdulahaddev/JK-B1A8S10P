@@ -1,7 +1,8 @@
-import { Bug, Cpu, HardDrive, History, Wifi } from "lucide-react";
-import { useBoots, useCrashes } from "../data";
-import type { Device as DeviceT, Info } from "../types";
-import { Ago, ago, Card, rssiKind, rssiLabel, StatusPill } from "./ui";
+import { Bug, Cable, Cpu, HardDrive, History, ScrollText, Wifi } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useBoots, useCrashes, useEvents } from "../data";
+import type { BoardEvent, Device as DeviceT, Info } from "../types";
+import { Ago, ago, Card, rssiKind, rssiLabel, Segmented, StatusPill, type Kind } from "./ui";
 
 // ESP-IDF wifi_err_reason_t of the last WiFi disconnect (device/wifi_disc_reason)
 const WIFI_REASONS: Record<number, string> = {
@@ -34,6 +35,134 @@ const wifiReason = (code: number) => `${WIFI_REASONS[code] ?? "reason"} (${code}
 const when = (ts: number) =>
   new Date(ts * 1000).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
 
+// esp_reset_reason_t (boot events)
+const RESET_REASONS: Record<number, string> = {
+  1: "power on",
+  2: "reset pin",
+  3: "software restart",
+  4: "crash",
+  5: "interrupt watchdog",
+  6: "task watchdog",
+  7: "watchdog",
+  8: "wake from deep sleep",
+  9: "brownout",
+  10: "SDIO",
+};
+// telemetry::RestartCause, in firmware order (restart events, and the cause before a boot)
+const RESTART_CAUSES = [
+  "none",
+  "remote restart",
+  "radio reset after a software reset",
+  "BMS watchdog",
+  "WiFi watchdog",
+  "stuck script",
+  "update took too long",
+  "network watchdog",
+  "radio reset after power-on",
+  "radio reset after a brownout",
+  "update failed",
+];
+const cause = (c?: number) => RESTART_CAUSES[c ?? 0] ?? `cause ${c}`;
+const duration = (s: number) => (s < 90 ? `${s} s` : s < 5400 ? `${Math.round(s / 60)} min` : s < 172800 ? `${(s / 3600).toFixed(1)} h` : `${(s / 86400).toFixed(1)} days`);
+
+const EVENT_GROUPS = [
+  { id: "all", label: "All" },
+  { id: "board", label: "Board" },
+  { id: "wifi", label: "WiFi" },
+  { id: "bms", label: "BMS" },
+  { id: "update", label: "Updates" },
+  { id: "error", label: "Errors" },
+] as const;
+type EventGroup = (typeof EVENT_GROUPS)[number]["id"];
+const GROUP_OF: Record<string, EventGroup> = {
+  boot: "board",
+  restart: "board",
+  control: "board",
+  crash: "error",
+  upload_fail: "error",
+  wifi_drop: "wifi",
+  bms_connect: "bms",
+  bms_disconnect: "bms",
+  ota: "update",
+};
+
+/** One event as a label, a status kind and a plain-language detail. */
+function describe(e: BoardEvent): { label: string; kind: Kind; detail: string } {
+  switch (e.code) {
+    case "boot":
+      return { label: "Boot", kind: "muted", detail: `${RESET_REASONS[e.a ?? 0] ?? `reason ${e.a}`}${e.b ? ` · before: ${cause(e.b)}` : ""}${e.text ? ` · firmware ${e.text}` : ""}` };
+    case "restart":
+      return { label: "Restart", kind: e.a === 1 || e.a === 8 ? "muted" : "warning", detail: cause(e.a) };
+    case "crash":
+      return { label: "Crash", kind: "critical", detail: `in step ${e.text || "unknown"}` };
+    case "wifi_drop":
+      return { label: "WiFi drop", kind: "warning", detail: `${wifiReason(e.a ?? 0)}${e.b ? ` · ${e.b} dBm before` : ""}` };
+    case "bms_connect":
+      return { label: "BMS connected", kind: "good", detail: e.a !== undefined ? `${duration(e.a)} after boot` : "" };
+    case "bms_disconnect":
+      return { label: "BMS disconnected", kind: "warning", detail: e.a !== undefined && e.a >= 0 ? `after ${duration(e.a)} connected` : "" };
+    case "ota":
+      return { label: "Update", kind: /fail|refus|stopped|rolled/i.test(e.text ?? "") ? "serious" : "muted", detail: e.text ?? "" };
+    case "upload_fail":
+      return {
+        label: "Upload failed",
+        kind: "serious",
+        detail: `${e.a && e.a > 0 ? `HTTP ${e.a}` : "no response"}${e.text ? ` (${e.text})` : ""}${e.b ? ` · ${(e.b / 1000).toFixed(1)} s` : ""}`,
+      };
+    case "control":
+      return { label: "Setting", kind: "muted", detail: e.text === "keepalive" ? `Kept connection ${e.a ? "on" : "off"}` : e.text ?? "" };
+    default:
+      return { label: e.code, kind: "muted", detail: e.text ?? "" };
+  }
+}
+
+/** The board's flash event log (events/, fw 1.2.42+), newest first, filtered by group. */
+function EventLog() {
+  const events = useEvents(300);
+  const [group, setGroup] = useState<EventGroup>("all");
+  const shown = useMemo(() => (events ?? []).filter((e) => group === "all" || GROUP_OF[e.code] === group), [events, group]);
+  return (
+    <Card
+      title="Event log"
+      icon={ScrollText}
+      subtitle={events ? `Latest ${events.length} events from the board's flash log` : "Loading…"}
+      className="span-2"
+      actions={<Segmented options={EVENT_GROUPS} value={group} onChange={setGroup} label="Event type" size="small" />}
+    >
+      {events && events.length === 0 ? (
+        <p className="sub">No events yet (needs firmware 1.2.42+).</p>
+      ) : (
+        <div className="table-wrap" style={{ maxHeight: 420 }}>
+          <table>
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Event</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shown.map((e) => {
+                const x = describe(e);
+                return (
+                  <tr key={e.key}>
+                    <td title={`boot ${e.boot}, ${e.up} s after start`}>{e.ts ? when(e.ts) : <span className="muted">boot {e.boot} · +{e.up} s</span>}</td>
+                    <td>
+                      <StatusPill kind={x.kind}>{x.label}</StatusPill>
+                    </td>
+                    <td>{x.detail}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {shown.length === 0 && <p className="sub">No events of this type.</p>}
+        </div>
+      )}
+    </Card>
+  );
+}
+
 function KV({ items }: { items: [string, React.ReactNode][] }) {
   return (
     <dl className="kv">
@@ -65,6 +194,16 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
               ["Boots since power-on", d.boot_count ?? "–"],
               ["Last reset", `${d.reset_reason ?? "–"}${d.restart_cause && d.restart_cause !== "none" ? ` (${d.restart_cause})` : ""}`],
               ["Watchdog resets", d.watchdog_resets ?? 0],
+              [
+                "Flash log",
+                d.flash_log === undefined ? (
+                  "–"
+                ) : d.flash_log ? (
+                  <StatusPill kind="good">Active</StatusPill>
+                ) : (
+                  <StatusPill kind="warning">Missing: flash the factory image</StatusPill>
+                ),
+              ],
             ]}
           />
         </Card>
@@ -97,7 +236,14 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
               ["Free memory", d.free_heap ? `${(d.free_heap / 1024).toFixed(0)} KB` : "–"],
               ["Lowest free", d.min_free_heap ? `${(d.min_free_heap / 1024).toFixed(0)} KB` : "–"],
               ["Largest block", d.max_block ? `${(d.max_block / 1024).toFixed(0)} KB` : "–"],
-              ["Queued / dropped", `${d.buffered ?? 0} / ${d.dropped ?? 0}`],
+              [
+                "Queued in flash",
+                d.queue_capacity
+                  ? `${d.buffered ?? 0} of ${d.queue_capacity} (≈ ${duration((d.buffered ?? 0) * 30)}; holds ${duration(d.queue_capacity * 30)})`
+                  : `${d.buffered ?? 0}`,
+              ],
+              ["Dropped (queue full)", d.dropped ?? 0],
+              ["Events waiting", d.events_queued ?? "–"],
               ["Last batch / limit", `${d.upload_batch ?? "–"} / ${d.upload_cap ?? "–"}`],
               ["Last upload took", d.upload_ms ? `${(d.upload_ms / 1000).toFixed(1)} s (avg ${((d.upload_ms_avg ?? 0) / 1000).toFixed(1)} s)` : "–"],
               ["Upload heap low", d.upload_heap_low ? `${(d.upload_heap_low / 1024).toFixed(1)} KB` : "–"],
@@ -106,6 +252,33 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
               ["Control errors", d.control_errors ?? 0],
             ]}
           />
+        </Card>
+        <Card
+          title="Firebase connection"
+          icon={Cable}
+          subtitle="Uploads and control reads since boot"
+          actions={
+            d.net_keepalive === undefined ? undefined : (
+              <StatusPill kind={d.net_keepalive ? "good" : "muted"}>{d.net_keepalive ? "Kept open" : "New per request"}</StatusPill>
+            )
+          }
+        >
+          <KV
+            items={[
+              ["Requests on the open connection", d.net_reused ?? "–"],
+              ["New connections", d.net_new ?? "–"],
+              ["Dead connections recovered", d.net_stale ?? "–"],
+              [
+                "Request task stack free",
+                d.net_stack_free === undefined ? (
+                  "–"
+                ) : (
+                  <StatusPill kind={d.net_stack_free < 1024 ? "critical" : d.net_stack_free < 2048 ? "warning" : "good"}>{`${(d.net_stack_free / 1024).toFixed(1)} KB`}</StatusPill>
+                ),
+              ],
+            ]}
+          />
+          <p className="sub">Switch the kept connection in Remote control.</p>
         </Card>
         <Card title="BMS" icon={Cpu} subtitle={info?.device_model ?? "JK-B1A8S10P"}>
           <KV
@@ -119,6 +292,10 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
             ]}
           />
         </Card>
+      </div>
+
+      <div className="grid-2">
+        <EventLog />
       </div>
 
       <div className="grid-2">

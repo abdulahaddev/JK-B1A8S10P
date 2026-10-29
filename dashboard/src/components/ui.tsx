@@ -1,6 +1,6 @@
 // Shared building blocks: cards, pills, segmented controls, the per-chart comparison picker, sparklines.
 import type { LucideIcon } from "lucide-react";
-import { AlertTriangle, CheckCircle2, Circle, GitCompareArrows, OctagonAlert } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Circle, OctagonAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Device } from "../types";
 
@@ -123,26 +123,10 @@ export function Segmented<T extends string>({
 export const COMPARES = [
   { id: "none", label: "No comparison", short: "", shift: () => 0 },
   { id: "prev", label: "Previous period", short: "Previous period", shift: (span: number) => span },
-  { id: "day", label: "Yesterday", short: "Yesterday", shift: () => 86400 },
-  { id: "week", label: "Last week", short: "Last week", shift: () => 7 * 86400 },
+  { id: "day", label: "One day earlier", short: "One day earlier", shift: () => 86400 },
+  { id: "week", label: "One week earlier", short: "One week earlier", shift: () => 7 * 86400 },
 ] as const;
 export type CompareId = (typeof COMPARES)[number]["id"];
-
-/** Comparison picker that lives in one chart's header. */
-export function CompareSelect({ value, onChange }: { value: CompareId; onChange: (v: CompareId) => void }) {
-  return (
-    <label className={`compare-select ${value !== "none" ? "active" : ""}`} title="Compare this chart with another period">
-      <GitCompareArrows size={14} aria-hidden />
-      <select value={value} onChange={(e) => onChange(e.target.value as CompareId)} aria-label="Compare with">
-        {COMPARES.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.id === "none" ? "Compare…" : `vs ${c.label}`}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
 
 /** Tiny trend line for KPI cards (no axes; the card states the value). */
 export function Sparkline({ values, color, height = 36 }: { values: number[]; color: string; height?: number }) {

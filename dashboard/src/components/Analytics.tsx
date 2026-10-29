@@ -6,7 +6,7 @@ import type { Reading } from "../types";
 import { TimeChart, type Metric } from "./Chart";
 import { PeriodComparison } from "./Compare";
 
-/** History over the selected range; every chart picks its own comparison. */
+/** History over the selected range; the period comparison table compares the whole range. */
 export function Analytics({
   rows,
   loading,
@@ -43,12 +43,12 @@ export function Analytics({
   return (
     <div className="page">
       <div className="grid-2">
-        <TimeChart {...common} title="State of charge" icon={BatteryMedium} unit="%" decimals={0} metrics={m.soc} comparable better="up" yMin={0} yMax={100} />
-        <TimeChart {...common} title="Pack voltage" icon={BatteryCharging} unit="V" metrics={m.voltage} comparable />
-        <TimeChart {...common} title="Current" icon={Zap} subtitle="+ charging · − discharging" unit="A" metrics={m.current} comparable zeroLine />
-        <TimeChart {...common} title="Power" icon={Plug} subtitle="+ charging · − load" unit="W" decimals={0} metrics={m.power} comparable zeroLine />
+        <TimeChart {...common} title="State of charge" icon={BatteryMedium} unit="%" decimals={0} metrics={m.soc} yMin={0} yMax={100} />
+        <TimeChart {...common} title="Pack voltage" icon={BatteryCharging} unit="V" metrics={m.voltage} />
+        <TimeChart {...common} title="Current" icon={Zap} subtitle="+ charging · − discharging" unit="A" metrics={m.current} zeroLine />
+        <TimeChart {...common} title="Power" icon={Plug} subtitle="+ charging · − load" unit="W" decimals={0} metrics={m.power} zeroLine />
         <TimeChart {...common} title="Cell voltages" icon={Grid2x2} subtitle="All four cells on one scale" unit="V" decimals={3} metrics={m.cells} />
-        <TimeChart {...common} title="Cell spread" icon={Activity} subtitle="Highest minus lowest cell" unit="mV" decimals={0} metrics={m.spread} comparable better="down" yMin={0} />
+        <TimeChart {...common} title="Cell spread" icon={Activity} subtitle="Highest minus lowest cell" unit="mV" decimals={0} metrics={m.spread} yMin={0} />
         <TimeChart {...common} title="Temperatures" icon={Thermometer} unit="°C" decimals={1} metrics={m.temps} className="span-2" />
         <PeriodComparison cur={rows} from={from} to={to} rangeLabel={rangeLabel} />
       </div>

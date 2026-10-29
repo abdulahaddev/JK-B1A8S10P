@@ -70,6 +70,9 @@ export function useControlWatcher(d: Device | null | undefined, c: Control | nul
       log("warn", `Board restarted (${d.reset_reason ?? "unknown reason"}${d.restart_cause && d.restart_cause !== "none" ? `, ${d.restart_cause}` : ""})`);
     if (d.ble_connected !== p.ble_connected) log(d.ble_connected === 1 ? "ok" : "warn", `BMS Bluetooth ${d.ble_connected === 1 ? "connected" : "disconnected"}`);
     if (d.control_s !== undefined && d.control_s !== p.control_s) log("info", `Board reads control every ${d.control_s} s`);
+    if (d.net_keepalive !== undefined && p.net_keepalive !== undefined && d.net_keepalive !== p.net_keepalive)
+      log("ok", `Board: kept connection ${d.net_keepalive ? "on" : "off"}`);
+    if (d.flash_log === 0 && p.flash_log !== 0) log("warn", "Board has no flash log partition: readings are not kept (flash the factory image)");
   }, [d]);
 
   useEffect(() => {
@@ -85,5 +88,6 @@ export function useControlWatcher(d: Device | null | undefined, c: Control | nul
     if (c?.ota !== p?.ota) c?.ota ? log("info", `control/ota = "${c.ota}" from ${c.ota_host ?? "(no host)"}`) : cleared("ota");
     if (c?.restart !== p?.restart) c?.restart ? log("info", "control/restart set") : cleared("restart");
     if (c?.check_s !== p?.check_s) log("info", c?.check_s ? `Control read interval set to ${c.check_s} s` : "Control read interval back to the default (300 s)");
+    if (c?.keepalive !== p?.keepalive) log("info", `control/keepalive = "${c?.keepalive ?? "(none: off)"}"`);
   }, [c]);
 }

@@ -15,7 +15,7 @@ import {
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
 import { readings } from "./telemetry";
-import type { Boot, Control, Crash, Device, Info, Reading } from "./types";
+import type { Boot, BoardEvent, Control, Crash, Device, Info, Reading } from "./types";
 
 const app = initializeApp({
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -65,6 +65,26 @@ export function useLatestReading(): Reading | undefined {
 
 export const useBoots = () => useLatest<Boot>("boots", 50);
 export const useCrashes = () => useLatest<Crash>("crashes", 20);
+
+/** The newest n events of the board's flash event log (fw 1.2.42+), newest first, live. */
+export function useEvents(n = 300): BoardEvent[] | null {
+  const [rows, setRows] = useState<BoardEvent[] | null>(null);
+  useEffect(
+    () =>
+      onValue(query(ref(db, "events"), orderByKey(), limitToLast(n)), (s) => {
+        const v = (s.val() ?? {}) as Record<string, Omit<BoardEvent, "key" | "ts" | "boot" | "up">>;
+        const out = Object.entries(v).map(([key, e]) => {
+          const [ts, boot, up] = key.split("-").map(Number);
+          return { ...e, key, ts, boot, up } as BoardEvent;
+        });
+        // newest first: by time, events without a time (logged before the clock was set) last
+        out.sort((a, b) => (b.ts || 0) - (a.ts || 0) || b.boot - a.boot || b.up - a.up);
+        setRows(out);
+      }),
+    [n],
+  );
+  return rows;
+}
 
 // Several charts can ask for the same comparison window at once: share one request per window.
 const cache = new Map<string, { at: number; rows: Promise<Reading[]> }>();
@@ -144,3 +164,5 @@ export const setOtaHost = (host: string) => set(ref(db, "control/ota_host"), hos
 // Radio settings (fw 1.2.29+): written together, applied by the board at its next control read
 export const requestRestart = () => set(ref(db, "control/restart"), String(Math.floor(Date.now() / 1000)));
 export const clearRestart = () => remove(ref(db, "control/restart"));
+// One kept connection to Firebase (fw 1.2.41+): "keep" or "off", applied at the board's next control read
+export const setKeepalive = (on: boolean) => set(ref(db, "control/keepalive"), on ? "keep" : "off");

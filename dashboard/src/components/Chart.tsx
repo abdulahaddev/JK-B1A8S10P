@@ -1,14 +1,14 @@
 import ReactECharts from "echarts-for-react";
 import type { LucideIcon } from "lucide-react";
 import { LineChart, Table2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { series, stats, type Pick, type Point } from "../analytics";
-import { useShifted } from "../data";
 import type { Tokens } from "../theme";
 import type { Reading } from "../types";
-import { Card, COMPARES, CompareSelect, Delta, type CompareId } from "./ui";
+import { Card } from "./ui";
 
-const FONT = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
+export const FONT = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
+const TOUCH = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
 const fmtTime = (ms: number, spanMs: number) => {
   const d = new Date(ms);
@@ -16,12 +16,12 @@ const fmtTime = (ms: number, spanMs: number) => {
   return spanMs > 1.5 * 86400e3 ? `${d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })} ${time}` : time;
 };
 
-const fade = (hex: string, a: number) => {
+export const fade = (hex: string, a: number) => {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
 };
 
-function tooltipBase(t: Tokens) {
+export function tooltipBase(t: Tokens) {
   return {
     trigger: "axis",
     backgroundColor: t.surface,
@@ -34,7 +34,7 @@ function tooltipBase(t: Tokens) {
   };
 }
 
-const axisCommon = (t: Tokens) => ({
+export const axisCommon = (t: Tokens) => ({
   axisLine: { show: false },
   axisTick: { show: false },
   axisLabel: { color: t.muted, fontSize: 11, fontFamily: FONT, hideOverlap: true },
@@ -52,15 +52,6 @@ function ViewToggle({ table, onToggle }: { table: boolean; onToggle: () => void 
       {table ? <LineChart size={15} /> : <Table2 size={15} />}
     </button>
   );
-}
-
-function rememberedCompare(key: string): CompareId {
-  try {
-    const v = localStorage.getItem(key);
-    return COMPARES.some((c) => c.id === v) ? (v as CompareId) : "none";
-  } catch {
-    return "none";
-  }
 }
 
 export interface Metric {
@@ -81,16 +72,12 @@ interface TimeProps {
   to: number;
   metrics: Metric[];
   tokens: Tokens;
-  /** Offer the per-chart comparison picker (single-metric charts only). */
-  comparable?: boolean;
-  /** Which direction of the average is good, for the comparison cue. */
-  better?: "up" | "down";
   height?: number;
   yMin?: number;
   yMax?: number;
   zeroLine?: boolean;
   className?: string;
-  /** Extra header controls, left of the comparison picker. */
+  /** Extra header controls, left of the table toggle. */
   extra?: React.ReactNode;
 }
 
@@ -98,38 +85,21 @@ interface Line {
   name: string;
   color: string;
   data: Point[];
-  compare?: boolean;
 }
 
-/** Time-series chart: gradient area for one metric, lines for several; own comparison, crosshair, zoom, table view. */
+/** Time-series chart over the global range: gradient area for one metric, lines for several; crosshair, zoom, table view. */
 export function TimeChart(p: TimeProps) {
   const t = p.tokens;
   const [table, setTable] = useState(false);
-  const storeKey = `cmp:${p.title}`;
-  const [compareId, setCompareId] = useState<CompareId>(() => (p.comparable ? rememberedCompare(storeKey) : "none"));
-  useEffect(() => {
-    try {
-      localStorage.setItem(storeKey, compareId);
-    } catch {
-      /* not essential */
-    }
-  }, [storeKey, compareId]);
-
-  const compare = COMPARES.find((c) => c.id === compareId)!;
-  const shift = p.comparable ? compare.shift(p.to - p.from) : 0;
-  const prev = useShifted(p.from, p.to, shift);
   const dec = p.decimals ?? 2;
   const single = p.metrics.length === 1;
 
   const lines = useMemo<Line[]>(() => {
     const rows = p.rows ?? [];
-    const out: Line[] = p.metrics.map((m) => ({ name: single ? "Current" : m.name, color: m.color, data: series(rows, m.pick) }));
-    if (single && prev.rows) out.push({ name: compare.short, color: t.muted, data: series(prev.rows, p.metrics[0].pick, 600, shift), compare: true });
-    return out;
-  }, [p.rows, p.metrics, prev.rows, shift, single, compare.short, t.muted]);
+    return p.metrics.map((m) => ({ name: m.name, color: m.color, data: series(rows, m.pick) }));
+  }, [p.rows, p.metrics]);
 
   const s = single && p.rows ? stats(p.rows, p.metrics[0].pick) : null;
-  const ps = single && prev.rows ? stats(prev.rows, p.metrics[0].pick) : null;
   const hasData = lines.some((l) => l.data.some((d) => d[1] !== null));
   const spanMs = (p.to - p.from) * 1000;
 
@@ -154,8 +124,7 @@ export function TimeChart(p: TimeProps) {
               .map((i) => {
                 const l = lines[i.seriesIndex];
                 const v = `${(i.value[1] as number).toFixed(dec)} ${p.unit}`;
-                const name = l.compare ? `${l.name} · ${fmtTime(i.value[0] - shift * 1000, spanMs)}` : l.name;
-                return row(l.color, v, name, t, l.compare);
+                return row(l.color, v, l.name, t);
               })
               .join("")
           );
@@ -171,7 +140,8 @@ export function TimeChart(p: TimeProps) {
         ...axisCommon(t),
         axisLabel: { ...axisCommon(t).axisLabel, formatter: (v: number) => `${+v.toFixed(dec)}` },
       },
-      dataZoom: [{ type: "inside", throttle: 50 }],
+      // The wheel and touch drags scroll the page: zoom with Ctrl + wheel (or drag) on desktop, none on touch screens
+      dataZoom: [{ type: "inside", throttle: 50, zoomOnMouseWheel: "ctrl", moveOnMouseWheel: false, preventDefaultMouseMove: false, disabled: TOUCH }],
       series: lines.map((l, i) => ({
         name: l.name,
         type: "line",
@@ -182,10 +152,10 @@ export function TimeChart(p: TimeProps) {
         smooth: 0.2,
         sampling: "lttb",
         connectNulls: false,
-        lineStyle: { width: l.compare ? 1.5 : 2, color: l.color, type: l.compare ? [5, 4] : "solid" },
+        lineStyle: { width: 2, color: l.color },
         itemStyle: { color: l.color, borderColor: t.surface, borderWidth: 2 },
         areaStyle:
-          single && !l.compare
+          single
             ? {
                 color: {
                   type: "linear",
@@ -202,7 +172,6 @@ export function TimeChart(p: TimeProps) {
               }
             : undefined,
         emphasis: { disabled: true },
-        z: l.compare ? 1 : 2,
         markLine:
           p.zeroLine && i === 0
             ? { silent: true, symbol: "none", label: { show: false }, lineStyle: { color: t.axis, type: "solid", width: 1 }, data: [{ yAxis: 0 }] }
@@ -210,11 +179,11 @@ export function TimeChart(p: TimeProps) {
       })),
       animationDuration: 300,
     }),
-    [lines, t, p.unit, dec, spanMs, shift, p.from, p.to, p.yMin, p.yMax, p.zeroLine, single],
+    [lines, t, p.unit, dec, spanMs, p.from, p.to, p.yMin, p.yMax, p.zeroLine, single],
   );
 
   const height = p.height ?? 240;
-  const busy = p.loading || prev.loading;
+  const busy = p.loading;
 
   return (
     <Card
@@ -224,12 +193,11 @@ export function TimeChart(p: TimeProps) {
         </>
       }
       icon={p.icon}
-      subtitle={p.subtitle}
+      subtitle={p.subtitle ?? (TOUCH ? undefined : "Ctrl + scroll to zoom, drag to pan")}
       className={`chart-card ${p.className ?? ""}`}
       actions={
         <>
           {p.extra}
-          {p.comparable && <CompareSelect value={compareId} onChange={setCompareId} />}
           <ViewToggle table={table} onToggle={() => setTable((x) => !x)} />
         </>
       }
@@ -239,27 +207,11 @@ export function TimeChart(p: TimeProps) {
           <Stat label="Min" value={s.min} dec={dec} unit={p.unit} />
           <Stat label="Avg" value={s.avg} dec={dec} unit={p.unit} />
           <Stat label="Max" value={s.max} dec={dec} unit={p.unit} />
-          {ps && (
-            <div className="chart-stat compare">
-              <span>Avg vs {compare.short.toLowerCase()}</span>
-              <Delta now={s.avg} prev={ps.avg} dec={dec} unit={p.unit} better={p.better} />
-            </div>
-          )}
-        </div>
-      )}
-      {single && prev.rows && (
-        <div className="chart-legend">
-          <span>
-            <i style={{ borderColor: lines[0].color }} /> Current
-          </span>
-          <span>
-            <i className="dashed" style={{ borderColor: t.muted }} /> {compare.short}
-          </span>
         </div>
       )}
       <div className={busy ? "stale" : ""}>
         {table ? (
-          <SeriesTable lines={lines} unit={p.unit} dec={dec} spanMs={spanMs} shift={shift} height={height} />
+          <SeriesTable lines={lines} unit={p.unit} dec={dec} spanMs={spanMs} height={height} />
         ) : hasData ? (
           <ReactECharts option={option} notMerge style={{ height }} />
         ) : (
@@ -283,7 +235,7 @@ function Stat({ label, value, dec, unit }: { label: string; value: number; dec: 
   );
 }
 
-function SeriesTable({ lines, unit, dec, spanMs, shift, height }: { lines: Line[]; unit: string; dec: number; spanMs: number; shift: number; height: number }) {
+function SeriesTable({ lines, unit, dec, spanMs, height }: { lines: Line[]; unit: string; dec: number; spanMs: number; height: number }) {
   // Rows from the first line's timestamps, thinned to ~60 rows; other lines matched by nearest time
   const base = lines[0]?.data.filter((d) => d[1] !== null) ?? [];
   const step = Math.max(1, Math.ceil(base.length / 60));
@@ -319,7 +271,6 @@ function SeriesTable({ lines, unit, dec, spanMs, shift, height }: { lines: Line[
           ))}
         </tbody>
       </table>
-      {shift > 0 && <p className="sub">Comparison values are matched to the same time of day.</p>}
     </div>
   );
 }

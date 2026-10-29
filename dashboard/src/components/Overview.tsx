@@ -7,6 +7,7 @@ import {
   Bluetooth,
   BluetoothOff,
   CalendarDays,
+  CircuitBoard,
   Cpu,
   Gauge,
   Grid2x2,
@@ -18,11 +19,12 @@ import {
   Zap,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { cells, integrate, powerW, spreadMv, stats, todayStart } from "../analytics";
+import { byDay, cells, integrate, powerW, spreadMv, stats, todayStart } from "../analytics";
 import type { Tokens } from "../theme";
 import type { Device, Info, Reading } from "../types";
 import { CELLS, cellKey } from "../types";
-import { TimeChart, type Metric } from "./Chart";
+import { CategoryChart, TimeChart, type Metric } from "./Chart";
+import { MonthCalendar, PowerFlow, TempGauges, UsageByHour } from "./Insights";
 import { Ago, ago, Card, HEALTH_LABEL, healthKind, linkHealth, rssiKind, rssiLabel, Segmented, Sparkline, StatusPill, type Kind } from "./ui";
 
 const fmtHours = (h: number) => (h < 1 ? `${Math.round(h * 60)} min` : h < 48 ? `${h.toFixed(1)} h` : `${(h / 24).toFixed(1)} days`);
@@ -91,8 +93,17 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
     </>
   ) : null;
   const wifiOk = live && d?.wifi_rssi !== undefined && d.wifi_rssi !== 0;
+  const ota = d?.ota_status && d.ota_status !== "idle" ? d.ota_status : "";
+  const otaBad = /fail|rolled back|refus|stopped|expired/i.test(ota);
   return (
     <div className="links">
+      <Link
+        icon={CircuitBoard}
+        label="Firmware"
+        value={d?.firmware_version ?? "–"}
+        detail={ota ? <span title={ota}>{ota}</span> : d?.flash_log === 0 ? "flash log missing" : ""}
+        kind={!d?.firmware_version ? "muted" : otaBad || d?.flash_log === 0 ? "warning" : "good"}
+      />
       <Link icon={Cpu} label="Board" value={HEALTH_LABEL[h]} detail={boardDetail} kind={queued > 2 && h === "online" ? "warning" : healthKind(h)} />
       <Link
         icon={wifiOk ? Wifi : WifiOff}
@@ -287,6 +298,37 @@ function TodayCard({ rows }: { rows: Reading[] }) {
   );
 }
 
+/** Charged and used energy for every day of this month (days without readings stay empty). */
+function MonthEnergy({ rows, loading, tokens: t }: { rows: Reading[] | null; loading: boolean; tokens: Tokens }) {
+  const d = useMemo(() => {
+    const now = new Date();
+    const y = now.getFullYear(), m = now.getMonth();
+    const n = new Date(y, m + 1, 0).getDate();
+    const byStart = new Map(byDay(rows ?? []).map((x) => [x.day, x]));
+    const days = Array.from({ length: n }, (_, i) => byStart.get(Math.floor(new Date(y, m, i + 1).getTime() / 1000)));
+    const charged = days.reduce((a, x) => a + (x?.chargeWh ?? 0), 0);
+    const used = days.reduce((a, x) => a + (x?.dischargeWh ?? 0), 0);
+    return {
+      month: now.toLocaleDateString(undefined, { month: "long", year: "numeric" }),
+      cats: Array.from({ length: n }, (_, i) => String(i + 1)),
+      charged,
+      used,
+      series: [
+        { name: "Charged", color: t.series[2], data: days.map((x) => (x ? +x.chargeWh.toFixed(0) : null)) },
+        { name: "Used", color: t.series[1], data: days.map((x) => (x ? +x.dischargeWh.toFixed(0) : null)) },
+      ],
+    };
+  }, [rows, t]);
+  const subtitle = rows
+    ? `${d.month} · charged ${(d.charged / 1000).toFixed(2)} kWh · used ${(d.used / 1000).toFixed(2)} kWh`
+    : loading
+      ? `${d.month} · loading…`
+      : d.month;
+  return (
+    <CategoryChart title="Energy per day" icon={BatteryCharging} subtitle={subtitle} categories={d.cats} series={d.series} unit="Wh" decimals={0} tokens={t} height={280} className="span-2" />
+  );
+}
+
 const TREND = [
   { id: "soc", label: "SOC" },
   { id: "power", label: "Power" },
@@ -300,6 +342,8 @@ export function Overview({
   info,
   rows,
   todayRows,
+  monthRows,
+  monthLoading,
   loading,
   from,
   now,
@@ -312,6 +356,8 @@ export function Overview({
   info?: Info | null;
   rows: Reading[] | null;
   todayRows: Reading[] | null; // since midnight, for the Today card
+  monthRows: Reading[] | null; // since the 1st of this month, for the energy per day chart
+  monthLoading: boolean;
   loading: boolean;
   from: number; // start of the graph range (unix s)
   now: number;
@@ -349,6 +395,7 @@ export function Overview({
     current: { unit: "A", dec: 2, metric: { name: "Current", color: t.series[0], pick: (x) => x.current }, zero: true },
   };
   const cfg = trendCfg[trend];
+  const cellMetrics: Metric[] = CELLS.map((c, idx) => ({ name: `Cell ${c}`, color: t.series[idx], pick: (x) => x[cellKey(c)] }));
 
   return (
     <div className="page">
@@ -378,6 +425,8 @@ export function Overview({
         </div>
       </div>
 
+      <PowerFlow r={r} info={info} todayRows={todayRows ?? []} bmsOnline={device?.ble_connected === 1} />
+
       <TimeChart
         title={rangeLabel}
         icon={TrendingUp}
@@ -389,7 +438,6 @@ export function Overview({
         to={now}
         metrics={[cfg.metric]}
         tokens={t}
-        comparable
         yMin={cfg.yMin}
         yMax={cfg.yMax}
         zeroLine={cfg.zero}
@@ -400,6 +448,24 @@ export function Overview({
       <div className="grid-2">
         <CellsCard r={r} info={info} tokens={t} />
         <TodayCard rows={todayRows ?? []} />
+        <TimeChart
+          title="Cell voltages"
+          icon={Grid2x2}
+          subtitle={rangeLabel}
+          unit="V"
+          decimals={3}
+          rows={rows}
+          loading={loading}
+          from={from}
+          to={now}
+          metrics={cellMetrics}
+          tokens={t}
+          height={260}
+        />
+        <TempGauges r={r} rows={rows} rangeLabel={rangeLabel} tokens={t} />
+        <MonthEnergy rows={monthRows} loading={monthLoading} tokens={t} />
+        <UsageByHour rows={monthRows} tokens={t} />
+        <MonthCalendar rows={monthRows} tokens={t} />
       </div>
       <p className="foot-note">
         <Gauge size={13} aria-hidden /> Live values update as the board reports; charts refresh every few minutes.

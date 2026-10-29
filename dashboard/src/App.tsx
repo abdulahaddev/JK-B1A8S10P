@@ -21,13 +21,51 @@ const PAGES = [
 ] as const satisfies readonly { id: string; label: string; icon: LucideIcon; sub: string }[];
 type PageId = (typeof PAGES)[number]["id"];
 
-// Graph range for Overview and Analytics (raw readings; a month needs hourly summaries, see BACKLOG)
+// Global range for Overview and Analytics; refresh = how often its readings are fetched again
 const RANGES = [
-  { id: "1h", label: "Last hour", name: "Last hour", s: 3600, refresh: 60 },
-  { id: "24h", label: "Last day", name: "Last 24 hours", s: 86400, refresh: 120 },
-  { id: "7d", label: "Last week", name: "Last 7 days", s: 7 * 86400, refresh: 600 },
+  { id: "24h", label: "Last 24 Hours", refresh: 120 },
+  { id: "today", label: "Today", refresh: 120 },
+  { id: "yesterday", label: "Yesterday", refresh: 3600 },
+  { id: "week", label: "This Week", refresh: 600 },
 ] as const;
 type RangeId = (typeof RANGES)[number]["id"];
+
+/** Local midnight of the first day of this week (the browser locale's first weekday, else Monday). */
+function weekStart(): number {
+  let first = 1; // 1 = Monday .. 7 = Sunday
+  try {
+    const loc = new Intl.Locale(navigator.language) as Intl.Locale & { weekInfo?: { firstDay: number }; getWeekInfo?: () => { firstDay: number } };
+    first = loc.getWeekInfo?.().firstDay ?? loc.weekInfo?.firstDay ?? 1;
+  } catch {
+    /* older browsers: Monday */
+  }
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  const back = (d.getDay() - (first % 7) + 7) % 7; // getDay: 0 = Sunday
+  d.setDate(d.getDate() - back);
+  return Math.floor(d.getTime() / 1000);
+}
+
+/** The range as unix seconds [from, to] at time `now`. */
+function rangeWindow(id: RangeId, now: number): { from: number; to: number } {
+  const t0 = todayStart();
+  switch (id) {
+    case "today":
+      return { from: t0, to: now };
+    case "yesterday":
+      return { from: t0 - 86400, to: t0 };
+    case "week":
+      return { from: weekStart(), to: now };
+    default:
+      return { from: now - 86400, to: now };
+  }
+}
+
+/** Local midnight of the 1st of this month. */
+function monthStart(): number {
+  const d = new Date();
+  return Math.floor(new Date(d.getFullYear(), d.getMonth(), 1).getTime() / 1000);
+}
 
 /** Wall clock in whole seconds, refreshed every `everyS` (keeps history queries stable in between). */
 function useNow(everyS: number) {
@@ -76,11 +114,15 @@ function usePage() {
 function OverviewPage(p: { rangeId: RangeId; latest?: Reading; info: ReturnType<typeof useInfo>; device: ReturnType<typeof useDevice>; clock: number; tokens: Tokens }) {
   const range = RANGES.find((r) => r.id === p.rangeId)!;
   const now = useNow(range.refresh);
-  const trend = useReadings(now - range.s, now, 3600);
-  // The Today card always covers since midnight: a range of a day or more already holds it
-  const own = range.s < 86400;
+  const { from, to } = rangeWindow(range.id, now);
+  const trend = useReadings(from, to, 3600);
+  // The Today card always covers since midnight; Yesterday's range does not hold it
+  const own = range.id === "yesterday";
   const today = useReadings(own ? todayStart() : 0, own ? now : 0, 3600);
   const todayRows = own ? today.rows : trend.rows;
+  // Energy per day of this month: refetched hourly (a month of readings is a few MB)
+  const hour = useNow(3600);
+  const month = useReadings(monthStart(), hour, 3600);
   return (
     <Overview
       latest={p.latest}
@@ -89,10 +131,12 @@ function OverviewPage(p: { rangeId: RangeId; latest?: Reading; info: ReturnType<
       clock={p.clock}
       rows={trend.rows}
       todayRows={todayRows}
+      monthRows={month.rows}
+      monthLoading={month.loading}
       loading={trend.loading}
-      from={now - range.s}
-      now={now}
-      rangeLabel={range.name}
+      from={from}
+      now={to}
+      rangeLabel={range.label}
       tokens={p.tokens}
     />
   );
@@ -101,8 +145,9 @@ function OverviewPage(p: { rangeId: RangeId; latest?: Reading; info: ReturnType<
 function AnalyticsPage({ rangeId, tokens }: { rangeId: RangeId; tokens: Tokens }) {
   const range = RANGES.find((r) => r.id === rangeId)!;
   const now = useNow(range.refresh);
-  const cur = useReadings(now - range.s, now, 3600);
-  return <Analytics rows={cur.rows} loading={cur.loading} from={now - range.s} to={now} rangeLabel={range.name} tokens={tokens} />;
+  const { from, to } = rangeWindow(range.id, now);
+  const cur = useReadings(from, to, 3600);
+  return <Analytics rows={cur.rows} loading={cur.loading} from={from} to={to} rangeLabel={range.label} tokens={tokens} />;
 }
 
 function EnergyPage({ tokens }: { tokens: Tokens }) {

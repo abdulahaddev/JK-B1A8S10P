@@ -1,7 +1,7 @@
-import { AlertTriangle, Eraser, KeyRound, Lock, RefreshCw, RotateCcw, Send, Server, Terminal, Timer, X } from "lucide-react";
+import { AlertTriangle, Cable, Eraser, KeyRound, Lock, RefreshCw, RotateCcw, Send, Server, Terminal, Timer, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { clearLog, log, markSent, sentTime, useLog, type Command } from "../controlLog";
-import { clearOta, clearRestart, requestRestart, setCheckInterval, setOta, setOtaHost, useControl } from "../data";
+import { clearOta, clearRestart, requestRestart, setCheckInterval, setKeepalive, setOta, setOtaHost, useControl } from "../data";
 import { compareVersions, ensureReleases, loadDefaultBase, syncReleases, useReleases } from "../ota";
 import { ALLOWED_DOMAINS, allowedBase } from "../otaHost";
 import { sha256Hex } from "../sha256";
@@ -189,6 +189,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
   const fw128 = d?.control_s !== undefined; // 1.2.28+ reports its control interval
   const interval = d?.control_s ?? control?.check_s ?? 300;
   const chosen = intervalSel ?? control?.check_s ?? 300;
+  const keepWanted = control?.keepalive === true || control?.keepalive === "keep" || control?.keepalive === "true";
 
   // Host: the one in control, else the dev server's default (ota_base_url)
   const hostSet = useRef(false);
@@ -373,7 +374,7 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
               <button className="secondary" onClick={() =>
                   setConfirm({
                     title: "Restart board",
-                    text: `Restart the board? It resets its radios for 1 s at its next control read (within ${interval} s); queued readings in restart-safe memory are kept.`,
+                    text: `Restart the board? It resets its radios for 1 s at its next control read (within ${interval} s); queued readings stay in its flash log and go up afterwards.`,
                     label: "Restart",
                     run: () => send("Restart", requestRestart, "restart"),
                   })
@@ -413,6 +414,41 @@ function ControlModal({ d, onClose }: { d: Device | null | undefined; onClose: (
             </div>
             <p className="field-hint">
               {fw128 ? `The board reads control every ${d?.control_s} s` : "Needs firmware 1.2.28 or newer (older boards read every 5 min)"}. Commands take effect within one interval.
+            </p>
+
+            <label className="field-label">Firebase connection</label>
+            <div className="control-row">
+              <span>
+                Kept connection{" "}
+                {d?.net_keepalive === undefined ? (
+                  <StatusPill kind="muted">unknown</StatusPill>
+                ) : (
+                  <StatusPill kind={d.net_keepalive ? "good" : "muted"}>{d.net_keepalive ? "on" : "off"}</StatusPill>
+                )}
+              </span>
+              <button
+                className="secondary"
+                disabled={d?.net_keepalive === undefined || keepWanted === !d?.net_keepalive}
+                onClick={() =>
+                  setConfirm({
+                    title: d?.net_keepalive ? "Turn the kept connection off" : "Turn the kept connection on",
+                    text: d?.net_keepalive
+                      ? "Open a new connection for every upload and control read (as before 1.2.41)? Slower and more radio time, but the fallback if the kept connection misbehaves."
+                      : "Keep one connection to Firebase open for all uploads and control reads? Uploads take well under a second instead of several.",
+                    label: d?.net_keepalive ? "Turn off" : "Turn on",
+                    run: () => send(`Kept connection ${d?.net_keepalive ? "off" : "on"}`, () => setKeepalive(!d?.net_keepalive)),
+                  })
+                }
+              >
+                <Cable size={14} aria-hidden /> {d?.net_keepalive ? "Turn off" : "Turn on"}
+              </button>
+            </div>
+            <p className="field-hint">
+              {d?.net_keepalive === undefined
+                ? "Needs firmware 1.2.41 or newer."
+                : keepWanted !== !!d.net_keepalive
+                  ? `Set to ${keepWanted ? "on" : "off"} in control; the board applies it at its next read.`
+                  : `Since boot: ${d.net_reused ?? 0} requests on the open connection, ${d.net_new ?? 0} new, ${d.net_stale ?? 0} dead ones recovered.`}
             </p>
 
           </section>

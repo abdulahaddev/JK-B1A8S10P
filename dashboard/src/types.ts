@@ -57,6 +57,28 @@ export interface Device {
   control_errors?: number;
   firmware_version?: string;
   ota_status?: string;
+  // fw 1.2.41+: one kept connection to Firebase (control/keepalive)
+  net_keepalive?: number; // 1 = on
+  net_reused?: number; // requests sent on an open connection since boot
+  net_new?: number; // new connections since boot
+  net_stale?: number; // open connections found dead and retried on a new one
+  net_stack_free?: number; // lowest free stack of the request task, bytes
+  // fw 1.2.42+: reading queue and event log in the jklog flash partition
+  flash_log?: number; // 1 = partition present (0: installed without the factory image)
+  queue_capacity?: number; // readings the flash queue holds
+  events_queued?: number; // events not uploaded yet
+}
+
+/** events/<ts>-<boot>-<uptime>-<seq> (fw 1.2.42+): the board's flash event log. */
+export interface BoardEvent {
+  key: string;
+  ts: number; // unix s; 0 when logged before the clock was set in an earlier boot
+  boot: number;
+  up: number; // seconds since that boot
+  code: "boot" | "wifi_drop" | "bms_connect" | "bms_disconnect" | "ota" | "restart" | "upload_fail" | "crash" | "control" | string;
+  a?: number;
+  b?: number;
+  text?: string;
 }
 
 export interface Info {
@@ -101,6 +123,7 @@ export interface Control {
   ota?: string; // version to install (one attempt; the board removes it when done)
   ota_host?: string; // OTA base URL under an allowed domain (fw 1.2.28+), kept
   check_s?: number; // control read interval in seconds, 30..3600 (fw 1.2.28+), kept
+  keepalive?: string | boolean; // "keep" (or true) = one kept connection to Firebase (fw 1.2.41+), kept
   restart?: string;
 }
 

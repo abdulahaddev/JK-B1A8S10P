@@ -397,3 +397,92 @@ tbody tr:last-child td { border-bottom: 0; }
 
 .check-row { display: flex; align-items: center; gap: 8px; margin: 2px 0 8px; font-size: 13px; color: var(--ink); cursor: pointer; }
 .check-row input { width: 16px; height: 16px; flex: none; accent-color: var(--accent); cursor: pointer; }
+
+/* ---------- overview infographics ---------- */
+.flow-card { display: flex; flex-direction: column; }
+.scene { display: block; width: 100%; height: auto; max-height: 400px; font-family: Inter, system-ui, sans-serif; }
+.scene text { text-anchor: middle; }
+.scene text.start { text-anchor: start; }
+.t-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; fill: var(--muted); }
+.t-value { font-size: 22px; font-weight: 700; fill: var(--ink); }
+.t-sub { font-size: 12px; fill: var(--muted); }
+.t-soc { font-size: 32px; font-weight: 800; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-opacity: 0.6; }
+.t-soc-unit { font-size: 17px; font-weight: 700; }
+.t-in { font-size: 12px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-opacity: 0.6; }
+.t-wire { font-size: 13px; font-weight: 700; }
+.t-wire.charge { fill: #129266; }
+.t-wire.use { fill: #d0561f; }
+
+/* cables: a grey track; live ones get a coloured stream and dots moving with the energy */
+.cable-track { fill: none; stroke: var(--grid); stroke-width: 10; stroke-linecap: round; }
+.cable.live .cable-track { stroke-opacity: 1; }
+.cable.charge .cable-track { stroke: rgba(27, 175, 122, 0.22); }
+.cable.use .cable-track { stroke: rgba(235, 104, 52, 0.22); }
+.cable-stream { fill: none; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 2 14; animation: stream 0.6s linear infinite; }
+.cable-stream.rev { animation-direction: reverse; }
+.cable.charge .cable-stream { stroke: #1baf7a; }
+.cable.use .cable-stream { stroke: #eb6834; }
+@keyframes stream { to { stroke-dashoffset: -16; } }
+.cable-dot { filter: url(#glow); }
+.cable.charge .cable-dot { fill: #22c58b; }
+.cable.use .cable-dot { fill: #f07a45; }
+
+.sun circle { fill: var(--axis); transition: fill 0.4s; }
+.sun line { stroke: var(--axis); stroke-width: 3; stroke-linecap: round; }
+.sun.on circle { fill: #f6b51e; }
+.sun.on line { stroke: #f6b51e; }
+.sun.on .rays { animation: spin 12s linear infinite; }
+.panel line { stroke: rgba(255, 255, 255, 0.35); stroke-width: 1.5; }
+.panel-edge { fill: none; stroke: #16306b; stroke-width: 2; stroke-linejoin: round; }
+.stand { stroke: var(--muted); stroke-width: 4; stroke-linecap: round; }
+.scene:not(.is-charging) .panel { opacity: 0.55; }
+
+.hub-box { fill: var(--surface); stroke: var(--axis); stroke-width: 2.5; }
+.is-charging .hub-box { stroke: #1baf7a; }
+.is-using .hub-box { stroke: #eb6834; }
+.hub-name { font-size: 15px; font-weight: 800; fill: var(--ink); letter-spacing: 0.02em; }
+.hub-sub { font-size: 11px; fill: var(--muted); }
+.hub-led { fill: var(--axis); }
+.hub-led.on { fill: #22c55e; animation: blink 1.6s ease-in-out infinite; }
+
+.batt-cap { fill: var(--axis); }
+.batt-body { fill: var(--surface-2); stroke: var(--axis); stroke-width: 5; }
+.liquid { transition: y 0.8s, height 0.8s; }
+.liquid-high { fill: #1baf7a; }
+.liquid-mid { fill: #eda100; }
+.liquid-low { fill: #d03b3b; }
+.wave { animation: wave 2.6s linear infinite; }
+.scene:not(.is-charging):not(.is-using) .wave { animation-duration: 7s; }
+@keyframes wave { to { transform: translateX(-56px); } }
+.bubble { fill: rgba(255, 255, 255, 0.7); animation: bubble 2.2s ease-in infinite; }
+@keyframes bubble { from { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateY(-110px); opacity: 0; } }
+.arrow-in, .arrow-out { fill: #fff; opacity: 0.9; animation: blink 1.4s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: 0.3; } }
+
+.house .roof { fill: var(--muted); }
+.house .walls { fill: var(--surface-2); stroke: var(--axis); stroke-width: 3; }
+.house .chimney { fill: var(--muted); }
+.house .door { fill: var(--axis); }
+.house .win { fill: var(--grid); stroke: var(--axis); stroke-width: 2; transition: fill 0.4s; }
+.house.on .roof, .house.on .chimney { fill: #c4501f; }
+.house.on .win { fill: #ffd25e; stroke: #eda100; animation: flicker 3s ease-in-out infinite; }
+@keyframes flicker { 50% { fill: #ffe7a0; } }
+
+.flow-facts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+.flow-facts span { display: block; font-size: 11.5px; color: var(--muted); }
+.flow-facts b { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 760px) { .flow-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) {
+  .cable-dot, .bubble { display: none; }
+  .cable-stream, .wave, .sun.on .rays, .hub-led.on, .arrow-in, .arrow-out, .house.on .win { animation: none; }
+}
+
+.gauges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.gauge { display: grid; justify-items: center; text-align: center; }
+.gauge > div { width: 100%; }
+.gauge-name { font-size: 13px; font-weight: 600; margin-top: -8px; }
+.gauge small { font-size: 11.5px; color: var(--muted); }
+
+@media (max-width: 620px) {
+  .gauges { grid-template-columns: minmax(0, 1fr); }
+}
