@@ -91,6 +91,11 @@ Decode crash addresses with the ELF that `tools/publish_ota.py` keeps in `dist/`
 `tools/control.py` shows them in `status`. `tools/ota_release.py --wait-healthy <min>` signals an update
 only once the board reports the BMS connected and no install in progress.
 
+## SRNE solar controller (planned)
+
+Notes on reading the SHINER2430 over RS485, its manual and the planned firmware design are in
+[docs/srne-shiner](docs/srne-shiner/README.md). A standalone reader is in `tools/srne_reader`.
+
 ## Logs
 
 `logs/` holds serial logs from test runs. They include the BMS passcodes printed in the device
