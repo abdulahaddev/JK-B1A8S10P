@@ -94,7 +94,7 @@ Values are big-endian 16-bit. Decoded from one controller; meanings are the usua
 | `0x0115` | Days running |
 | `0x0116`, `0x0117` | Over-discharge count, full-charge count |
 | `0x0118`–`0x011F` | Lifetime totals of Ah and Wh. Exact split not checked |
-| `0x0120` | Low byte charging stage (2 seen, shown as MPPT), high byte load state. Not fully checked |
+| `0x0120` | Top bit load on (tested). Low byte charging stage (2 seen, shown as MPPT, not checked) |
 | `0x0121`, `0x0122` | Fault bits. All 0 so far, bit meanings not checked |
 
 A power cycle appears to reset these: `0x0115` went from 1 to 0, and today's peak fell from 4.94 A, 61 W.
@@ -132,7 +132,16 @@ Tested once: capacity is not in the screen menu, so it was written over Modbus.
 - Request and matching reply: `01 06 E0 02 00 64 1E 21` (`0xE002` = 100)
 - Read back as 100, the other 12 settings unchanged, still 100 after a power cycle of the controller only
 
-No other register has been written. Load switching over Modbus is untested.
+Load switching, also tested once:
+
+- Request and matching reply: `01 06 01 0A 00 01 69 F4` (`0x010A` = 1, load on)
+- Load went from 0.0 V to 12.9 V, then drew 0.84 A, 10 W with a test load
+- `0x0120` went from `0002` to `8002`, so the top bit means load on. `0x010A` reads back as 1
+- Load mode read at `0xE01D` was 15, the manual's default. `0xE01D` is the usual SRNE address, and that 15 means
+  manual mode is from the manual's default, not checked further
+- Writing 0 to turn it off is untested
+
+No other register has been written.
 
 ### Daily history, `0xF000`, 10 registers per address
 
