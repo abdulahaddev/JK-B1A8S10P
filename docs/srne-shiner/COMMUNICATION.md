@@ -207,7 +207,7 @@ At 9600 baud with 8N1, one byte is 10 bits, about 1.04 ms.
 | Today and lifetime | `0x010B` × 16, `0x011B` × 16 | 5 min |
 | Settings | `0xE002` × 13 | Boot and daily |
 | Identity | `0x000A` × 16 | Boot and daily |
-| Daily history | `0xF000` + n × 10, one per day | After an outage, once history is proven |
+| Daily history | `0xF000` + n × 10, one per day | After an outage, once the checks in README.md pass |
 
 ## Implementation rules
 

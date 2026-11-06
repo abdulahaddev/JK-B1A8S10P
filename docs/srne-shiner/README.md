@@ -94,7 +94,8 @@ Values are big-endian 16-bit. Decoded from one controller; meanings are the usua
 | `0x0113`, `0x0114` | Wh generated, consumed |
 | `0x0115` | Days running |
 | `0x0116`, `0x0117` | Over-discharge count, full-charge count |
-| `0x0118`–`0x011F` | Lifetime totals of Ah and Wh. Exact split not checked |
+| `0x0118`–`0x0119`, `0x011A`–`0x011B` | Lifetime Ah charged, used, 32-bit |
+| `0x011C`–`0x011D`, `0x011E`–`0x011F` | Lifetime Wh generated, consumed, 32-bit |
 | `0x0120` | Top bit load on (tested). Low byte charging stage (2 seen, shown as MPPT, not checked) |
 | `0x0121`, `0x0122` | Fault bits. All 0 so far, bit meanings not checked |
 
@@ -166,10 +167,26 @@ The manual says "Save the last 200 days of historical data", but does not say ho
   answer with zeros, so answering does not mark the end of the history.
 - Records have no date, only a position.
 
-**Not proven yet:** that past days are stored, how a new day is detected, and whether a power cut clears them.
+First rollover, read on 2026-11-06 at 21:27 local time with a load on and no sun:
 
-**Next check:** with a small load on the LOAD terminals and the controller left powered through a real night,
-read `0xF000` and `0xF001`. If `0xF001` holds the previous day, including the load's Ah and Wh, history works.
+| Record | Battery range | Peak charge | Peak load | Ah in / out | Wh in / out |
+|---|---|---|---|---|---|
+| `0xF000` | 12.9–13.1 V | 1.98 A, 26 W | 3.81 A, 49 W | 2 / 9 | 26 / 117 |
+| `0xF001` | 13.1–13.3 V | 1.98 A, 26 W | 2.58 A, 34 W | 2 / 3 | 26 / 39 |
+| `0xF002` | 13.2–13.3 V | 0 | 0 | 0 / 0 | 0 / 0 |
+
+- **Records shift down.** The voltage-only record seen earlier at `0xF001` moved to `0xF002`. So `0xF000` is the
+  current day, `0xF001` the one before, and so on. `0xF000` also matched `0x010B` at that read.
+- **Load fields check out.** Lifetime used Ah `0x011B` = 12 (9 + 3), lifetime consumed Wh `0x011F` = 156 (117 + 39).
+- **Charge fields may carry over.** Both days show 2 Ah, 26 Wh, 1.98 A, but lifetime generated Wh `0x011D` is only
+  26, not 52. They seem to carry into the new day until charging starts again, so check them against lifetime totals.
+- `0x0115` went to 2. Rollover probably happens at dark, but the moment was not seen.
+
+**Not proven yet:** whether a power cut clears history, whether a record is a full calendar day (this rollover
+came hours after a factory reset), and how the charge fields behave on the next charging day. Records have no
+date, so dates must be worked out from position.
+
+**Next check:** read the history again after the next full day and night, then once after a power cut.
 
 ## Design for adding this to the firmware
 
@@ -185,5 +202,5 @@ Agreed direction, not built yet: one board, the existing ESP32 and `my-jk-bms-fi
 - Firebase: `controller/<ts>` and `controller_info` in the same PATCH, BMS paths unchanged.
 - Offline storage: the 640 KB flash ring is shared. BMS alone gives about 6.3 days, plus controller every 60 s
   about 4.2 days, every 5 min while offline about 5.8 days (only with working daily history).
-- Daily history backfill only after the check above passes.
+- Daily history backfill: records shift as expected, but finish the checks above before relying on it.
 - Keep the board's current power supply. The port's 5 V, 200 mA is too little for it.
