@@ -1,7 +1,8 @@
 # SRNE SHINER2430 over RS485 (Modbus RTU)
 
 Findings from reading the controller with an ESP32 and a MAX485, November 2026. Manual:
-[Shiner_User_Manual_V1.05.pdf](Shiner_User_Manual_V1.05.pdf). Reader code: [tools/srne_reader](../../tools/srne_reader).
+[Shiner_User_Manual_V1.05.pdf](Shiner_User_Manual_V1.05.pdf). Protocol and timing:
+[COMMUNICATION.md](COMMUNICATION.md). Reader code: [tools/srne_reader](../../tools/srne_reader).
 
 **How far to trust this:** the manual gives the port, pinout, baud rate and setting ranges, but no register
 map. Registers below come from the usual SRNE layout. "Read" means the controller answered there; meanings
@@ -105,7 +106,7 @@ Everything but capacity matches the LI column in the manual (section 8.1), which
 
 | Register | Meaning | Read |
 |---|---|---|
-| `0xE002` | Battery capacity (Ah) | 200, **now 100** |
+| `0xE002` | Battery capacity (Ah) | 200 by default, see Writing |
 | `0xE003` | System voltage | `0C0C` (12 V) |
 | `0xE004` | Battery type | 4 (LI) |
 | `0xE005` | Over-voltage disconnect | 16.0 V |
@@ -131,6 +132,7 @@ Tested once: capacity is not in the screen menu, so it was written over Modbus.
 
 - Request and matching reply: `01 06 E0 02 00 64 1E 21` (`0xE002` = 100)
 - Read back as 100, the other 12 settings unchanged, still 100 after a power cycle of the controller only
+- A factory reset by hand put it back to 200, so it needs writing again after any reset
 
 Load switching, also tested once:
 
@@ -157,7 +159,11 @@ The manual says "Save the last 200 days of historical data", but does not say ho
 
 - `0xF000` looks like the current day. `0xF001` returned zeros, not a shifted copy, so each address looks
   like one whole day, not one register.
-- `0xF002`, `0xF00A`, `0xF014`, `0xF01E`, `0xF0C8`, `0xF100`, `0xF200` returned zeros. `0xF800` did not answer.
+- `0xF100`, `0xF200` returned zeros. `0xF800` did not answer.
+- Full scan after a factory reset: `0xF000`–`0xF0D2` (211 addresses) all answered in a few seconds. Only
+  `0xF000` and `0xF001` held data, both from after the reset, so the reset most likely clears history.
+  `0xF001` held only voltages, 13.2 V and 13.3 V, and its meaning is not known yet. Addresses past 200 also
+  answer with zeros, so answering does not mark the end of the history.
 - Records have no date, only a position.
 
 **Not proven yet:** that past days are stored, how a new day is detected, and whether a power cut clears them.
