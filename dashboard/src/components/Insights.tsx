@@ -1,6 +1,6 @@
 // Overview infographics: power flow, temperature gauges, usage by hour, month calendar.
 import ReactECharts from "echarts-for-react";
-import { ArrowDownRight, ArrowUpRight, CalendarRange, Clock3, Pause, Thermometer, Waypoints } from "lucide-react";
+import { CalendarRange, Clock3, Thermometer, Waypoints } from "lucide-react";
 import { useMemo } from "react";
 import { byDay, hourProfile, integrate, powerW, stats, todayStart } from "../analytics";
 import type { Tokens } from "../theme";
@@ -11,15 +11,15 @@ import { Card } from "./ui";
 const fmtH = (h: number) => (!Number.isFinite(h) ? "–" : h < 1 ? `${Math.round(h * 60)} min` : h < 48 ? `${h.toFixed(1)} h` : h < 24 * 14 ? `${(h / 24).toFixed(1)} days` : "2+ weeks");
 const fmtWh = (wh: number) => (Math.abs(wh) >= 1000 ? `${(wh / 1000).toFixed(2)} kWh` : `${wh.toFixed(0)} Wh`);
 
-// Scene layout (viewBox 0 25 900 270): solar, controller and load on the top row, centred at x 150, 450 and 750, y 85;
-// the battery under the controller at x 450, y 235. Every device is scaled to fit the same box of about 96 units. The controller feeds both battery and load, as it is wired.
+// Scene layout (viewBox 0 -62 900 377, the top part holds the controller label): solar, controller and load on the top row, centred at x 150, 450 and 750, y 85;
+// the battery under the controller at x 450, y 255. Every device is scaled to fit the same box of about 96 units. The controller feeds both battery and load, as it is wired.
 // The drawing has no text: it scales with the card, the labels (HTML, placed in % of the scene) must not.
 type Wire = [x1: number, y1: number, x2: number, y2: number];
-const SCENE_TOP = 25, SCENE_H = 270;
+const SCENE_TOP = -62, SCENE_H = 377;
 const WIRES = {
   solar: [198, 85, 402, 85] as Wire, // solar -> controller
   load: [498, 85, 702, 85] as Wire, // controller -> load
-  battery: [450, 121, 450, 189] as Wire, // controller -> battery, drawn the other way while the battery discharges
+  battery: [450, 121, 450, 209] as Wire, // controller -> battery, drawn the other way while the battery discharges
 };
 
 /**
@@ -67,7 +67,6 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
   const i = r.current ?? 0;
   const charging = p > 2, using = p < -2;
   const w = Math.abs(p);
-  const StateIcon = charging ? ArrowUpRight : using ? ArrowDownRight : Pause;
   const storedWh = r.capacity_remaining * r.total_voltage;
   const full = info?.full_charge_capacity;
   // Solar and load come from the controller, which is the only one that sees them; the BMS only sees the battery's net.
@@ -97,14 +96,15 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
   const nodes = [
     { x: 150, y: 140, label: "Solar", value: ctrl ? `${solarW} W` : "–", sub: ctrl ? todayWh(8) : "no data", tone: solarOn ? "charge" : "" },
     {
-      x: 320,
-      y: 150,
+      x: 450,
+      y: 44,
+      up: "-100%",
       label: "Controller",
       value: ctrl ? stage : "–",
       sub: ctrl ? (ctrl.faults ? "fault reported" : `${(ctrl.charge_a * ctrl.batt_v).toFixed(0)} W out`) : "not reporting",
       tone: ctrl?.faults ? "use" : "",
     },
-    { x: 585, y: 195, label: "Battery", value: `${soc}%`, sub: `${fmtWh(storedWh)} stored`, tone: `soc-${level}` },
+    { x: 590, y: 215, label: "Battery", value: `${soc}%`, sub: `${fmtWh(storedWh)} stored`, tone: `soc-${level}` },
     { x: 750, y: 140, label: "Load", value: ctrl ? `${loadW} W` : "–", sub: ctrl ? todayWh(9) : "no data", tone: loadOn ? "use" : "" },
   ];
   const facts: [string, string][] = [
@@ -120,20 +120,14 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
   const battWire: Wire = using ? [WIRES.battery[2], WIRES.battery[3], WIRES.battery[0], WIRES.battery[1]] : WIRES.battery;
   const wireTags = [
     { key: "solar", x: (WIRES.solar[0] + WIRES.solar[2]) / 2, y: 85, live: solarOn, kind: "charge", amps: `${(ctrl?.pv_a ?? 0).toFixed(1)} A` },
-    { key: "battery", x: 500, y: 168, live: battLive, kind: using ? "use" : "charge", amps: `${Math.abs(i).toFixed(1)} A` },
+    { key: "battery", x: 450, y: (WIRES.battery[1] + WIRES.battery[3]) / 2, side: true, live: battLive, kind: using ? "use" : "charge", amps: `${Math.abs(i).toFixed(1)} A` },
     { key: "load", x: (WIRES.load[0] + WIRES.load[2]) / 2, y: 85, live: loadOn, kind: "use", amps: `${(ctrl?.load_a ?? 0).toFixed(1)} A` },
   ];
   return (
     <Card
       title="Power flow"
       icon={Waypoints}
-      subtitle={words}
       className="flow-card"
-      actions={
-        <span className={`state ${charging ? "state-charging" : using ? "state-discharging" : "state-idle"}`}>
-          <StateIcon size={15} aria-hidden /> {charging ? "Charging" : using ? "Discharging" : "Idle"}
-        </span>
-      }
     >
       <div className="flow-stage">
         <div className="flow-canvas">
@@ -205,7 +199,7 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
 
           {/* battery: an upright cell with a terminal, filled from the bottom and split into five bars;
               under the controller, centred on x 450; the LED on the terminal is the BMS Bluetooth link */}
-          <g transform="translate(450 235) scale(0.62) translate(-450 -101.5)">
+          <g transform="translate(450 255) scale(0.62) translate(-450 -101.5)">
           <rect x="433" y="27" width="34" height="14" rx="3" className="batt-cap" />
           <rect x="408" y="40" width="84" height="136" rx="12" className="batt-body" />
           <g clipPath="url(#batt-in)">
@@ -232,8 +226,8 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
         </svg>
           {wireTags
             .filter((x) => x.live)
-            .map(({ key, x, y, kind, amps }) => (
-              <span key={key} className={`wire-tag ${kind}`} style={{ left: `${(x / 900) * 100}%`, top: `${((y - SCENE_TOP) / SCENE_H) * 100}%` }}>
+            .map(({ key, x, y, kind, amps, side }) => (
+              <span key={key} className={`wire-tag ${kind} ${side ? "side" : ""}`} style={{ left: `${(x / 900) * 100}%`, top: `${((y - SCENE_TOP) / SCENE_H) * 100}%` }}>
                 {amps}
               </span>
             ))}
@@ -243,7 +237,7 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
             <div
               key={n.label}
               className={`flow-node ${n.tone}`}
-              style={{ "--x": `${(n.x / 900) * 100}%`, "--y": `${((n.y - SCENE_TOP) / SCENE_H) * 100}%` } as React.CSSProperties}
+              style={{ "--x": `${(n.x / 900) * 100}%`, "--y": `${((n.y - SCENE_TOP) / SCENE_H) * 100}%`, "--up": n.up ?? "0" } as React.CSSProperties}
             >
               <span>{n.label}</span>
               <b>{n.value}</b>

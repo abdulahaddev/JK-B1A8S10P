@@ -396,7 +396,7 @@ tbody tr:last-child td { border-bottom: 0; }
 /* Power flow: a text-free drawing on top, its labels as HTML in three equal columns that match the
    drawing's device centres (1/6, 1/2, 5/6), then four fact tiles pinned to the bottom of the card. */
 .flow-card { display: flex; flex-direction: column; }
-.flow-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 4px 0 18px; }
+.flow-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 0 0 20px; }
 .scene { display: block; width: 100%; height: auto; }
 /* current, centred on each cable and sitting just above it; positioned in % of the scene so it tracks the drawing */
 .scene-wrap { position: relative; }
@@ -405,14 +405,16 @@ tbody tr:last-child td { border-bottom: 0; }
   font-size: 12.5px; font-weight: 600; line-height: 18px; white-space: nowrap; font-variant-numeric: tabular-nums;
   background: var(--surface-2); border: 1px solid var(--border); color: var(--muted);
 }
+/* on an upright cable: beside it, at the middle of its length */
+.wire-tag.side { transform: translate(12px, -50%); }
 .wire-tag.charge { background: rgba(27, 175, 122, 0.14); border-color: transparent; color: var(--good-text); }
 .wire-tag.use { background: rgba(235, 104, 52, 0.13); border-color: transparent; color: #c4501f; }
 :root[data-theme="dark"] .wire-tag.use { color: #f08a5d; }
 
 /* labels sit in the scene next to their device; on a phone they move to a row under it */
-.flow-canvas { position: relative; }
+.flow-canvas { position: relative; width: 100%; max-width: 620px; margin: 0 auto; }
 .flow-nodes { position: absolute; inset: 0; pointer-events: none; }
-.flow-nodes .flow-node { position: absolute; left: var(--x); top: var(--y); transform: translateX(-50%); white-space: nowrap; }
+.flow-nodes .flow-node { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, var(--up, 0)); white-space: nowrap; }
 @media (max-width: 640px) {
   .flow-nodes { position: static; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 10px; }
   .flow-nodes .flow-node { position: static; transform: none; white-space: normal; }
