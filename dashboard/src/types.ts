@@ -19,7 +19,39 @@ export interface Reading {
   balancing: number;
 }
 
+/** controller/<ts>: the solar controller's live values (fw 1.3.1+). */
+export interface Ctrl {
+  ts: number;
+  batt_v: number;
+  charge_a: number; // what the controller puts out (BMS current is the battery's net)
+  soc: number; // the controller's own estimate: not shown as the battery's state
+  ctrl_temp: number;
+  batt_temp: number;
+  load_v: number;
+  load_a: number;
+  load_w: number;
+  pv_v: number;
+  pv_a: number;
+  pv_w: number;
+  status?: number; // 0x0120: top bit load on, low byte charging stage
+  faults: number;
+}
+
+/** controller_info: raw registers, see docs/srne-shiner/README.md (fw 1.3.1+). */
+export interface CtrlInfo {
+  updated?: number;
+  today?: number[]; // 0x010B..: min V, max V, peak charge A, peak load A, peak charge W, peak load W, Ah in, Ah out, Wh in, Wh out, days, ...
+  totals?: number[]; // 0x011B..: lifetime Ah used (low), Wh generated (high, low), Wh consumed (high, low)
+  settings?: number[]; // 0xE002..: capacity, system V, type, over V, limit, equalize, boost, float, boost return, reconnect, warning, disconnect, cutoff
+  ident?: number[]; // 0x000A..: max V/charge A, load A/type, model (8), software (2), hardware (2), serial (2)
+}
+
 export interface Device {
+  ctrl_silent_s?: number; // seconds since the controller last answered (fw 1.3.1+)
+  ctrl_ok?: number;
+  ctrl_fail?: number;
+  ctrl_queued?: number;
+  ctrl_dropped?: number;
   last_seen?: number;
   uptime_s?: number;
   boot_count?: number;

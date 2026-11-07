@@ -14,8 +14,8 @@ import {
   update,
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
-import { readings } from "./telemetry";
-import type { Boot, BoardEvent, Control, Crash, Device, Info, Reading } from "./types";
+import { readings, toCtrl } from "./telemetry";
+import type { Boot, BoardEvent, Control, Crash, Ctrl, CtrlInfo, Device, Info, Reading } from "./types";
 
 const app = initializeApp({
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -62,6 +62,21 @@ export function useLatestReading(): Reading | undefined {
   );
   return row;
 }
+
+/** The newest solar controller reading, live. */
+export function useLatestCtrl(): Ctrl | null | undefined {
+  const [row, setRow] = useState<Ctrl | null | undefined>(undefined);
+  useEffect(
+    () =>
+      onValue(query(ref(db, "controller"), orderByKey(), limitToLast(1)), (s) => {
+        const e = Object.entries((s.val() ?? {}) as Record<string, unknown>)[0];
+        setRow(e ? toCtrl(Number(e[0]), e[1]) : null);
+      }),
+    [],
+  );
+  return row;
+}
+export const useCtrlInfo = () => useNode<CtrlInfo>("controller_info");
 
 export const useBoots = () => useLatest<Boot>("boots", 50);
 export const useCrashes = () => useLatest<Crash>("crashes", 20);

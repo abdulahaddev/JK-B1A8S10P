@@ -9,6 +9,7 @@ import {
   Cpu,
   Gauge,
   Grid2x2,
+  Sun,
   Thermometer,
   TrendingUp,
   Wifi,
@@ -18,7 +19,8 @@ import {
 import { useMemo, useState } from "react";
 import { byDay, cells, integrate, powerW, spreadMv, stats, todayStart } from "../analytics";
 import type { Tokens } from "../theme";
-import type { Device, Info, Reading } from "../types";
+import { useCtrlInfo, useLatestCtrl } from "../data";
+import type { CtrlInfo, Device, Info, Reading } from "../types";
 import { CELLS, cellKey } from "../types";
 import { CategoryChart, TimeChart, type Metric } from "./Chart";
 import { MonthCalendar, PowerFlow, TempGauges, UsageByHour } from "./Insights";
@@ -62,9 +64,17 @@ function Links({ d, nowS }: { d: Device | null | undefined; nowS: number }) {
   ) : null;
   const wifiOk = live && d?.wifi_rssi !== undefined && d.wifi_rssi !== 0;
   const ota = d?.ota_status && d.ota_status !== "idle" ? d.ota_status : "";
+  const ctrlOk = d?.ctrl_silent_s !== undefined && d.ctrl_silent_s < 180;
   const otaBad = /fail|rolled back|refus|stopped|expired/i.test(ota);
   return (
     <div className="links">
+      <Link
+        icon={Sun}
+        label="Controller"
+        value={!live ? "Unknown" : ctrlOk ? "Connected" : "Silent"}
+        detail={live && d?.ctrl_silent_s !== undefined && !ctrlOk ? `${Math.round(d.ctrl_silent_s / 60)} min` : ""}
+        kind={!live ? "muted" : ctrlOk ? "good" : "critical"}
+      />
       <Link
         icon={CircuitBoard}
         label="Firmware"
@@ -197,19 +207,19 @@ function CellsCard({ r, info, tokens: t }: { r: Reading; info?: Info | null; tok
   );
 }
 
-function TodayCard({ rows }: { rows: Reading[] }) {
+function TodayCard({ rows, ctrlInfo }: { rows: Reading[]; ctrlInfo?: CtrlInfo | null }) {
   const today = rows.filter((r) => r.ts >= todayStart());
-  const f = integrate(today);
   const soc = stats(today, (r) => r.state_of_charge);
-  const pk = stats(today, (r) => -Math.min(0, powerW(r)));
+  const c = ctrlInfo?.today;
+  const num = (k: number) => (c?.[k] !== undefined ? String(c[k]) : "–");
   const items: [string, string, string][] = [
-    ["Charged", f.chargeWh.toFixed(0), "Wh"],
-    ["Used", f.dischargeWh.toFixed(0), "Wh"],
+    ["Solar generated", num(8), "Wh"],
+    ["Load used", num(9), "Wh"],
     ["SOC range", soc ? `${soc.min.toFixed(0)}–${soc.max.toFixed(0)}` : "–", "%"],
-    ["Peak load", pk ? pk.max.toFixed(0) : "–", "W"],
+    ["Peak load", num(5), "W"],
   ];
   return (
-    <Card title="Today" icon={CalendarDays} subtitle="Since midnight, integrated from current">
+    <Card title="Today" icon={CalendarDays} subtitle="Solar and load from the controller's day, SOC from the BMS">
       <div className="today">
         {items.map(([k, v, u]) => (
           <div key={k}>
@@ -240,18 +250,18 @@ function MonthEnergy({ rows, loading, tokens: t }: { rows: Reading[] | null; loa
       charged,
       used,
       series: [
-        { name: "Charged", color: t.series[2], data: days.map((x) => (x ? +x.chargeWh.toFixed(0) : null)) },
-        { name: "Used", color: t.series[1], data: days.map((x) => (x ? +x.dischargeWh.toFixed(0) : null)) },
+        { name: "Into battery", color: t.series[2], data: days.map((x) => (x ? +x.chargeWh.toFixed(0) : null)) },
+        { name: "Out of battery", color: t.series[1], data: days.map((x) => (x ? +x.dischargeWh.toFixed(0) : null)) },
       ],
     };
   }, [rows, t]);
   const subtitle = rows
-    ? `${d.month} · charged ${(d.charged / 1000).toFixed(2)} kWh · used ${(d.used / 1000).toFixed(2)} kWh`
+    ? `${d.month} · battery net, from the BMS · in ${(d.charged / 1000).toFixed(2)} kWh · out ${(d.used / 1000).toFixed(2)} kWh`
     : loading
       ? `${d.month} · loading…`
       : d.month;
   return (
-    <CategoryChart title="Energy per day" icon={BatteryCharging} subtitle={subtitle} categories={d.cats} series={d.series} unit="Wh" decimals={0} tokens={t} height={280} className="span-2" />
+    <CategoryChart title="Battery energy per day" icon={BatteryCharging} subtitle={subtitle} categories={d.cats} series={d.series} unit="Wh" decimals={0} tokens={t} height={280} className="span-2" />
   );
 }
 
@@ -293,6 +303,9 @@ export function Overview({
   tokens: Tokens;
 }) {
   const [trend, setTrend] = useState<TrendId>("soc");
+  const ctrlRow = useLatestCtrl();
+  const ctrlInfo = useCtrlInfo();
+  const ctrl = ctrlRow && clock - ctrlRow.ts < 180 ? ctrlRow : null;
   const sparks = useMemo(() => {
     // Sparklines: the last 6 hours, or the whole range when it is shorter
     const recent = (rows ?? []).filter((r) => r.ts >= Math.max(from, now - 6 * 3600));
@@ -328,7 +341,7 @@ export function Overview({
       <StatusStrip d={device} nowS={clock} />
 
       <div className="overview-top">
-        <PowerFlow r={r} info={info} todayRows={todayRows ?? []} bmsOnline={device?.ble_connected === 1} />
+        <PowerFlow r={r} info={info} bmsOnline={device?.ble_connected === 1} ctrl={ctrl} ctrlInfo={ctrlInfo} />
         <div className="kpis">
           <Kpi icon={BatteryCharging} label="Pack voltage" value={r.total_voltage.toFixed(2)} unit="V" note={`${(r.total_voltage / 4).toFixed(3)} V per cell`} spark={sparks.voltage} color={t.series[0]} />
           <Kpi icon={Zap} label="Current" value={`${i > 0 ? "+" : ""}${i.toFixed(2)}`} unit="A" note={packState(r)} spark={sparks.current} color={t.series[2]} />
@@ -375,7 +388,7 @@ export function Overview({
 
       <div className="grid-2">
         <CellsCard r={r} info={info} tokens={t} />
-        <TodayCard rows={todayRows ?? []} />
+        <TodayCard rows={todayRows ?? []} ctrlInfo={ctrlInfo} />
         <TimeChart
           title="Cell voltages"
           icon={Grid2x2}

@@ -1,6 +1,7 @@
-import { Bug, Cable, Cpu, HardDrive, History, ScrollText, Wifi } from "lucide-react";
+import { Bug, Cable, Cpu, HardDrive, History, ScrollText, Sun, Wifi } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useBoots, useCrashes, useEvents } from "../data";
+import { useBoots, useCrashes, useCtrlInfo, useEvents } from "../data";
+import { ctrlIdent } from "../telemetry";
 import type { BoardEvent, Device as DeviceT, Info } from "../types";
 import { Ago, ago, Card, rssiKind, rssiLabel, Segmented, StatusPill, type Kind } from "./ui";
 
@@ -176,6 +177,38 @@ function KV({ items }: { items: [string, React.ReactNode][] }) {
   );
 }
 
+/** The solar controller: identity, link and the settings it reports. */
+function ControllerCard({ d }: { d: DeviceT }) {
+  const ci = useCtrlInfo();
+  const id = ctrlIdent(ci);
+  const s = ci?.settings;
+  const v = (k: number) => (s?.[k] !== undefined ? `${(s[k] / 10).toFixed(1)} V` : "–");
+  const ok = d.ctrl_silent_s !== undefined && d.ctrl_silent_s < 180;
+  return (
+    <Card
+      title="Solar controller"
+      icon={Sun}
+      subtitle={id?.model ?? "Not reporting"}
+      actions={<StatusPill kind={ok ? "good" : "critical"}>{ok ? "Connected" : "Silent"}</StatusPill>}
+    >
+      <KV
+        items={[
+          ["Rated", id ? `${id.maxV} V · ${id.chargeA} A charge · ${id.loadA} A load` : "–"],
+          ["Software / hardware", id ? `${id.software} / ${id.hardware}` : "–"],
+          ["Serial", id?.serial ?? "–"],
+          ["Last answer", d.ctrl_silent_s !== undefined ? `${ago(d.ctrl_silent_s)} ago` : "–"],
+          ["Reads ok / failed", `${d.ctrl_ok ?? 0} / ${d.ctrl_fail ?? 0}`],
+          ["Queued in flash", d.ctrl_queued ?? 0],
+          ["Capacity setting", s?.[0] !== undefined ? `${s[0]} Ah` : "–"],
+          ["Boost / boost return", `${v(6)} / ${v(8)}`],
+          ["Load disconnect / reconnect", `${v(11)} / ${v(9)}`],
+          ["Over-voltage cut", v(3)],
+        ]}
+      />
+    </Card>
+  );
+}
+
 export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: Info | null }) {
   const boots = useBoots();
   const crashes = useCrashes();
@@ -280,6 +313,8 @@ export function DevicePage({ d, info }: { d: DeviceT | null | undefined; info?: 
           />
           <p className="sub">Switch the kept connection in Remote control.</p>
         </Card>
+        <ControllerCard d={d} />
+
         <Card title="BMS" icon={Cpu} subtitle={info?.device_model ?? "JK-B1A8S10P"}>
           <KV
             items={[

@@ -162,7 +162,7 @@ input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px 
 .overview-top { display: grid; grid-template-columns: minmax(420px, 1.2fr) minmax(0, 1.4fr); gap: 16px; }
 /* Firmware / Board / WiFi / Bluetooth in one slim row above everything else */
 .status-strip { padding: 12px 20px; }
-.status-strip .links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; width: auto; padding: 0; border: 0; }
+.status-strip .links { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; width: auto; padding: 0; border: 0; }
 .status-strip .link { padding: 0 16px; border-left: 1px solid var(--border); }
 .status-strip .link:first-child { padding-left: 0; border-left: 0; }
 @media (max-width: 860px) {
@@ -409,7 +409,14 @@ tbody tr:last-child td { border-bottom: 0; }
 .wire-tag.use { background: rgba(235, 104, 52, 0.13); border-color: transparent; color: #c4501f; }
 :root[data-theme="dark"] .wire-tag.use { color: #f08a5d; }
 
-.flow-nodes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* labels sit in the scene next to their device; on a phone they move to a row under it */
+.flow-canvas { position: relative; }
+.flow-nodes { position: absolute; inset: 0; pointer-events: none; }
+.flow-nodes .flow-node { position: absolute; left: var(--x); top: var(--y); transform: translateX(-50%); white-space: nowrap; }
+@media (max-width: 640px) {
+  .flow-nodes { position: static; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 10px; }
+  .flow-nodes .flow-node { position: static; transform: none; white-space: normal; }
+}
 .flow-node { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; padding: 0 8px; text-align: center; }
 .flow-node span { font-size: 12px; font-weight: 500; color: var(--muted); }
 .flow-node b { font-size: 24px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -454,6 +461,12 @@ tbody tr:last-child td { border-bottom: 0; }
 .stand { stroke: var(--muted); stroke-width: 4; stroke-linecap: round; }
 .scene:not(.is-charging) .panel { opacity: 0.55; }
 
+.ctrl-body { fill: var(--surface-2); stroke: var(--axis); stroke-width: 3; }
+.ctrl-screen { fill: var(--grid); transition: fill 0.4s; }
+.ctrl-box.on .ctrl-screen { fill: rgba(27, 175, 122, 0.22); }
+.ctrl-bolt { fill: var(--axis); }
+.scene.is-charging .ctrl-bolt { fill: #f6b51e; }
+.ctrl-term { fill: var(--axis); }
 .hub-led { fill: var(--surface-2); }
 .hub-led.on { fill: #22c55e; animation: blink 1.6s ease-in-out infinite; }
 
