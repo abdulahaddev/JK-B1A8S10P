@@ -1,7 +1,7 @@
 # OTA bridge: a minimal firmware that only installs the next full firmware.
 #
 # Used when the full firmware cannot download a release (e.g. its 8 s read timeout on a link that
-# pauses longer). This build is small (no BLE stack, display or fonts), so it downloads faster, and it
+# pauses longer). This build is small (no BLE stack), so it downloads faster, and it
 # downloads the next release with a long read timeout and the radio to itself.
 #
 # Flow: running firmware --control/ota="bridge"--> this bridge --control/ota="<version>"--> release
@@ -43,13 +43,6 @@ esphome:
             id(pending) = esp_ota_get_state_partition(esp_ota_get_running_partition(), &state) == ESP_OK &&
                           state == ESP_OTA_IMG_PENDING_VERIFY;
             id(status) = id(pending) ? "bridge verifying" : "bridge ready";
-    # The OLED keeps its last image across reboots (own power, own RAM): switch it off so a dark
-    # screen means "bridge running, not monitoring" instead of frozen BMS values
-    - priority: -100
-      then:
-        - lambda: |-
-            const uint8_t display_off[] = {0x00, 0xAE};  // SSD1306: command stream, DISPLAY OFF
-            id(oled_bus).write(0x3C, display_off, sizeof(display_off));
 
 esp32:
   board: esp32dev
@@ -61,11 +54,6 @@ esp32:
       CONFIG_MBEDTLS_DYNAMIC_BUFFER: y
       CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA: y
       CONFIG_BT_ENABLED: n
-
-i2c:
-  id: oled_bus
-  sda: GPIO21
-  scl: GPIO22
 
 safe_mode:
   boot_is_good_after: 15min

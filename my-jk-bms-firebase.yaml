@@ -1,10 +1,10 @@
 substitutions:
   name: jk-bms
-  fw_version: "1.2.42"        # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
-  device_description: "Monitor JK-B1A8S10P via BLE with OLED display and Firebase upload"
+  fw_version: "1.3.1"         # Bump for every OTA release; the OTA file is jk-bms-<fw_version>.ota.bin
+  device_description: "Monitor JK-B1A8S10P via BLE with Firebase upload"
   protocol_version: JK02_32S
   bms_mac_address: "a4:c1:38:0b:82:42"
-  log_level: INFO             # DEBUG logs every sensor and delays the OLED redraw ~110ms; NONE turns logging OFF
+  log_level: INFO             # DEBUG logs every sensor; NONE turns logging OFF
   log_baud_rate: "115200"     # Change to 0 to turn OFF serial output
   sample_interval: "30s"      # One telemetry reading into the buffer
   sample_interval_ms: "30000" # Same, in ms (upload timing); keep both in sync
@@ -41,8 +41,9 @@ substitutions:
   ota_download_ms: "300000"
   info_refresh_ms: "86400000" # Re-send the info node daily even if nothing changed
   energy_interval_ms: "3600000"
-  i2c_sda_pin: GPIO21         # D21 on ESP32 DevKit (OLED SDA)
-  i2c_scl_pin: GPIO22         # D22 on ESP32 DevKit (OLED SCL)
+  srne_tx_pin: "7"            # MAX485 DI
+  srne_rx_pin: "6"            # MAX485 RO
+  srne_de_pin: "5"            # MAX485 DE + RE
   firebase_db_url: !secret firebase_db_url
   firebase_auth: !secret firebase_auth
   # The OTA host comes from control/ota_host (allowed domains in ota_control.h); the login stays here
@@ -57,8 +58,6 @@ substitutions:
   control_max_s: "3600"
   ota_verify_timeout_ms: "600000"  # New firmware must upload to Firebase within 10 min or it rolls back
   radio_reset_fallback_ms: "120000"  # Radio reset after a software reset even without a successful upload
-  ota_text_long_ms: "600000"  # OTA text replaces BAL/DSG this long after a failure or rollback
-  ota_text_short_ms: "120000" # ...and this long after a confirmed update
   # Self-healing: radio reset (1 s deep sleep) when the BMS link or WiFi stays down this long.
   # Each reset in a row doubles the wait (x1, x2, x4, x8); it starts over once both work again.
   ble_watchdog_ms: "600000"   # no BMS frame for 10 min
@@ -92,6 +91,7 @@ esphome:
     - crash_capture.h
     - radio_sleep.h
     - net_worker.h
+    - srne.h
     - ota_control.h
     - <esphome/components/esp32/crash_handler.h>
   # Remember that the run ended through ESPHome (OTA reboot, safe_reboot) for the boots/ history
@@ -103,6 +103,7 @@ esphome:
         # Restart bookkeeping (RTC) and the flash rings: readings still to upload, events
         - lambda: |-
             telemetry::begin();
+            srne::begin(${srne_tx_pin}, ${srne_rx_pin}, ${srne_de_pin});
             crash::begin();
             // ESPHome printed its crash report before on_message was listening; print it again to collect it
             if (esphome::esp32::crash_handler_has_data()) esphome::esp32::crash_handler_log();
@@ -148,13 +149,10 @@ esphome:
                                      state == ESP_OTA_IMG_PENDING_VERIFY;
             if (id(ota_pending_verify)) {
               id(ota_status) = "verifying ${fw_version}";
-              id(ota_display) = "OTA verifying ${fw_version}";
             } else if (strcmp(telemetry::restart_cause(), "ota_failed") == 0) {
               // Failed update, then a radio reset (ota_install): show its result again; ota_failed_hash makes the
               // first control read remove control/ota
               id(ota_status) = telemetry::take_note();
-              id(ota_display) = "OTA failed";
-              id(ota_show_until) = millis() + ${ota_text_long_ms};
             } else if (id(ota_attempt_hash) != 0) {
               if (id(ota_attempt_hash) != fnv1_hash("${fw_version}")) {
                 // Not installed: the first control read removes control/ota if it still names that version
@@ -163,16 +161,12 @@ esphome:
                   // ESPHome's download hung after a transport timeout until the task watchdog reset the board
                   // (28 Oct, 1.2.34: errno 11 at 76 s, watchdog 80 s later); the running firmware is untouched
                   id(ota_status) = "update stopped: the download hung (watchdog reset), running ${fw_version}";
-                  id(ota_display) = "OTA hung";
                 } else if (strcmp(telemetry::restart_cause(), "ota_time_limit") == 0) {
                   id(ota_status) = "update stopped: download took over " + std::to_string(${ota_download_ms} / 60000) +
                                    " min, running ${fw_version}";
-                  id(ota_display) = "OTA too slow";
                 } else {
                   id(ota_status) = "rolled back, running ${fw_version}";
-                  id(ota_display) = "OTA rolled back";
                 }
-                id(ota_show_until) = millis() + ${ota_text_long_ms};
               }
               id(ota_attempt_hash) = 0;
               global_preferences->sync();
@@ -207,15 +201,16 @@ esphome:
             ESP_LOGI("ble_power", "BLE TX power set to +9 dBm (level %d)", esp_ble_tx_power_get(ESP_BLE_PWR_TYPE_DEFAULT));
 
 esp32:
-  board: esp32dev
-  # Smaller app slots and NVS, a 640 KB jklog partition for the reading queue and event log (flash_log.h).
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 16MB
+  # 3 MB app slots, about 9.9 MB jklog partition for the reading queue and event log (flash_log.h).
   # A new table needs a USB flash of the factory image.
   partitions: partitions.csv
   framework:
     type: esp-idf
     advanced:
       enable_ota_rollback: true  # Bootloader returns to the previous firmware if a new one is never confirmed
-      minimum_chip_revision: "3.1"  # this board's chip; drops workarounds for older revisions (smaller, faster)
     sdkconfig_options:
       # Allocate TLS record buffers only while needed and free the parsed config after the
       # handshake: lowers the heap peak of every HTTPS request next to the BLE stack
@@ -254,8 +249,6 @@ ota:
             id(ota_status) = "download failed " + id(ota_target) + " (error " + err + " at " + std::to_string(id(ota_dl_pct)) +
                              " %, after " + std::to_string((millis() - id(ota_dl_start_ms)) / 1000) + " s)";
             ESP_LOGE("ota", "%s", id(ota_status).c_str());
-            id(ota_display) = "OTA failed";
-            id(ota_show_until) = millis() + ${ota_text_long_ms};
             // ota_install goes on after the flash action: it reports this status, then resets the radio
     on_progress:
       then:
@@ -301,131 +294,6 @@ http_request:
   timeout: 8s   # per read. Only the OTA download (and its .md5) uses this client and blocks the main loop; uploads and control reads run in net_worker.h.
   watchdog_timeout: 30s  # DNS + TLS handshake on a weak link can exceed 15 s
 
-# I2C Bus for 0.96" OLED Display (SDA: D21, SCL: D22)
-i2c:
-  sda: ${i2c_sda_pin}
-  scl: ${i2c_scl_pin}
-  scan: false
-  frequency: 400kHz
-  id: bus_a
-
-# Fonts for OLED Display
-font:
-  - file: "gfonts://Roboto"
-    id: font_small
-    size: 10
-  - file: "gfonts://Roboto"
-    id: font_main
-    size: 14
-
-# 0.96" Inch I2C OLED Display (128x64, 7-bit address 0x3C corresponding to 8-bit 0x78)
-display:
-  - platform: ssd1306_i2c
-    model: "SSD1306 128x64"
-    address: 0x3C
-    i2c_id: bus_a
-    id: oled_display
-    update_interval: 30s  # rarely watched: one redraw per reading, nothing in between
-    lambda: |-
-      using CS = esphome::esp32_ble_tracker::ClientState;
-      const uint32_t now = millis();
-
-      // 1. Header (y=0..11): title (or queued readings), BT icon, WiFi bars, SOC
-      const size_t queued = telemetry::size();
-      if (queued > ${upload_min_batch}) {
-        it.printf(2, 0, id(font_small), "Q%u", (unsigned) queued);
-      } else {
-        it.print(2, 0, id(font_small), "JK-BMS");
-      }
-
-      // BT icon; "x" next to it while the BMS is not connected, "!" when the BMS reports an error
-      const auto bt = id(client0)->state();
-      {
-        const int x = 44, y = 1;
-        it.line(x + 0, y + 2, x + 6, y + 6);
-        it.line(x + 6, y + 6, x + 3, y + 9);
-        it.line(x + 3, y + 9, x + 3, y + 0);
-        it.line(x + 3, y + 0, x + 6, y + 3);
-        it.line(x + 6, y + 3, x + 0, y + 7);
-      }
-      const std::string &errors = id(bms_errors).state;
-      if (bt != CS::ESTABLISHED) {
-        it.print(52, 0, id(font_small), "x");
-      } else if (!errors.empty() && errors != "None" && errors != "Offline") {
-        it.print(55, 0, id(font_small), "!");
-      }
-
-      // WiFi: signal bars when connected, empty bars and "x" when not.
-      // "!" when the last Firebase upload failed.
-      auto *wifi = esphome::wifi::global_wifi_component;
-      const bool wifi_ok = wifi != nullptr && wifi->is_connected();
-      int bars = 0;
-      if (wifi_ok) {
-        const int rssi = wifi->wifi_rssi();
-        bars = rssi > -60 ? 4 : rssi > -70 ? 3 : rssi > -80 ? 2 : 1;
-      }
-      for (int i = 0; i < 4; i++) {
-        const int x = 62 + i * 3, h = 2 + i * 2;
-        if (i < bars) {
-          it.filled_rectangle(x, 10 - h, 2, h);
-        } else {
-          it.horizontal_line(x, 9, 2);
-        }
-      }
-      if (!wifi_ok) {
-        it.print(75, 0, id(font_small), "x");
-      } else if (id(firebase_error)) {
-        it.print(77, 0, id(font_small), "!");
-      }
-
-      if (id(bms_state_of_charge).has_state() && !std::isnan(id(bms_state_of_charge).state)) {
-        it.printf(98, 0, id(font_small), "%3.0f%%", id(bms_state_of_charge).state);
-      }
-
-      // Divider Line 1
-      it.line(0, 12, 127, 12);
-
-      // 2. Battery Voltage (y=15..28)
-      it.print(2, 15, id(font_main), "VOLT:");
-      if (id(bms_total_voltage).has_state() && !std::isnan(id(bms_total_voltage).state)) {
-        it.printf(56, 15, id(font_main), "%5.2f V", id(bms_total_voltage).state);
-      } else {
-        it.print(56, 15, id(font_main), "--.-- V");
-      }
-
-      // 3. Current with +/- sign indicator (y=30..43)
-      it.print(2, 30, id(font_main), "CURR:");
-      if (id(bms_current).has_state() && !std::isnan(id(bms_current).state)) {
-        it.printf(56, 30, id(font_main), "%+6.2f A", id(bms_current).state);
-      } else {
-        it.print(56, 30, id(font_main), "--.-- A");
-      }
-
-      // Divider Line 2
-      it.line(0, 46, 127, 46);
-
-      // 4. Bottom row (y=49..62): OTA state while an update runs or just finished, else BAL/DSG
-      if (id(ota_pending_verify) || (int32_t) (id(ota_show_until) - now) > 0) {
-        it.print(4, 49, id(font_small), id(ota_display).c_str());
-        return;
-      }
-      bool bal_on = false;
-      if (id(bms_balancer_switch).has_state()) {
-        bal_on = id(bms_balancer_switch).state;
-      } else if (id(bms_balancing).has_state()) {
-        bal_on = id(bms_balancing).state;
-      }
-
-      bool dsg_on = false;
-      if (id(bms_discharging_switch).has_state()) {
-        dsg_on = id(bms_discharging_switch).state;
-      } else if (id(bms_discharging).has_state()) {
-        dsg_on = id(bms_discharging).state;
-      }
-
-      it.printf(4, 49, id(font_small), "BAL: %s", bal_on ? "ON" : "OFF");
-      it.printf(68, 49, id(font_small), "DSG: %s", dsg_on ? "ON" : "OFF");
-
 external_components:
   # jk_bms_ble from upstream, pinned to the commit this project was tested with
   - source: github://syssi/esphome-jk-bms@58385c78dc7248bd7bc1040677b05a46a5be42d3
@@ -434,6 +302,7 @@ external_components:
 
 logger:
   level: ${log_level}
+  hardware_uart: UART0  # the board's COM port (CH343)
   # Collect ESPHome's crash report lines for the crashes/ upload (crash_capture.h)
   on_message:
     level: ERROR
@@ -446,11 +315,6 @@ logger:
     wifi: INFO
     scheduler: INFO
     component: INFO
-    i2c: WARN
-    i2c.idf: WARN
-    ssd1306_i2c: WARN
-    ssd1306_base: WARN
-    display: WARN
 
 globals:
   - id: needs_radio_reset # booted from a software reset; do one radio_reset when safe
@@ -470,10 +334,6 @@ globals:
     restore_value: no
     initial_value: '0'
   - id: bms_fresh_frame   # a new BMS frame arrived since the last buffered reading
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-  - id: firebase_error    # last upload failed
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -707,19 +567,11 @@ globals:
     type: std::string
     restore_value: no
     initial_value: '"idle"'
-  - id: ota_display       # short OTA text for the bottom display row
-    type: std::string
-    restore_value: no
-    initial_value: '""'
-  - id: ota_show_until    # millis() until which ota_display replaces BAL/DSG
-    type: uint32_t
-    restore_value: no
-    initial_value: '0'
   - id: ble_connect_ms    # last BMS connect (stale-link check)
     type: uint32_t
     restore_value: no
     initial_value: '0'
-  - id: ble_rx_ms         # last BMS frame, for the BT activity dot
+  - id: ble_rx_ms         # last BMS frame (stale-link check)
     type: uint32_t
     restore_value: no
     initial_value: '0'
@@ -773,6 +625,11 @@ globals:
     initial_value: '""'
 
 interval:
+  # The solar controller: one small step of its read cycle (srne.h)
+  - interval: 50ms
+    then:
+      - lambda: 'srne::poll();'
+
   # Background requests (net_worker.h): hand each finished one to its handler script
   - interval: 200ms
     then:
@@ -1101,6 +958,38 @@ interval:
                   a.add(r.flags);
                 }
 
+                // controller/<ts>: [battery 0.1 V, charge 0.01 A, SOC %, controller degC, battery degC, load 0.1 V, 0.01 A, W,
+                // solar 0.1 V, 0.01 A, W, status, faults], integers as stored; up to 8 of the oldest unsent
+                srne::in_flight = std::min<uint32_t>(flog::controller.size(), 8);
+                for (uint32_t i = 0; i < srne::in_flight; i++) {
+                  uint8_t buf[flog::PAYLOAD];
+                  if (!flog::controller.peek(i, buf)) continue;
+                  srne::Record c;
+                  memcpy(&c, buf, sizeof(c));
+                  if (c.ts == 0) continue;
+                  JsonArray a = root[std::string("controller/") + std::to_string(c.ts)].to<JsonArray>();
+                  a.add(c.batt_dv); a.add(c.charge_ca); a.add(c.soc); a.add(c.ctrl_temp); a.add(c.batt_temp);
+                  a.add(c.load_dv); a.add(c.load_ca); a.add(c.load_w);
+                  a.add(c.pv_dv); a.add(c.pv_ca); a.add(c.pv_w);
+                  if (c.status == srne::NO_STATUS) a.add(nullptr);
+                  else a.add(c.status);
+                  a.add(c.faults);
+                }
+                // controller_info: raw registers (see docs/srne-shiner/README.md), replaced as a whole
+                srne::info_in_flight = srne::info_dirty;
+                if (srne::info_dirty) {
+                  JsonObject ci = root["controller_info"].to<JsonObject>();
+                  ci["updated"] = now_ts;
+                  auto regs = [&ci](const char *key, const uint16_t *v, size_t n) {
+                    JsonArray a = ci[key].to<JsonArray>();
+                    for (size_t i = 0; i < n; i++) a.add(v[i]);
+                  };
+                  if (srne::have_today) regs("today", srne::today, 16);
+                  if (srne::have_totals) regs("totals", srne::totals, 5);
+                  if (srne::have_settings) regs("settings", srne::settings, 13);
+                  if (srne::have_ident) regs("ident", srne::ident, 16);
+                }
+
                 // events/<ts>-<boot>-<uptime>-<seq>: up to 4 of the oldest unsent events of the flash log
                 const uint32_t up_now = (uint32_t) (esp_timer_get_time() / 1000000);
                 id(events_in_flight) = std::min<uint32_t>(flog::events.size(), 4);
@@ -1163,6 +1052,11 @@ interval:
                 d["buffered"] = telemetry::size();
                 d["dropped"] = telemetry::dropped();
                 d["queue_capacity"] = telemetry::capacity();
+                d["ctrl_silent_s"] = srne::silent_s();
+                d["ctrl_ok"] = srne::n_ok;
+                d["ctrl_fail"] = srne::n_fail;
+                d["ctrl_queued"] = flog::controller.size();
+                d["ctrl_dropped"] = flog::controller.dropped();
                 d["flash_log"] = flog::present ? 1 : 0;  // 0: no jklog partition (installed without the factory image)
                 d["events_queued"] = flog::events.size();
                 d["upload_batch"] = id(upload_batch_last);
@@ -1291,9 +1185,6 @@ ble_client:
             id(ble_tracker)->set_scan_continuous(true);
             if (id(ble_tracker)->get_scanner_state() == esp32_ble_tracker::ScannerState::IDLE) id(ble_tracker)->start_scan();
 
-# Redraw the OLED when data or connection state changes instead of polling.
-# The 0s delay runs the redraw on the next loop pass, after the whole BMS frame has been
-# published; mode: single folds several triggers in the same pass into one redraw.
 script:
   # Results of the background requests (net_worker.h), handled in the main loop by the 200 ms poll
   - id: net_upload_done
@@ -1302,7 +1193,6 @@ script:
           const net::Result &rsp = net::last;
           if (rsp.status < 0) {
             crash::step(crash::STEP_IDLE);
-            id(firebase_error) = true;
             id(upload_errors)++;
             id(last_upload_ms) = millis();
             id(info_in_flight) = false;
@@ -1323,9 +1213,10 @@ script:
           }
           crash::step(crash::STEP_IDLE);
           const bool ok = rsp.status >= 200 && rsp.status < 300;
-          id(firebase_error) = !ok;
           id(last_upload_ms) = millis();
           if (ok) {
+            flog::controller.discard(srne::in_flight);
+            if (srne::info_in_flight) srne::info_dirty = false;
             id(uploaded_since_boot) = true;
             id(net_ok_ms) = millis();
             id(bad_requests) = 0;
@@ -1338,8 +1229,6 @@ script:
               id(ota_attempt_hash) = 0;
               global_preferences->sync();
               id(ota_status) = "updated to ${fw_version}";
-              id(ota_display) = "OTA updated ${fw_version}";
-              id(ota_show_until) = millis() + ${ota_text_short_ms};
               ESP_LOGI("ota", "%s, confirmed", id(ota_status).c_str());
               id(control_force) = true;  // read control now: removes control/ota naming this version
               // Report "updated", then the radio reset that follows every software reset, at once
@@ -1773,8 +1662,6 @@ script:
             - lambda: |-
                 id(ota_done) = id(ota_target);
                 id(control_force) = true;
-                id(ota_display) = "OTA refused";
-                id(ota_show_until) = millis() + ${ota_text_long_ms};
             - script.execute: ota_report
             - script.wait: ota_report
             - lambda: 'id(ota_active) = false;'
@@ -1850,7 +1737,7 @@ jk_bms_ble:
     id: bms0
     protocol_version: ${protocol_version}
     # The BMS streams a frame every 2-3 s whatever we do; only every 20 s is decoded and published. Each decoded
-    # frame updates ~30 sensors and redraws the display (50-240 ms each), so this frees the main loop. Every
+    # frame updates ~30 sensors, so this frees the main loop. Every
     # 30 s reading still gets a fresh frame (20 s < 30 s); the stale-link check (2 min) is far above it.
     throttle: 20s
 

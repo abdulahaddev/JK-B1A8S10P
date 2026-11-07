@@ -1,7 +1,7 @@
 # JK-B1A8S10P ESP32 monitor
 
-ESPHome firmware that reads a JK-B1A8S10P BMS over Bluetooth LE, shows it on a 0.96" SSD1306
-OLED and uploads it to a Firebase Realtime Database.
+ESPHome firmware that reads a JK-B1A8S10P BMS over Bluetooth LE and uploads it to a Firebase
+Realtime Database.
 
 The `jk_bms_ble` component comes from [syssi/esphome-jk-bms](https://github.com/syssi/esphome-jk-bms),
 pinned to the commit this project was tested with (see `external_components` in each config).
@@ -10,7 +10,7 @@ pinned to the commit this project was tested with (see `external_components` in 
 
 | File | What it does |
 |---|---|
-| `my-jk-bms-firebase.yaml` | Main firmware: BLE + OLED + WiFi + Firebase upload |
+| `my-jk-bms-firebase.yaml` | Main firmware: BLE + WiFi + Firebase upload |
 | `my-jk-bms-bridge.yaml` | Minimal OTA bridge (no BLE): only installs the next full firmware, falls back after 60 min |
 
 ## Setup

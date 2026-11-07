@@ -263,10 +263,13 @@ class Ring {
   }
 };
 
-// The partition: readings in the first 144 sectors (576 KB, ~6.3 days at 30 s), events in the last 16 (64 KB)
-static const uint32_t READING_SECTORS = 144;
-static const uint32_t EVENT_SECTORS = 16;
+// The partition, in order: BMS readings (about 6.4 MB, ~72 days at 30 s), controller readings (about 3.2 MB, ~72 days
+// at 60 s), events (256 KB)
+static const uint32_t READING_SECTORS = 1643;
+static const uint32_t CONTROLLER_SECTORS = 821;
+static const uint32_t EVENT_SECTORS = 64;
 static Ring readings;
+static Ring controller;
 static Ring events;
 
 static bool present = false;  // the jklog partition exists (1.2.42+ factory image)
@@ -278,8 +281,9 @@ inline bool begin() {
     return false;
   }
   readings.begin(p, 0, READING_SECTORS, 1);
-  events.begin(p, READING_SECTORS, EVENT_SECTORS, 2);
-  present = readings.ok() && events.ok();
+  controller.begin(p, READING_SECTORS, CONTROLLER_SECTORS, 3);
+  events.begin(p, READING_SECTORS + CONTROLLER_SECTORS, EVENT_SECTORS, 2);
+  present = readings.ok() && controller.ok() && events.ok();
   return present;
 }
 
