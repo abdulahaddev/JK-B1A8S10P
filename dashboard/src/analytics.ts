@@ -1,5 +1,5 @@
 // Pure helpers over readings: downsampling, energy integration, profiles, comparisons.
-import type { Reading } from "./types";
+import type { Ctrl, Reading } from "./types";
 import { CELLS, cellKey } from "./types";
 
 export type Point = [number, number | null]; // [ms, value]
@@ -115,6 +115,40 @@ export function byDay(rows: Reading[]): Day[] {
       const s = stats(rs, (r) => r.state_of_charge)!;
       return { day, ...integrate(rs), socMin: s.min, socMax: s.max, readings: rs.length };
     });
+}
+
+/**
+ * Solar and load energy from the controller's readings, by the board's timestamps: the controller has no clock and
+ * its own "day" ends when it sees dark, so a calendar day is only possible this way. Gaps > 5 min are skipped.
+ */
+export interface CtrlFlow {
+  solarWh: number;
+  loadWh: number;
+  peakLoadW: number; // highest 60 s sample: can miss shorter spikes
+  coveredS: number; // time the sums cover
+}
+export function integrateCtrl(rows: Ctrl[]): CtrlFlow {
+  const f: CtrlFlow = { solarWh: 0, loadWh: 0, peakLoadW: 0, coveredS: 0 };
+  for (let i = 0; i < rows.length; i++) {
+    f.peakLoadW = Math.max(f.peakLoadW, rows[i].load_w);
+    if (i === 0) continue;
+    const dt = rows[i].ts - rows[i - 1].ts;
+    if (dt <= 0 || dt > 300) continue;
+    f.solarWh += (rows[i - 1].pv_w * dt) / 3600;
+    f.loadWh += (rows[i - 1].load_w * dt) / 3600;
+    f.coveredS += dt;
+  }
+  return f;
+}
+
+/** integrateCtrl per local day (unix s of local midnight). */
+export function ctrlByDay(rows: Ctrl[]): (CtrlFlow & { day: number })[] {
+  const groups = new Map<number, Ctrl[]>();
+  for (const r of rows) {
+    const d = dayStart(r.ts);
+    (groups.get(d) ?? groups.set(d, []).get(d)!).push(r);
+  }
+  return [...groups.entries()].sort((a, b) => a[0] - b[0]).map(([day, rs]) => ({ day, ...integrateCtrl(rs) }));
 }
 
 /** Average value per hour of the local day (0-23) for a set of readings; null where no data. */

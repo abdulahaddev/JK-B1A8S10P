@@ -17,10 +17,10 @@ import {
   Zap,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { byDay, cells, integrate, powerW, spreadMv, stats, todayStart } from "../analytics";
+import { byDay, cells, ctrlByDay, integrateCtrl, powerW, spreadMv, stats, todayStart, type CtrlFlow } from "../analytics";
 import type { Tokens } from "../theme";
-import { useCtrlInfo, useLatestCtrl } from "../data";
-import type { CtrlInfo, Device, Info, Reading } from "../types";
+import { useLatestCtrl } from "../data";
+import type { Ctrl, Device, Info, Reading } from "../types";
 import { CELLS, cellKey } from "../types";
 import { CategoryChart, TimeChart, type Metric } from "./Chart";
 import { MonthCalendar, PowerFlow, TempGauges, UsageByHour } from "./Insights";
@@ -207,19 +207,25 @@ function CellsCard({ r, info, tokens: t }: { r: Reading; info?: Info | null; tok
   );
 }
 
-function TodayCard({ rows, ctrlInfo }: { rows: Reading[]; ctrlInfo?: CtrlInfo | null }) {
+/** Since local midnight: solar and load added up from the controller's readings, SOC from the BMS. */
+function TodayCard({ rows, ctrl, nowS }: { rows: Reading[]; ctrl: CtrlFlow | null; nowS: number }) {
   const today = rows.filter((r) => r.ts >= todayStart());
   const soc = stats(today, (r) => r.state_of_charge);
-  const c = ctrlInfo?.today;
-  const num = (k: number) => (c?.[k] !== undefined ? String(c[k]) : "–");
+  const has = ctrl !== null && ctrl.coveredS > 0;
   const items: [string, string, string][] = [
-    ["Solar generated", num(8), "Wh"],
-    ["Load used", num(9), "Wh"],
+    ["Solar generated", has ? ctrl.solarWh.toFixed(0) : "–", "Wh"],
+    ["Load used", has ? ctrl.loadWh.toFixed(0) : "–", "Wh"],
     ["SOC range", soc ? `${soc.min.toFixed(0)}–${soc.max.toFixed(0)}` : "–", "%"],
-    ["Peak load", num(5), "W"],
+    ["Peak load", has ? ctrl.peakLoadW.toFixed(0) : "–", "W"],
   ];
+  // Say so when the controller was silent for a real part of the day: the sums are then too low
+  const elapsedS = nowS - todayStart();
+  const partial = has && elapsedS > 1800 && ctrl.coveredS < elapsedS * 0.9;
+  const subtitle = partial
+    ? `Since midnight · controller data for ${(ctrl.coveredS / 3600).toFixed(1)} of ${(elapsedS / 3600).toFixed(1)} h`
+    : "Since midnight · solar and load from the controller, SOC from the BMS";
   return (
-    <Card title="Today" icon={CalendarDays} subtitle="Solar and load from the controller's day, SOC from the BMS">
+    <Card title="Today" icon={CalendarDays} subtitle={subtitle}>
       <div className="today">
         {items.map(([k, v, u]) => (
           <div key={k}>
@@ -234,34 +240,77 @@ function TodayCard({ rows, ctrlInfo }: { rows: Reading[]; ctrlInfo?: CtrlInfo | 
   );
 }
 
-/** Charged and used energy for every day of this month (days without readings stay empty). */
-function MonthEnergy({ rows, loading, tokens: t }: { rows: Reading[] | null; loading: boolean; tokens: Tokens }) {
+const ENERGY_VIEWS = [
+  { id: "solar", label: "Solar" },
+  { id: "battery", label: "Battery" },
+] as const;
+type EnergyView = (typeof ENERGY_VIEWS)[number]["id"];
+
+/**
+ * Energy for every day of this month, midnight to midnight (days without readings stay empty).
+ * Solar: generated and load used, from the controller. Battery: net in and out, from the BMS.
+ */
+function MonthEnergy({
+  bms,
+  bmsLoading,
+  ctrl,
+  ctrlLoading,
+  tokens: t,
+}: {
+  bms: Reading[] | null;
+  bmsLoading: boolean;
+  ctrl: Ctrl[] | null;
+  ctrlLoading: boolean;
+  tokens: Tokens;
+}) {
+  const [view, setView] = useState<EnergyView>("solar");
   const d = useMemo(() => {
     const now = new Date();
     const y = now.getFullYear(), m = now.getMonth();
     const n = new Date(y, m + 1, 0).getDate();
-    const byStart = new Map(byDay(rows ?? []).map((x) => [x.day, x]));
-    const days = Array.from({ length: n }, (_, i) => byStart.get(Math.floor(new Date(y, m, i + 1).getTime() / 1000)));
-    const charged = days.reduce((a, x) => a + (x?.chargeWh ?? 0), 0);
-    const used = days.reduce((a, x) => a + (x?.dischargeWh ?? 0), 0);
+    const dayKeys = Array.from({ length: n }, (_, i) => Math.floor(new Date(y, m, i + 1).getTime() / 1000));
+    const solarBy = new Map(ctrlByDay(ctrl ?? []).map((x) => [x.day, x]));
+    const battBy = new Map(byDay(bms ?? []).map((x) => [x.day, x]));
+    const solarDays = dayKeys.map((k) => solarBy.get(k));
+    const battDays = dayKeys.map((k) => battBy.get(k));
+    const sum = <T,>(xs: (T | undefined)[], f: (x: T) => number) => xs.reduce((a, x) => a + (x ? f(x) : 0), 0);
+    const kwh = (wh: number) => `${(wh / 1000).toFixed(2)} kWh`;
     return {
       month: now.toLocaleDateString(undefined, { month: "long", year: "numeric" }),
       cats: Array.from({ length: n }, (_, i) => String(i + 1)),
-      charged,
-      used,
-      series: [
-        { name: "Into battery", color: t.series[2], data: days.map((x) => (x ? +x.chargeWh.toFixed(0) : null)) },
-        { name: "Out of battery", color: t.series[1], data: days.map((x) => (x ? +x.dischargeWh.toFixed(0) : null)) },
-      ],
+      solar: {
+        note: `from the controller · solar ${kwh(sum(solarDays, (x) => x.solarWh))} · load ${kwh(sum(solarDays, (x) => x.loadWh))}`,
+        series: [
+          { name: "Solar", color: t.series[2], data: solarDays.map((x) => (x ? +x.solarWh.toFixed(0) : null)) },
+          { name: "Load", color: t.series[1], data: solarDays.map((x) => (x ? +x.loadWh.toFixed(0) : null)) },
+        ],
+      },
+      battery: {
+        note: `battery net, from the BMS · in ${kwh(sum(battDays, (x) => x.chargeWh))} · out ${kwh(sum(battDays, (x) => x.dischargeWh))}`,
+        series: [
+          { name: "Into battery", color: t.series[2], data: battDays.map((x) => (x ? +x.chargeWh.toFixed(0) : null)) },
+          { name: "Out of battery", color: t.series[1], data: battDays.map((x) => (x ? +x.dischargeWh.toFixed(0) : null)) },
+        ],
+      },
     };
-  }, [rows, t]);
-  const subtitle = rows
-    ? `${d.month} · battery net, from the BMS · in ${(d.charged / 1000).toFixed(2)} kWh · out ${(d.used / 1000).toFixed(2)} kWh`
-    : loading
-      ? `${d.month} · loading…`
-      : d.month;
+  }, [bms, ctrl, t]);
+  const rows = view === "solar" ? ctrl : bms;
+  const loading = view === "solar" ? ctrlLoading : bmsLoading;
+  const subtitle = rows ? `${d.month} · ${d[view].note}` : loading ? `${d.month} · loading…` : d.month;
   return (
-    <CategoryChart title="Battery energy per day" icon={BatteryCharging} subtitle={subtitle} categories={d.cats} series={d.series} unit="Wh" decimals={0} tokens={t} height={280} className="span-2" />
+    <CategoryChart
+      title="Energy per day"
+      icon={view === "solar" ? Sun : BatteryCharging}
+      subtitle={subtitle}
+      categories={d.cats}
+      series={d[view].series}
+      unit="Wh"
+      decimals={0}
+      tokens={t}
+      height={280}
+      className="span-2"
+      extra={<Segmented options={ENERGY_VIEWS} value={view} onChange={setView} label="Energy source" size="small" />}
+    />
   );
 }
 
@@ -280,6 +329,9 @@ export function Overview({
   todayRows,
   monthRows,
   monthLoading,
+  ctrlToday,
+  ctrlMonth,
+  ctrlMonthLoading,
   loading,
   from,
   now,
@@ -294,6 +346,9 @@ export function Overview({
   todayRows: Reading[] | null; // since midnight, for the Today card
   monthRows: Reading[] | null; // since the 1st of this month, for the energy per day chart
   monthLoading: boolean;
+  ctrlToday: Ctrl[] | null; // controller readings since midnight, for today's solar and load
+  ctrlMonth: Ctrl[] | null; // since the 1st, for solar and load per day
+  ctrlMonthLoading: boolean;
   loading: boolean;
   from: number; // start of the graph range (unix s)
   now: number;
@@ -304,8 +359,9 @@ export function Overview({
 }) {
   const [trend, setTrend] = useState<TrendId>("soc");
   const ctrlRow = useLatestCtrl();
-  const ctrlInfo = useCtrlInfo();
   const ctrl = ctrlRow && clock - ctrlRow.ts < 180 ? ctrlRow : null;
+  // midnight to midnight by the board's timestamps; the filter drops yesterday's rows for a while after midnight
+  const ctrlDay = useMemo(() => (ctrlToday ? integrateCtrl(ctrlToday.filter((x) => x.ts >= todayStart())) : null), [ctrlToday]);
   const sparks = useMemo(() => {
     // Sparklines: the last 6 hours, or the whole range when it is shorter
     const recent = (rows ?? []).filter((r) => r.ts >= Math.max(from, now - 6 * 3600));
@@ -341,7 +397,7 @@ export function Overview({
       <StatusStrip d={device} nowS={clock} />
 
       <div className="overview-top">
-        <PowerFlow r={r} info={info} bmsOnline={device?.ble_connected === 1} ctrl={ctrl} ctrlInfo={ctrlInfo} />
+        <PowerFlow r={r} info={info} bmsOnline={device?.ble_connected === 1} ctrl={ctrl} today={ctrlDay} />
         <div className="kpis">
           <Kpi icon={BatteryCharging} label="Pack voltage" value={r.total_voltage.toFixed(2)} unit="V" note={`${(r.total_voltage / 4).toFixed(3)} V per cell`} spark={sparks.voltage} color={t.series[0]} />
           <Kpi icon={Zap} label="Current" value={`${i > 0 ? "+" : ""}${i.toFixed(2)}`} unit="A" note={packState(r)} spark={sparks.current} color={t.series[2]} />
@@ -366,7 +422,7 @@ export function Overview({
         </div>
       </div>
 
-      <MonthEnergy rows={monthRows} loading={monthLoading} tokens={t} />
+      <MonthEnergy bms={monthRows} bmsLoading={monthLoading} ctrl={ctrlMonth} ctrlLoading={ctrlMonthLoading} tokens={t} />
 
       <TimeChart
         title={rangeLabel}
@@ -388,7 +444,7 @@ export function Overview({
 
       <div className="grid-2">
         <CellsCard r={r} info={info} tokens={t} />
-        <TodayCard rows={todayRows ?? []} ctrlInfo={ctrlInfo} />
+        <TodayCard rows={todayRows ?? []} ctrl={ctrlDay} nowS={clock} />
         <TimeChart
           title="Cell voltages"
           icon={Grid2x2}

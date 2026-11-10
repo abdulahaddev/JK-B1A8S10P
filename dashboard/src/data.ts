@@ -14,7 +14,7 @@ import {
   update,
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
-import { readings, toCtrl } from "./telemetry";
+import { ctrlRows, readings, toCtrl } from "./telemetry";
 import type { Boot, BoardEvent, Control, Crash, Ctrl, CtrlInfo, Device, Info, Reading } from "./types";
 
 const app = initializeApp({
@@ -102,20 +102,25 @@ export function useEvents(n = 300): BoardEvent[] | null {
 }
 
 // Several charts can ask for the same comparison window at once: share one request per window.
-const cache = new Map<string, { at: number; rows: Promise<Reading[]> }>();
+const cache = new Map<string, { at: number; rows: Promise<unknown[]> }>();
 
-/** Telemetry between two unix times (inclusive); identical windows within 30 s reuse one request. */
-export function fetchReadings(from: number, to: number): Promise<Reading[]> {
-  const k = `${from}-${to}`;
+/** A keyed node between two unix times (inclusive); identical windows within 30 s reuse one request. */
+function fetchWindow<T>(path: string, parse: (v: Record<string, unknown> | null) => T[], from: number, to: number): Promise<T[]> {
+  const k = `${path}:${from}-${to}`;
   const hit = cache.get(k);
-  if (hit && Date.now() - hit.at < 30_000) return hit.rows;
-  const q = query(ref(db, "telemetry"), orderByKey(), startAt(String(from)), endAt(String(to)));
-  const rows = get(q).then((s) => readings(s.val()));
+  if (hit && Date.now() - hit.at < 30_000) return hit.rows as Promise<T[]>;
+  const q = query(ref(db, path), orderByKey(), startAt(String(from)), endAt(String(to)));
+  const rows = get(q).then((s) => parse(s.val()));
   rows.catch(() => cache.delete(k));
   cache.set(k, { at: Date.now(), rows });
   for (const [key, v] of cache) if (Date.now() - v.at > 300_000) cache.delete(key);
   return rows;
 }
+
+/** Telemetry between two unix times (inclusive). */
+export const fetchReadings = (from: number, to: number) => fetchWindow("telemetry", readings, from, to);
+/** Solar controller readings between two unix times (inclusive). */
+export const fetchCtrl = (from: number, to: number) => fetchWindow("controller", ctrlRows, from, to);
 
 /** Hourly cumulative charge counter (energy/<ts> = Ah). */
 export async function fetchEnergy(from: number): Promise<{ ts: number; ah: number }[]> {
@@ -128,8 +133,8 @@ export async function fetchEnergy(from: number): Promise<{ ts: number; ah: numbe
  * A history window that reloads when its range changes and refreshes in place every `refreshS`.
  * Keeps showing the previous data while a reload is in flight (no flash).
  */
-export function useReadings(from: number, to: number, refreshS = 60) {
-  const [rows, setRows] = useState<Reading[] | null>(null);
+function useWindow<T>(fetch: (from: number, to: number) => Promise<T[]>, from: number, to: number, refreshS: number) {
+  const [rows, setRows] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
   const key = useRef("");
@@ -141,12 +146,15 @@ export function useReadings(from: number, to: number, refreshS = 60) {
     const k = `${from}-${to}-${tick}`;
     key.current = k;
     setLoading(true);
-    fetchReadings(from, to)
+    fetch(from, to)
       .then((r) => key.current === k && setRows(r))
       .finally(() => key.current === k && setLoading(false));
-  }, [from, to, tick]);
+  }, [fetch, from, to, tick]);
   return { rows, loading };
 }
+export const useReadings = (from: number, to: number, refreshS = 60) => useWindow(fetchReadings, from, to, refreshS);
+/** Solar controller history, like useReadings. */
+export const useCtrlReadings = (from: number, to: number, refreshS = 60) => useWindow(fetchCtrl, from, to, refreshS);
 
 /** The same window moved back by `shiftS` (0 = off: nothing is fetched). */
 export function useShifted(from: number, to: number, shiftS: number) {

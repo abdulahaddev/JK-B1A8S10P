@@ -62,6 +62,15 @@ export function toCtrl(ts: number, v: unknown): Ctrl | null {
   };
 }
 
+/** A controller node (keyed by unix ts) as readings sorted by time. */
+export function ctrlRows(obj: Record<string, unknown> | null): Ctrl[] {
+  if (!obj) return [];
+  return Object.entries(obj)
+    .map(([k, v]) => toCtrl(Number(k), v))
+    .filter((x): x is Ctrl => x !== null)
+    .sort((a, b) => a.ts - b.ts);
+}
+
 /** Model, versions and ratings from controller_info/ident. */
 export function ctrlIdent(i: CtrlInfo | null | undefined) {
   const r = i?.ident;

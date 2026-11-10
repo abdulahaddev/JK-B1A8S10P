@@ -294,6 +294,7 @@ interface CatProps {
   height?: number;
   kind?: "bar" | "line";
   className?: string;
+  extra?: React.ReactNode;
 }
 
 /** Category chart (days, hours): grouped rounded bars or category lines, tooltip, table view. */
@@ -353,7 +354,12 @@ export function CategoryChart(p: CatProps) {
       icon={p.icon}
       subtitle={p.subtitle}
       className={`chart-card ${p.className ?? ""}`}
-      actions={<ViewToggle table={table} onToggle={() => setTable((x) => !x)} />}
+      actions={
+        <>
+          {p.extra}
+          <ViewToggle table={table} onToggle={() => setTable((x) => !x)} />
+        </>
+      }
     >
       {table ? (
         <CatTable categories={p.categories} cols={p.series.map((s) => ({ name: s.name, data: s.data }))} unit={p.unit} dec={dec} height={p.height ?? 260} />

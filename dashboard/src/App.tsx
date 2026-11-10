@@ -9,7 +9,7 @@ import { Overview } from "./components/Overview";
 import { RemoteControl } from "./components/RemoteControl";
 import { Ago, StatusPill } from "./components/ui";
 import { useControlWatcher } from "./controlLog";
-import { useControl, useDevice, useInfo, useLatestReading, useReadings } from "./data";
+import { useControl, useCtrlReadings, useDevice, useInfo, useLatestReading, useReadings } from "./data";
 import { useTheme, type Tokens } from "./theme";
 import type { Reading } from "./types";
 
@@ -123,8 +123,15 @@ function OverviewPage(p: { rangeId: RangeId; latest?: Reading; info: ReturnType<
   // Energy per day of this month: refetched hourly (a month of readings is a few MB)
   const hour = useNow(3600);
   const month = useReadings(monthStart(), hour, 3600);
+  // Controller readings for calendar-day solar and load: today every 2 min, the month hourly (like the BMS month)
+  const twoMin = useNow(120);
+  const ctrlToday = useCtrlReadings(todayStart(), twoMin, 3600);
+  const ctrlMonth = useCtrlReadings(monthStart(), hour, 3600);
   return (
     <Overview
+      ctrlToday={ctrlToday.rows}
+      ctrlMonth={ctrlMonth.rows}
+      ctrlMonthLoading={ctrlMonth.loading}
       latest={p.latest}
       info={p.info}
       device={p.device}

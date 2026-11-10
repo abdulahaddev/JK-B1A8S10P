@@ -2,9 +2,9 @@
 import ReactECharts from "echarts-for-react";
 import { CalendarRange, Clock3, Thermometer, Waypoints } from "lucide-react";
 import { useMemo } from "react";
-import { byDay, hourProfile, integrate, powerW, stats, todayStart } from "../analytics";
+import { byDay, hourProfile, powerW, stats, type CtrlFlow } from "../analytics";
 import type { Tokens } from "../theme";
-import type { Ctrl, CtrlInfo, Info, Reading } from "../types";
+import type { Ctrl, Info, Reading } from "../types";
 import { CategoryChart, FONT, fade, tooltipBase } from "./Chart";
 import { Card } from "./ui";
 
@@ -62,7 +62,7 @@ function Cable({ wire, live, watts, kind }: { wire: Wire; live: boolean; watts: 
 }
 
 /** Charger → battery → loads, drawn like an inverter app: the live cable streams in the direction the energy moves. */
-export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; info?: Info | null; bmsOnline: boolean; ctrl: Ctrl | null; ctrlInfo?: CtrlInfo | null }) {
+export function PowerFlow({ r, info, bmsOnline, ctrl, today }: { r: Reading; info?: Info | null; bmsOnline: boolean; ctrl: Ctrl | null; today: CtrlFlow | null }) {
   const p = powerW(r);
   const i = r.current ?? 0;
   const charging = p > 2, using = p < -2;
@@ -73,7 +73,8 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
   // ctrl is null when the controller has not reported recently: unknown, never 0 W.
   const solarW = ctrl?.pv_w ?? 0, loadW = ctrl?.load_w ?? 0;
   const solarOn = solarW > 2, loadOn = loadW > 2;
-  const todayWh = (k: number) => (ctrlInfo?.today?.[k] !== undefined ? `${fmtWh(ctrlInfo.today[k])} today` : "");
+  // since local midnight, added up from the controller's readings (its own counters follow its dusk-to-dusk day)
+  const todayWh = (wh: number | undefined) => (today && today.coveredS > 0 && wh !== undefined ? `${fmtWh(wh)} today` : "");
   // 0x0120 low byte; only MPPT and no charging have been seen on this controller so far
   const stageNo = (ctrl?.status ?? 0) & 255;
   const stage = stageNo === 2 ? "MPPT" : stageNo === 0 ? "Standby" : `Stage ${stageNo}`;
@@ -94,7 +95,7 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
   // Battery inside: x 415..485, y 47..169
   const fillH = (122 * soc) / 100;
   const nodes = [
-    { x: 150, y: 140, label: "Solar", value: ctrl ? `${solarW} W` : "–", sub: ctrl ? todayWh(8) : "no data", tone: solarOn ? "charge" : "" },
+    { x: 150, y: 140, label: "Solar", value: ctrl ? `${solarW} W` : "–", sub: ctrl ? todayWh(today?.solarWh) : "no data", tone: solarOn ? "charge" : "" },
     {
       x: 450,
       y: 44,
@@ -105,7 +106,7 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, ctrlInfo }: { r: Reading; 
       tone: ctrl?.faults ? "use" : "",
     },
     { x: 590, y: 215, label: "Battery", value: `${soc}%`, sub: `${fmtWh(storedWh)} stored`, tone: `soc-${level}` },
-    { x: 750, y: 140, label: "Load", value: ctrl ? `${loadW} W` : "–", sub: ctrl ? todayWh(9) : "no data", tone: loadOn ? "use" : "" },
+    { x: 750, y: 140, label: "Load", value: ctrl ? `${loadW} W` : "–", sub: ctrl ? todayWh(today?.loadWh) : "no data", tone: loadOn ? "use" : "" },
   ];
   const facts: [string, string][] = [
     ["Voltage", `${r.total_voltage.toFixed(2)} V`],
