@@ -2,7 +2,7 @@
 import ReactECharts from "echarts-for-react";
 import { CalendarRange, Clock3, Thermometer, Waypoints } from "lucide-react";
 import { useMemo } from "react";
-import { byDay, hourProfile, powerW, stats, type CtrlFlow } from "../analytics";
+import { ctrlByDay, hourProfile, powerW, stats, type CtrlFlow } from "../analytics";
 import type { Tokens } from "../theme";
 import type { Ctrl, Info, Reading } from "../types";
 import { CategoryChart, FONT, fade, tooltipBase } from "./Chart";
@@ -121,6 +121,8 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, today }: { r: Reading; inf
   const battWire: Wire = using ? [WIRES.battery[2], WIRES.battery[3], WIRES.battery[0], WIRES.battery[1]] : WIRES.battery;
   const wireTags = [
     { key: "solar", x: (WIRES.solar[0] + WIRES.solar[2]) / 2, y: 85, live: solarOn, kind: "charge", amps: `${(ctrl?.pv_a ?? 0).toFixed(1)} A` },
+    // panel voltage under the solar cable, amps above it; shown whenever there is a voltage, also with no current
+    { key: "solar-v", x: (WIRES.solar[0] + WIRES.solar[2]) / 2, y: 85, below: true, live: (ctrl?.pv_v ?? 0) >= 0.5, kind: solarOn ? "charge" : "", amps: `${(ctrl?.pv_v ?? 0).toFixed(1)} V`, title: "Panel voltage" },
     { key: "battery", x: 450, y: (WIRES.battery[1] + WIRES.battery[3]) / 2, side: true, live: battLive, kind: using ? "use" : "charge", amps: `${Math.abs(i).toFixed(1)} A` },
     { key: "load", x: (WIRES.load[0] + WIRES.load[2]) / 2, y: 85, live: loadOn, kind: "use", amps: `${(ctrl?.load_a ?? 0).toFixed(1)} A` },
   ];
@@ -227,8 +229,8 @@ export function PowerFlow({ r, info, bmsOnline, ctrl, today }: { r: Reading; inf
         </svg>
           {wireTags
             .filter((x) => x.live)
-            .map(({ key, x, y, kind, amps, side }) => (
-              <span key={key} className={`wire-tag ${kind} ${side ? "side" : ""}`} style={{ left: `${(x / 900) * 100}%`, top: `${((y - SCENE_TOP) / SCENE_H) * 100}%` }}>
+            .map(({ key, x, y, kind, amps, side, below, title }) => (
+              <span key={key} title={title} className={`wire-tag ${kind} ${side ? "side" : ""} ${below ? "below" : ""}`} style={{ left: `${(x / 900) * 100}%`, top: `${((y - SCENE_TOP) / SCENE_H) * 100}%` }}>
                 {amps}
               </span>
             ))}
@@ -311,23 +313,23 @@ export function TempGauges({ r, rows, rangeLabel, tokens: t }: { r: Reading; row
   );
 }
 
-/** Average charging and load power per hour of the day over this month's readings. */
-export function UsageByHour({ rows, tokens: t }: { rows: Reading[] | null; tokens: Tokens }) {
+/** Average solar and load power per hour of the day over this month, from the controller. */
+export function UsageByHour({ rows, tokens: t }: { rows: Ctrl[] | null; tokens: Tokens }) {
   const d = useMemo(() => {
     const all = rows ?? [];
-    const charge = hourProfile(all, (r) => Math.max(0, powerW(r)));
-    const load = hourProfile(all, (r) => Math.max(0, -powerW(r)));
+    const solar = hourProfile(all, (r: Ctrl) => r.pv_w);
+    const load = hourProfile(all, (r: Ctrl) => r.load_w);
     const peak = load.reduce<number>((b, v, h) => ((v ?? -1) > (load[b] ?? -1) ? h : b), 0);
     return {
       cats: Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`),
       peak: load[peak] ? `Busiest hour ${String(peak).padStart(2, "0")}:00 · ${load[peak]!.toFixed(0)} W on average` : "No load this month yet",
       series: [
-        { name: "Charging", color: t.series[2], data: charge.map((v) => (v === null ? null : +v.toFixed(1))) },
+        { name: "Solar", color: t.series[2], data: solar.map((v) => (v === null ? null : +v.toFixed(1))) },
         { name: "Load", color: t.series[1], data: load.map((v) => (v === null ? null : +v.toFixed(1))) },
       ],
     };
   }, [rows, t]);
-  return <CategoryChart title="Power by hour of day" icon={Clock3} subtitle={`This month · ${d.peak}`} categories={d.cats} series={d.series} unit="W" decimals={0} tokens={t} height={260} />;
+  return <CategoryChart title="Power by hour of day" icon={Clock3} subtitle={`This month, from the controller · ${d.peak}`} categories={d.cats} series={d.series} unit="W" decimals={0} tokens={t} height={260} />;
 }
 
 const isoDay = (s: number) => {
@@ -336,12 +338,12 @@ const isoDay = (s: number) => {
 };
 
 /** This month as a calendar, each day shaded by the energy used. */
-export function MonthCalendar({ rows, tokens: t }: { rows: Reading[] | null; tokens: Tokens }) {
+export function MonthCalendar({ rows, tokens: t }: { rows: Ctrl[] | null; tokens: Tokens }) {
   const option = useMemo(() => {
     const now = new Date();
-    const days = byDay(rows ?? []);
+    const days = ctrlByDay(rows ?? []);
     const byIso = new Map(days.map((x) => [isoDay(x.day), x]));
-    const max = Math.max(100, ...days.map((x) => x.dischargeWh));
+    const max = Math.max(100, ...days.map((x) => x.loadWh));
     const first = isoDay(new Date(now.getFullYear(), now.getMonth(), 1).getTime() / 1000);
     const last = isoDay(new Date(now.getFullYear(), now.getMonth() + 1, 0).getTime() / 1000);
     return {
@@ -353,8 +355,8 @@ export function MonthCalendar({ rows, tokens: t }: { rows: Reading[] | null; tok
           const d = byIso.get(x.value[0]);
           const head = `<div style="color:${t.muted};font-size:11px">${new Date(x.value[0] + "T12:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "short" })}</div>`;
           return d
-            ? `${head}<b>${fmtWh(d.dischargeWh)}</b> used · <b>${fmtWh(d.chargeWh)}</b> charged<br/>SOC ${d.socMin.toFixed(0)}–${d.socMax.toFixed(0)} %`
-            : `${head}No readings`;
+            ? `${head}<b>${fmtWh(d.loadWh)}</b> load · <b>${fmtWh(d.solarWh)}</b> solar<br/>Peak load ${d.peakLoadW} W`
+            : `${head}No controller data`;
         },
       },
       visualMap: { show: false, min: 0, max, inRange: { color: [fade(t.series[1], 0.08), fade(t.series[1], 0.95)] } },
@@ -376,7 +378,7 @@ export function MonthCalendar({ rows, tokens: t }: { rows: Reading[] | null; tok
         {
           type: "heatmap",
           coordinateSystem: "calendar",
-          data: days.map((x) => [isoDay(x.day), +x.dischargeWh.toFixed(0)]),
+          data: days.map((x) => [isoDay(x.day), +x.loadWh.toFixed(0)]),
           label: { show: true, color: t.ink, fontSize: 11, fontFamily: FONT, formatter: (x: { value: [string, number] }) => `${+x.value[0].slice(8)}\n{s|${fmtWh(x.value[1])}}`, rich: { s: { fontSize: 9, color: t.ink2 } } },
           itemStyle: { borderColor: t.surface, borderWidth: 4, borderRadius: 6 },
         },
@@ -385,7 +387,7 @@ export function MonthCalendar({ rows, tokens: t }: { rows: Reading[] | null; tok
   }, [rows, t]);
   const month = new Date().toLocaleDateString(undefined, { month: "long" });
   return (
-    <Card title="Month at a glance" icon={CalendarRange} subtitle={`${month} · darker = more energy used`}>
+    <Card title="Month at a glance" icon={CalendarRange} subtitle={`${month} · load from the controller, darker = more used`}>
       <ReactECharts option={option} notMerge style={{ height: 300 }} />
     </Card>
   );

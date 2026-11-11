@@ -2,9 +2,8 @@ import ReactECharts from "echarts-for-react";
 import type { LucideIcon } from "lucide-react";
 import { LineChart, Table2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { series, stats, type Pick, type Point } from "../analytics";
+import { series, stats, type Pick, type Point, type Row } from "../analytics";
 import type { Tokens } from "../theme";
-import type { Reading } from "../types";
 import { Card } from "./ui";
 
 export const FONT = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
@@ -66,7 +65,7 @@ interface TimeProps {
   subtitle?: string;
   unit: string;
   decimals?: number;
-  rows: Reading[] | null;
+  rows: Row[] | null;
   loading?: boolean;
   from: number; // unix s
   to: number;

@@ -14,9 +14,9 @@ import { useTheme, type Tokens } from "./theme";
 import type { Reading } from "./types";
 
 const PAGES = [
-  { id: "overview", label: "Overview", icon: LayoutDashboard, sub: "Live state of the pack" },
+  { id: "overview", label: "Overview", icon: LayoutDashboard, sub: "Solar, load and battery right now" },
   { id: "analytics", label: "Analytics", icon: BarChart3, sub: "History, trends and comparisons" },
-  { id: "energy", label: "Energy", icon: BatteryCharging, sub: "Daily energy and usage patterns" },
+  { id: "energy", label: "Energy", icon: BatteryCharging, sub: "Solar and load per day, from the controller" },
   { id: "device", label: "Device", icon: Cpu, sub: "Board health and remote control" },
 ] as const satisfies readonly { id: string; label: string; icon: LucideIcon; sub: string }[];
 type PageId = (typeof PAGES)[number]["id"];
@@ -127,11 +127,13 @@ function OverviewPage(p: { rangeId: RangeId; latest?: Reading; info: ReturnType<
   const twoMin = useNow(120);
   const ctrlToday = useCtrlReadings(todayStart(), twoMin, 3600);
   const ctrlMonth = useCtrlReadings(monthStart(), hour, 3600);
+  const ctrlRange = useCtrlReadings(from, to, 3600);
   return (
     <Overview
       ctrlToday={ctrlToday.rows}
       ctrlMonth={ctrlMonth.rows}
       ctrlMonthLoading={ctrlMonth.loading}
+      ctrlRows={ctrlRange.rows}
       latest={p.latest}
       info={p.info}
       device={p.device}
@@ -154,13 +156,15 @@ function AnalyticsPage({ rangeId, tokens }: { rangeId: RangeId; tokens: Tokens }
   const now = useNow(range.refresh);
   const { from, to } = rangeWindow(range.id, now);
   const cur = useReadings(from, to, 3600);
-  return <Analytics rows={cur.rows} loading={cur.loading} from={from} to={to} rangeLabel={range.label} tokens={tokens} />;
+  const ctrl = useCtrlReadings(from, to, 3600);
+  return <Analytics rows={cur.rows} ctrlRows={ctrl.rows} loading={cur.loading || ctrl.loading} from={from} to={to} rangeLabel={range.label} tokens={tokens} />;
 }
 
 function EnergyPage({ tokens }: { tokens: Tokens }) {
   const now = useNow(600);
   const week = useReadings(todayStart() - 7 * 86400, now, 3600);
-  return <Energy rows={week.rows} loading={week.loading} tokens={tokens} />;
+  const ctrl = useCtrlReadings(todayStart() - 7 * 86400, now, 3600);
+  return <Energy rows={week.rows} ctrlRows={ctrl.rows} loading={week.loading || ctrl.loading} tokens={tokens} />;
 }
 
 export default function App() {

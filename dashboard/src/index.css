@@ -407,6 +407,8 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 /* on an upright cable: beside it, at the middle of its length */
 .wire-tag.side { transform: translate(12px, -50%); }
+/* under a level cable (the panel voltage below the solar current) */
+.wire-tag.below { transform: translate(-50%, 9px); }
 .wire-tag.charge { background: rgba(27, 175, 122, 0.14); border-color: transparent; color: var(--good-text); }
 .wire-tag.use { background: rgba(235, 104, 52, 0.13); border-color: transparent; color: #c4501f; }
 :root[data-theme="dark"] .wire-tag.use { color: #f08a5d; }

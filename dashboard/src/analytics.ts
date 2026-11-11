@@ -3,10 +3,13 @@ import type { Ctrl, Reading } from "./types";
 import { CELLS, cellKey } from "./types";
 
 export type Point = [number, number | null]; // [ms, value]
-export type Pick = (r: Reading) => number | undefined;
+/** Any row with a unix time: BMS readings or controller rows. */
+export type Row = { ts: number };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Pick = (r: any) => number | undefined;
 
 /** Average into at most `max` time buckets; a gap > 3 buckets (or > 5 min) becomes a break in the line. */
-export function series(rows: Reading[], pick: Pick, max = 600, shiftS = 0): Point[] {
+export function series(rows: Row[], pick: Pick, max = 600, shiftS = 0): Point[] {
   if (rows.length === 0) return [];
   const t0 = rows[0].ts;
   const span = Math.max(1, rows[rows.length - 1].ts - t0);
@@ -49,7 +52,7 @@ export interface Stats {
   max: number;
   avg: number;
 }
-export function stats(rows: Reading[], pick: Pick): Stats | null {
+export function stats(rows: Row[], pick: Pick): Stats | null {
   let min = Infinity, max = -Infinity, sum = 0, n = 0;
   for (const r of rows) {
     const v = pick(r);
@@ -152,7 +155,7 @@ export function ctrlByDay(rows: Ctrl[]): (CtrlFlow & { day: number })[] {
 }
 
 /** Average value per hour of the local day (0-23) for a set of readings; null where no data. */
-export function hourProfile(rows: Reading[], pick: Pick): (number | null)[] {
+export function hourProfile(rows: Row[], pick: Pick): (number | null)[] {
   const sum = new Array(24).fill(0), n = new Array(24).fill(0);
   for (const r of rows) {
     const v = pick(r);

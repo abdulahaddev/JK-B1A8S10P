@@ -156,6 +156,22 @@ export const useReadings = (from: number, to: number, refreshS = 60) => useWindo
 /** Solar controller history, like useReadings. */
 export const useCtrlReadings = (from: number, to: number, refreshS = 60) => useWindow(fetchCtrl, from, to, refreshS);
 
+/** The same controller window moved back by `shiftS` (0 = off). */
+export function useShiftedCtrl(from: number, to: number, shiftS: number) {
+  const [rows, setRows] = useState<Ctrl[] | null>(null);
+  const key = useRef("");
+  useEffect(() => {
+    const k = `${from}-${to}-${shiftS}`;
+    key.current = k;
+    if (!shiftS) {
+      setRows(null);
+      return;
+    }
+    fetchCtrl(from - shiftS, to - shiftS).then((r) => key.current === k && setRows(r));
+  }, [from, to, shiftS]);
+  return shiftS ? rows : null;
+}
+
 /** The same window moved back by `shiftS` (0 = off: nothing is fetched). */
 export function useShifted(from: number, to: number, shiftS: number) {
   const [rows, setRows] = useState<Reading[] | null>(null);

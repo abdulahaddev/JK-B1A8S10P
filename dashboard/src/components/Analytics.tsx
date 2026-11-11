@@ -1,14 +1,15 @@
-import { Activity, BatteryCharging, BatteryMedium, Grid2x2, Plug, Thermometer, Zap } from "lucide-react";
+import { Activity, BatteryCharging, BatteryMedium, Grid2x2, House, Plug, Sun, Thermometer, Zap } from "lucide-react";
 import { useMemo } from "react";
 import { cells, powerW, spreadMv } from "../analytics";
 import type { Tokens } from "../theme";
-import type { Reading } from "../types";
+import type { Ctrl, Reading } from "../types";
 import { TimeChart, type Metric } from "./Chart";
 import { PeriodComparison } from "./Compare";
 
 /** History over the selected range; the period comparison table compares the whole range. */
 export function Analytics({
   rows,
+  ctrlRows,
   loading,
   from,
   to,
@@ -16,6 +17,7 @@ export function Analytics({
   tokens: t,
 }: {
   rows: Reading[] | null;
+  ctrlRows: Ctrl[] | null;
   loading: boolean;
   from: number;
   to: number;
@@ -25,9 +27,18 @@ export function Analytics({
   const m = useMemo(() => {
     const one = (name: string, pick: Metric["pick"]): Metric[] => [{ name, color: t.series[0], pick }];
     return {
-      soc: one("SOC", (r) => r.state_of_charge),
-      voltage: one("Voltage", (r) => r.total_voltage),
-      current: one("Current", (r) => r.current),
+      solarLoad: [
+        { name: "Solar", color: t.series[2], pick: (r: Ctrl) => r.pv_w },
+        { name: "Load", color: t.series[1], pick: (r: Ctrl) => r.load_w },
+      ],
+      pvV: one("Solar voltage", (r: Ctrl) => r.pv_v),
+      chargeA: [
+        { name: "Controller output", color: t.series[2], pick: (r: Ctrl) => r.charge_a },
+        { name: "Load", color: t.series[1], pick: (r: Ctrl) => r.load_a },
+      ],
+      soc: one("SOC", (r: Reading) => r.state_of_charge),
+      voltage: one("Voltage", (r: Reading) => r.total_voltage),
+      current: one("Current", (r: Reading) => r.current),
       power: one("Power", powerW),
       spread: one("Spread", spreadMv),
       cells: [0, 1, 2, 3].map((i) => ({ name: `Cell ${i + 1}`, color: t.series[i], pick: (r: Reading) => cells(r)[i] })),
@@ -40,17 +51,21 @@ export function Analytics({
   }, [t]);
 
   const common = { rows, loading, from, to, tokens: t };
+  const ctl = { rows: ctrlRows, loading, from, to, tokens: t };
   return (
     <div className="page">
       <div className="grid-2">
+        <TimeChart {...ctl} title="Solar and load" icon={Sun} subtitle="From the controller" unit="W" decimals={0} metrics={m.solarLoad} yMin={0} className="span-2" />
+        <TimeChart {...ctl} title="Solar voltage" icon={Sun} subtitle="Panel voltage at the controller" unit="V" decimals={1} metrics={m.pvV} yMin={0} />
+        <TimeChart {...ctl} title="Controller current" icon={House} subtitle="Output includes the load" unit="A" metrics={m.chargeA} yMin={0} />
         <TimeChart {...common} title="State of charge" icon={BatteryMedium} unit="%" decimals={0} metrics={m.soc} yMin={0} yMax={100} />
         <TimeChart {...common} title="Pack voltage" icon={BatteryCharging} unit="V" metrics={m.voltage} />
-        <TimeChart {...common} title="Current" icon={Zap} subtitle="+ charging · − discharging" unit="A" metrics={m.current} zeroLine />
-        <TimeChart {...common} title="Power" icon={Plug} subtitle="+ charging · − load" unit="W" decimals={0} metrics={m.power} zeroLine />
+        <TimeChart {...common} title="Battery current" icon={Zap} subtitle="From the BMS · + charging · − discharging" unit="A" metrics={m.current} zeroLine />
+        <TimeChart {...common} title="Battery net power" icon={Plug} subtitle="From the BMS · + in · − out" unit="W" decimals={0} metrics={m.power} zeroLine />
         <TimeChart {...common} title="Cell voltages" icon={Grid2x2} subtitle="All four cells on one scale" unit="V" decimals={3} metrics={m.cells} />
         <TimeChart {...common} title="Cell spread" icon={Activity} subtitle="Highest minus lowest cell" unit="mV" decimals={0} metrics={m.spread} yMin={0} />
         <TimeChart {...common} title="Temperatures" icon={Thermometer} unit="°C" decimals={1} metrics={m.temps} className="span-2" />
-        <PeriodComparison cur={rows} from={from} to={to} rangeLabel={rangeLabel} />
+        <PeriodComparison cur={rows} ctrl={ctrlRows} from={from} to={to} rangeLabel={rangeLabel} />
       </div>
     </div>
   );

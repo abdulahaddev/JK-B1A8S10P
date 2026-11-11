@@ -9,15 +9,14 @@ import {
   Cpu,
   Gauge,
   Grid2x2,
+  House,
   Sun,
-  Thermometer,
   TrendingUp,
   Wifi,
   WifiOff,
-  Zap,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { byDay, cells, ctrlByDay, integrateCtrl, powerW, spreadMv, stats, todayStart, type CtrlFlow } from "../analytics";
+import { byDay, cells, ctrlByDay, integrateCtrl, spreadMv, stats, todayStart, type CtrlFlow, type Row } from "../analytics";
 import type { Tokens } from "../theme";
 import { useLatestCtrl } from "../data";
 import type { Ctrl, Device, Info, Reading } from "../types";
@@ -315,10 +314,10 @@ function MonthEnergy({
 }
 
 const TREND = [
+  { id: "solar", label: "Solar" },
+  { id: "load", label: "Load" },
   { id: "soc", label: "SOC" },
-  { id: "power", label: "Power" },
   { id: "voltage", label: "Voltage" },
-  { id: "current", label: "Current" },
 ] as const;
 type TrendId = (typeof TREND)[number]["id"];
 
@@ -332,6 +331,7 @@ export function Overview({
   ctrlToday,
   ctrlMonth,
   ctrlMonthLoading,
+  ctrlRows,
   loading,
   from,
   now,
@@ -349,6 +349,7 @@ export function Overview({
   ctrlToday: Ctrl[] | null; // controller readings since midnight, for today's solar and load
   ctrlMonth: Ctrl[] | null; // since the 1st, for solar and load per day
   ctrlMonthLoading: boolean;
+  ctrlRows: Ctrl[] | null; // controller readings over the graph range
   loading: boolean;
   from: number; // start of the graph range (unix s)
   now: number;
@@ -357,7 +358,7 @@ export function Overview({
   clock: number; // live wall clock for "x ago"
   tokens: Tokens;
 }) {
-  const [trend, setTrend] = useState<TrendId>("soc");
+  const [trend, setTrend] = useState<TrendId>("solar");
   const ctrlRow = useLatestCtrl();
   const ctrl = ctrlRow && clock - ctrlRow.ts < 180 ? ctrlRow : null;
   // midnight to midnight by the board's timestamps; the filter drops yesterday's rows for a while after midnight
@@ -365,32 +366,35 @@ export function Overview({
   const sparks = useMemo(() => {
     // Sparklines: the last 6 hours, or the whole range when it is shorter
     const recent = (rows ?? []).filter((r) => r.ts >= Math.max(from, now - 6 * 3600));
-    const step = Math.max(1, Math.floor(recent.length / 60));
-    const thin = recent.filter((_, i) => i % step === 0);
-    return {
-      voltage: thin.map((r) => r.total_voltage),
-      current: thin.map((r) => r.current ?? 0),
-      spread: thin.map(spreadMv),
-      temp: thin.map((r) => r.mosfet_temperature ?? 0),
+    const thin = <T,>(a: T[]) => {
+      const step = Math.max(1, Math.floor(a.length / 60));
+      return a.filter((_, i) => i % step === 0);
     };
-  }, [rows, from, now]);
+    const bms = thin(recent);
+    const ctl = thin((ctrlRows ?? []).filter((r) => r.ts >= Math.max(from, now - 6 * 3600)));
+    return {
+      solar: ctl.map((r) => r.pv_w),
+      load: ctl.map((r) => r.load_w),
+      current: bms.map((r) => r.current ?? 0),
+      spread: bms.map(spreadMv),
+    };
+  }, [rows, ctrlRows, from, now]);
 
   if (!latest) return <div className="card empty" style={{ height: 200 }}>Waiting for the first reading…</div>;
 
   const r = latest;
   const i = r.current ?? 0;
   const spread = spreadMv(r);
-  const temps = [r.mosfet_temperature, r.temperature_sensor_1, r.temperature_sensor_2].filter((x): x is number => x !== undefined);
-  const hot = temps.length ? Math.max(...temps) : null;
 
-  const trendCfg: Record<TrendId, { unit: string; dec: number; metric: Metric; yMin?: number; yMax?: number; zero?: boolean }> = {
-    soc: { unit: "%", dec: 0, metric: { name: "SOC", color: t.series[0], pick: (x) => x.state_of_charge }, yMin: 0, yMax: 100 },
-    power: { unit: "W", dec: 0, metric: { name: "Power", color: t.series[0], pick: powerW }, zero: true },
-    voltage: { unit: "V", dec: 2, metric: { name: "Voltage", color: t.series[0], pick: (x) => x.total_voltage } },
-    current: { unit: "A", dec: 2, metric: { name: "Current", color: t.series[0], pick: (x) => x.current }, zero: true },
+  // Solar and load from the controller; SOC and voltage from the BMS
+  const trendCfg: Record<TrendId, { unit: string; dec: number; metric: Metric; rows: Row[] | null; yMin?: number; yMax?: number }> = {
+    solar: { unit: "W", dec: 0, metric: { name: "Solar", color: t.series[2], pick: (x: Ctrl) => x.pv_w }, rows: ctrlRows, yMin: 0 },
+    load: { unit: "W", dec: 0, metric: { name: "Load", color: t.series[1], pick: (x: Ctrl) => x.load_w }, rows: ctrlRows, yMin: 0 },
+    soc: { unit: "%", dec: 0, metric: { name: "SOC", color: t.series[0], pick: (x: Reading) => x.state_of_charge }, rows, yMin: 0, yMax: 100 },
+    voltage: { unit: "V", dec: 2, metric: { name: "Voltage", color: t.series[0], pick: (x: Reading) => x.total_voltage }, rows },
   };
   const cfg = trendCfg[trend];
-  const cellMetrics: Metric[] = CELLS.map((c, idx) => ({ name: `Cell ${c}`, color: t.series[idx], pick: (x) => x[cellKey(c)] }));
+  const cellMetrics: Metric[] = CELLS.map((c, idx) => ({ name: `Cell ${c}`, color: t.series[idx], pick: (x: Reading) => x[cellKey(c)] }));
 
   return (
     <div className="page">
@@ -399,8 +403,25 @@ export function Overview({
       <div className="overview-top">
         <PowerFlow r={r} info={info} bmsOnline={device?.ble_connected === 1} ctrl={ctrl} today={ctrlDay} />
         <div className="kpis">
-          <Kpi icon={BatteryCharging} label="Pack voltage" value={r.total_voltage.toFixed(2)} unit="V" note={`${(r.total_voltage / 4).toFixed(3)} V per cell`} spark={sparks.voltage} color={t.series[0]} />
-          <Kpi icon={Zap} label="Current" value={`${i > 0 ? "+" : ""}${i.toFixed(2)}`} unit="A" note={packState(r)} spark={sparks.current} color={t.series[2]} />
+          <Kpi
+            icon={Sun}
+            label="Solar"
+            value={ctrl ? String(ctrl.pv_w) : "–"}
+            unit="W"
+            note={ctrl ? `${ctrl.pv_v.toFixed(1)} V · ${ctrl.pv_a.toFixed(1)} A` : "controller not reporting"}
+            spark={sparks.solar}
+            color={t.series[2]}
+          />
+          <Kpi
+            icon={House}
+            label="Load"
+            value={ctrl ? String(ctrl.load_w) : "–"}
+            unit="W"
+            note={ctrl ? `${ctrl.load_a.toFixed(2)} A · output ${ctrl.status !== undefined && ctrl.status & 0x8000 ? "on" : "off"}` : "controller not reporting"}
+            spark={sparks.load}
+            color={t.series[1]}
+          />
+          <Kpi icon={BatteryCharging} label="Battery" value={`${i > 0 ? "+" : ""}${i.toFixed(2)}`} unit="A" note={`${packState(r)} · ${r.total_voltage.toFixed(2)} V`} spark={sparks.current} color={t.series[0]} />
           <Kpi
             icon={Activity}
             label="Cell spread"
@@ -409,15 +430,6 @@ export function Overview({
             note={<StatusPill kind={spread < 30 ? "good" : spread < 80 ? "warning" : "serious"}>{spread < 30 ? "Balanced" : spread < 80 ? "Drifting" : "Unbalanced"}</StatusPill>}
             spark={sparks.spread}
             color={t.series[6]}
-          />
-          <Kpi
-            icon={Thermometer}
-            label="Temperature"
-            value={hot === null ? "–" : hot.toFixed(1)}
-            unit="°C"
-            note={`MOS ${r.mosfet_temperature?.toFixed(0) ?? "–"} · T1 ${r.temperature_sensor_1?.toFixed(0) ?? "–"} · T2 ${r.temperature_sensor_2?.toFixed(0) ?? "–"}`}
-            spark={sparks.temp}
-            color={t.series[1]}
           />
         </div>
       </div>
@@ -429,7 +441,7 @@ export function Overview({
         icon={TrendingUp}
         unit={cfg.unit}
         decimals={cfg.dec}
-        rows={rows}
+        rows={cfg.rows}
         loading={loading}
         from={from}
         to={now}
@@ -437,7 +449,6 @@ export function Overview({
         tokens={t}
         yMin={cfg.yMin}
         yMax={cfg.yMax}
-        zeroLine={cfg.zero}
         height={300}
         extra={<Segmented options={TREND} value={trend} onChange={setTrend} label="Metric" size="small" />}
       />
@@ -460,8 +471,8 @@ export function Overview({
           height={260}
         />
         <TempGauges r={r} rows={rows} rangeLabel={rangeLabel} tokens={t} />
-        <UsageByHour rows={monthRows} tokens={t} />
-        <MonthCalendar rows={monthRows} tokens={t} />
+        <UsageByHour rows={ctrlMonth} tokens={t} />
+        <MonthCalendar rows={ctrlMonth} tokens={t} />
       </div>
       <p className="foot-note">
         <Gauge size={13} aria-hidden /> Live values update as the board reports; charts refresh every few minutes.
